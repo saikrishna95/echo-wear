@@ -1,11 +1,30 @@
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { TrendingUp, Users, ShoppingBag } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
   const navigate = useNavigate();
+  const { isAuthenticated, logout } = useAuth();
+  const [showAnimation, setShowAnimation] = useState(false);
+
+  // Control animation on mount
+  useEffect(() => {
+    setShowAnimation(true);
+  }, []);
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/login");
+    }
+  }, [isAuthenticated, navigate]);
+
+  if (!isAuthenticated) {
+    return null; // Don't render anything while checking auth state
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -19,28 +38,16 @@ const Index = () => {
             <Button 
               variant="outline" 
               className="text-fashion-navy"
-              onClick={() => {
-                // This would be a login function in a real application
-                console.log("Login clicked");
-              }}
+              onClick={logout}
             >
-              Login
-            </Button>
-            <Button 
-              className="bg-fashion-teal hover:bg-fashion-teal/90 text-white"
-              onClick={() => {
-                // This would be a signup function in a real application
-                console.log("Sign Up clicked");
-              }}
-            >
-              Sign Up
+              Logout
             </Button>
           </div>
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="flex-1 flex flex-col items-center justify-center p-6 animate-fade-in">
+      {/* Hero Section with Animation */}
+      <section className={`flex-1 flex flex-col items-center justify-center p-6 transition-all duration-700 ease-in-out transform ${showAnimation ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
         <h1 className="text-4xl md:text-6xl font-bold text-center mb-6 text-fashion-navy">
           Your AI stylist for every occasion!
         </h1>
@@ -49,63 +56,35 @@ const Index = () => {
           all in one place.
         </p>
         
-        <div className="flex flex-col md:flex-row gap-6 w-full max-w-lg">
-          <Button 
-            className="flex-1 bg-fashion-navy hover:bg-fashion-navy/90 text-white py-8 fashion-button text-lg"
-            onClick={() => navigate("/closet")}
-          >
-            <ShoppingBag className="mr-2 h-6 w-6" />
-            Virtual Closet
-          </Button>
-          <Button 
-            className="flex-1 bg-fashion-teal hover:bg-fashion-teal/90 text-white py-8 fashion-button text-lg"
-            onClick={() => navigate("/social")}
-          >
-            <Users className="mr-2 h-6 w-6" />
-            Fashion Social
-          </Button>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="py-16 px-6 bg-fashion-gray">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12 text-fashion-navy">
-            AI-Powered Fashion Experience
-          </h2>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            {/* Feature 1 */}
-            <div className="fashion-card p-6">
-              <div className="bg-fashion-teal/10 p-4 rounded-full w-16 h-16 flex items-center justify-center mb-4">
-                <ShoppingBag className="h-8 w-8 text-fashion-teal" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Virtual Closet</h3>
-              <p className="text-gray-600">
-                Scan, upload and organize your clothes. Get AI-powered outfit suggestions based on weather and events.
-              </p>
+        {/* Split box for Virtual Closet and Fashion Social */}
+        <div className="w-full max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-md">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Left side - Virtual Closet */}
+            <div className={`transform transition-all duration-700 delay-200 ${showAnimation ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
+              <Button 
+                className="w-full h-64 bg-fashion-navy hover:bg-fashion-navy/90 text-white p-8 rounded-xl flex flex-col items-center justify-center gap-4 shadow-lg transition-transform hover:scale-105"
+                onClick={() => navigate("/closet")}
+              >
+                <ShoppingBag className="h-16 w-16 mb-2" />
+                <span className="text-2xl font-bold">Virtual Closet</span>
+                <p className="text-sm opacity-80 max-w-xs text-center">
+                  Organize your wardrobe and get AI outfit recommendations
+                </p>
+              </Button>
             </div>
             
-            {/* Feature 2 */}
-            <div className="fashion-card p-6">
-              <div className="bg-fashion-pink/20 p-4 rounded-full w-16 h-16 flex items-center justify-center mb-4">
-                <Users className="h-8 w-8 text-fashion-pink" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Fashion Social</h3>
-              <p className="text-gray-600">
-                Connect with fashion enthusiasts, share trends, and discover new styles from brands and creators.
-              </p>
-            </div>
-            
-            {/* Feature 3 */}
-            <div className="fashion-card p-6">
-              <div className="bg-fashion-navy/10 p-4 rounded-full w-16 h-16 flex items-center justify-center mb-4">
-                <TrendingUp className="h-8 w-8 text-fashion-navy" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Smart Insights</h3>
-              <p className="text-gray-600">
-                Track clothing rotation, get outfit analytics, and receive suggestions for sustainable fashion choices.
-              </p>
+            {/* Right side - Fashion Social */}
+            <div className={`transform transition-all duration-700 delay-300 ${showAnimation ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}>
+              <Button 
+                className="w-full h-64 bg-fashion-teal hover:bg-fashion-teal/90 text-white p-8 rounded-xl flex flex-col items-center justify-center gap-4 shadow-lg transition-transform hover:scale-105"
+                onClick={() => navigate("/social")}
+              >
+                <Users className="h-16 w-16 mb-2" />
+                <span className="text-2xl font-bold">Fashion Social</span>
+                <p className="text-sm opacity-80 max-w-xs text-center">
+                  Connect with fashion enthusiasts and discover new trends
+                </p>
+              </Button>
             </div>
           </div>
         </div>
