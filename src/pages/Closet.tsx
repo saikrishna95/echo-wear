@@ -5,7 +5,6 @@ import {
   Shirt, 
   ArrowLeft, 
   Home, 
-  Pants, 
   Footprints, 
   UserIcon,
   Camera,
@@ -14,7 +13,8 @@ import {
   SnowflakeIcon,
   Calendar,
   Plus,
-  Users
+  Users,
+  Scissors
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -124,7 +124,7 @@ const Closet = () => {
                       Tops
                     </TabsTrigger>
                     <TabsTrigger value="bottoms" className="flex gap-2 items-center">
-                      <Pants className="h-4 w-4" />
+                      <Scissors className="h-4 w-4" />
                       Bottoms
                     </TabsTrigger>
                     <TabsTrigger value="shoes" className="flex gap-2 items-center">
@@ -315,7 +315,7 @@ const Closet = () => {
                     <div className="space-y-3">
                       <div className="flex items-center p-3 bg-green-50 rounded-lg">
                         <div className="bg-green-100 p-2 rounded-full mr-3">
-                          <Hanger className="h-5 w-5 text-green-600" />
+                          <Shirt className="h-5 w-5 text-green-600" />
                         </div>
                         <div>
                           <p className="font-medium">Donate unused clothes</p>
