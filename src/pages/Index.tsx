@@ -2,7 +2,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Trendingup, Users, Hanger } from "lucide-react";
+import { TrendingUp, Users, ShoppingBag } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -54,7 +54,7 @@ const Index = () => {
             className="flex-1 bg-fashion-navy hover:bg-fashion-navy/90 text-white py-8 fashion-button text-lg"
             onClick={() => navigate("/closet")}
           >
-            <Hanger className="mr-2 h-6 w-6" />
+            <ShoppingBag className="mr-2 h-6 w-6" />
             Virtual Closet
           </Button>
           <Button 
@@ -78,7 +78,7 @@ const Index = () => {
             {/* Feature 1 */}
             <div className="fashion-card p-6">
               <div className="bg-fashion-teal/10 p-4 rounded-full w-16 h-16 flex items-center justify-center mb-4">
-                <Hanger className="h-8 w-8 text-fashion-teal" />
+                <ShoppingBag className="h-8 w-8 text-fashion-teal" />
               </div>
               <h3 className="text-xl font-semibold mb-2">Virtual Closet</h3>
               <p className="text-gray-600">
@@ -100,7 +100,7 @@ const Index = () => {
             {/* Feature 3 */}
             <div className="fashion-card p-6">
               <div className="bg-fashion-navy/10 p-4 rounded-full w-16 h-16 flex items-center justify-center mb-4">
-                <Trendingup className="h-8 w-8 text-fashion-navy" />
+                <TrendingUp className="h-8 w-8 text-fashion-navy" />
               </div>
               <h3 className="text-xl font-semibold mb-2">Smart Insights</h3>
               <p className="text-gray-600">

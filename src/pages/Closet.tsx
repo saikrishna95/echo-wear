@@ -1,12 +1,11 @@
-
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { 
-  Hanger, 
+  ShoppingBag, 
   Shirt, 
   ArrowLeft, 
   Home, 
-  PantsIcon, 
+  Pants, 
   Footprints, 
   UserIcon,
   Camera,
@@ -14,7 +13,8 @@ import {
   CloudRainIcon,
   SnowflakeIcon,
   Calendar,
-  Plus
+  Plus,
+  Users
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -22,7 +22,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 
-// Mock data for clothing items
 const mockClothes = {
   tops: [
     { id: 1, name: "White T-Shirt", image: "https://placehold.co/200x200/ffffff/000000?text=White+Tee", color: "White", type: "Casual" },
@@ -39,7 +38,6 @@ const mockClothes = {
   ],
 };
 
-// Mock data for outfits
 const mockOutfits = [
   {
     id: 1,
@@ -77,7 +75,6 @@ const Closet = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-fashion-gray">
-      {/* Top Navigation */}
       <header className="w-full py-4 px-6 bg-white shadow-sm z-10">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-4">
@@ -94,7 +91,6 @@ const Closet = () => {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="flex-1 p-6 max-w-7xl mx-auto w-full">
         <Tabs 
           defaultValue="closet" 
@@ -107,7 +103,6 @@ const Closet = () => {
             <TabsTrigger value="insights">Insights</TabsTrigger>
           </TabsList>
           
-          {/* Closet Tab */}
           <TabsContent value="closet" className="animate-fade-in">
             <Card>
               <CardContent className="p-6">
@@ -122,7 +117,6 @@ const Closet = () => {
                   </Button>
                 </div>
                 
-                {/* Secondary tabs for clothing categories */}
                 <Tabs defaultValue="tops" className="w-full">
                   <TabsList className="mb-6">
                     <TabsTrigger value="tops" className="flex gap-2 items-center">
@@ -130,7 +124,7 @@ const Closet = () => {
                       Tops
                     </TabsTrigger>
                     <TabsTrigger value="bottoms" className="flex gap-2 items-center">
-                      <PantsIcon className="h-4 w-4" />
+                      <Pants className="h-4 w-4" />
                       Bottoms
                     </TabsTrigger>
                     <TabsTrigger value="shoes" className="flex gap-2 items-center">
@@ -139,7 +133,6 @@ const Closet = () => {
                     </TabsTrigger>
                   </TabsList>
                   
-                  {/* Tops Content */}
                   <TabsContent value="tops">
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                       {mockClothes.tops.map((item) => (
@@ -167,7 +160,6 @@ const Closet = () => {
                     </div>
                   </TabsContent>
                   
-                  {/* Bottoms Content */}
                   <TabsContent value="bottoms">
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                       {mockClothes.bottoms.map((item) => (
@@ -195,7 +187,6 @@ const Closet = () => {
                     </div>
                   </TabsContent>
                   
-                  {/* Shoes Content */}
                   <TabsContent value="shoes">
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                       {mockClothes.shoes.map((item) => (
@@ -227,7 +218,6 @@ const Closet = () => {
             </Card>
           </TabsContent>
           
-          {/* Outfits Tab */}
           <TabsContent value="outfits" className="animate-fade-in">
             <Card>
               <CardContent className="p-6">
@@ -292,7 +282,6 @@ const Closet = () => {
             </Card>
           </TabsContent>
           
-          {/* Insights Tab */}
           <TabsContent value="insights" className="animate-fade-in">
             <Card>
               <CardContent className="p-6">
@@ -351,7 +340,6 @@ const Closet = () => {
         </Tabs>
       </main>
 
-      {/* Bottom Navigation */}
       <nav className="bg-white border-t border-gray-200 fixed bottom-0 left-0 right-0 z-10">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-around">
@@ -366,7 +354,7 @@ const Closet = () => {
               to="/closet" 
               className={`flex flex-col items-center py-3 px-4 ${selectedTab === "closet" ? "text-fashion-teal" : "text-fashion-navy"}`}
             >
-              <Hanger className="h-6 w-6" />
+              <ShoppingBag className="h-6 w-6" />
               <span className="text-xs mt-1">Closet</span>
             </Link>
             <Link 
@@ -387,7 +375,6 @@ const Closet = () => {
         </div>
       </nav>
 
-      {/* Bottom padding to account for fixed nav */}
       <div className="h-20"></div>
     </div>
   );

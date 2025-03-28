@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { 
   ArrowLeft, 
   Home, 
-  Hanger, 
+  ShoppingBag, 
   Users, 
   UserIcon,
   Heart,
@@ -372,7 +372,7 @@ const Social = () => {
               to="/closet" 
               className="flex flex-col items-center py-3 px-4 text-fashion-navy"
             >
-              <Hanger className="h-6 w-6" />
+              <ShoppingBag className="h-6 w-6" />
               <span className="text-xs mt-1">Closet</span>
             </Link>
             <Link 

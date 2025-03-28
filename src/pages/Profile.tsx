@@ -1,10 +1,9 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import { 
   ArrowLeft, 
   Home, 
-  Hanger, 
+  ShoppingBag, 
   Users, 
   UserIcon,
   Settings,
@@ -136,7 +135,7 @@ const Profile = () => {
               <Bookmark className="h-5 w-5" />
             </TabsTrigger>
             <TabsTrigger value="outfits">
-              <Hanger className="h-5 w-5" />
+              <ShoppingBag className="h-5 w-5" />
             </TabsTrigger>
           </TabsList>
           
@@ -215,7 +214,7 @@ const Profile = () => {
               to="/closet" 
               className="flex flex-col items-center py-3 px-4 text-fashion-navy"
             >
-              <Hanger className="h-6 w-6" />
+              <ShoppingBag className="h-6 w-6" />
               <span className="text-xs mt-1">Closet</span>
             </Link>
             <Link 
