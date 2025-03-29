@@ -58,11 +58,16 @@ const Index = () => {
         
         {/* Door-like button container with no gap */}
         <div className="w-full max-w-2xl mx-auto">
-          <div className="grid grid-cols-2 gap-0">
+          <div className="grid grid-cols-2 gap-0 perspective-[1000px]">
             {/* Left side - Virtual Closet */}
             <div 
-              className={`h-auto py-16 bg-fashion-navy text-white rounded-l-xl rounded-r-none flex flex-col items-center justify-center gap-2 shadow-md transition-all duration-500 border-r border-white/10 overflow-hidden relative cursor-pointer ${showAnimation ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
+              className={`h-auto py-16 bg-fashion-navy text-white rounded-l-xl rounded-r-none flex flex-col items-center justify-center gap-2 shadow-xl transition-all duration-500 border-r border-white/10 overflow-hidden relative cursor-pointer transform hover:translate-z-4 hover:-translate-y-2 hover:shadow-2xl active:translate-y-1 active:shadow-inner ${showAnimation ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
               onClick={() => navigate("/closet")}
+              style={{
+                transform: "translateZ(0)",
+                transformStyle: "preserve-3d",
+                boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1), 0 -4px 0 0 rgba(0, 0, 0, 0.1) inset, 6px 0 0 0 rgba(255, 255, 255, 0.05) inset"
+              }}
             >
               {/* Background image */}
               <div className="absolute inset-0 w-full h-full opacity-30">
@@ -75,17 +80,22 @@ const Index = () => {
               
               {/* Content with z-index to appear above the background */}
               <div className="relative z-10 flex flex-col items-center justify-center">
-                <span className="text-base font-bold">Virtual Closet</span>
+                <span className="text-base font-bold text-shadow shadow-black/50">Virtual Closet</span>
               </div>
             </div>
             
             {/* Right side - Fashion Social */}
             <Button 
-              className={`h-auto py-16 bg-fashion-teal hover:bg-fashion-teal/90 text-white rounded-r-xl rounded-l-none flex flex-col items-center justify-center gap-2 shadow-md transition-all duration-500 ${showAnimation ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
+              className={`h-auto py-16 bg-fashion-teal hover:bg-fashion-teal/90 text-white rounded-r-xl rounded-l-none flex flex-col items-center justify-center gap-2 shadow-xl transition-all duration-500 ${showAnimation ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
               onClick={() => navigate("/social")}
+              style={{
+                transform: "translateZ(0)",
+                transformStyle: "preserve-3d",
+                boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1), 0 -4px 0 0 rgba(0, 0, 0, 0.1) inset, -6px 0 0 0 rgba(255, 255, 255, 0.05) inset"
+              }}
             >
               <Users className="h-8 w-8" />
-              <span className="text-base font-bold">Fashion Social</span>
+              <span className="text-base font-bold text-shadow shadow-black/50">Fashion Social</span>
             </Button>
           </div>
         </div>
