@@ -61,7 +61,7 @@ const Index = () => {
           <div className="grid grid-cols-2 gap-0">
             {/* Left side - Virtual Closet */}
             <Button 
-              className={`h-auto py-8 bg-fashion-navy hover:bg-fashion-navy/90 text-white rounded-l-xl rounded-r-none flex flex-col items-center justify-center gap-2 shadow-md transition-all duration-500 border-r border-white/10 ${showAnimation ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
+              className={`h-auto py-16 bg-fashion-navy hover:bg-fashion-navy/90 text-white rounded-l-xl rounded-r-none flex flex-col items-center justify-center gap-2 shadow-md transition-all duration-500 border-r border-white/10 ${showAnimation ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
               onClick={() => navigate("/closet")}
             >
               <ShoppingBag className="h-8 w-8" />
@@ -70,7 +70,7 @@ const Index = () => {
             
             {/* Right side - Fashion Social */}
             <Button 
-              className={`h-auto py-8 bg-fashion-teal hover:bg-fashion-teal/90 text-white rounded-r-xl rounded-l-none flex flex-col items-center justify-center gap-2 shadow-md transition-all duration-500 ${showAnimation ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
+              className={`h-auto py-16 bg-fashion-teal hover:bg-fashion-teal/90 text-white rounded-r-xl rounded-l-none flex flex-col items-center justify-center gap-2 shadow-md transition-all duration-500 ${showAnimation ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
               onClick={() => navigate("/social")}
             >
               <Users className="h-8 w-8" />
