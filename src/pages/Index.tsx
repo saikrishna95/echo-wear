@@ -60,19 +60,24 @@ const Index = () => {
         <div className="w-full max-w-2xl mx-auto">
           <div className="grid grid-cols-2 gap-0">
             {/* Left side - Virtual Closet */}
-            <Button 
-              className={`h-auto py-16 bg-fashion-navy hover:bg-fashion-navy/90 text-white rounded-l-xl rounded-r-none flex flex-col items-center justify-center gap-2 shadow-md transition-all duration-500 border-r border-white/10 ${showAnimation ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
+            <div 
+              className={`h-auto py-16 bg-fashion-navy text-white rounded-l-xl rounded-r-none flex flex-col items-center justify-center gap-2 shadow-md transition-all duration-500 border-r border-white/10 overflow-hidden relative cursor-pointer ${showAnimation ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
               onClick={() => navigate("/closet")}
             >
-              <div className="h-24 w-20 mb-2">
+              {/* Background image */}
+              <div className="absolute inset-0 w-full h-full opacity-30">
                 <img 
                   src="/lovable-uploads/a5e5209b-37ed-404a-aca4-c4984df06eff.png" 
-                  alt="Wardrobe" 
-                  className="h-full w-full object-contain"
+                  alt="" 
+                  className="w-full h-full object-cover"
                 />
               </div>
-              <span className="text-base font-bold">Virtual Closet</span>
-            </Button>
+              
+              {/* Content with z-index to appear above the background */}
+              <div className="relative z-10 flex flex-col items-center justify-center">
+                <span className="text-base font-bold">Virtual Closet</span>
+              </div>
+            </div>
             
             {/* Right side - Fashion Social */}
             <Button 
