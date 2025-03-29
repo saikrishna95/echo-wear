@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Shirt, Users } from "lucide-react";
+import { Users } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
@@ -64,7 +64,13 @@ const Index = () => {
               className={`h-auto py-16 bg-fashion-navy hover:bg-fashion-navy/90 text-white rounded-l-xl rounded-r-none flex flex-col items-center justify-center gap-2 shadow-md transition-all duration-500 border-r border-white/10 ${showAnimation ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
               onClick={() => navigate("/closet")}
             >
-              <Shirt className="h-8 w-8" />
+              <div className="h-24 w-20 mb-2">
+                <img 
+                  src="/lovable-uploads/a5e5209b-37ed-404a-aca4-c4984df06eff.png" 
+                  alt="Wardrobe" 
+                  className="h-full w-full object-contain"
+                />
+              </div>
               <span className="text-base font-bold">Virtual Closet</span>
             </Button>
             
