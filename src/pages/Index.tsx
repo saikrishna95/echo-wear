@@ -2,13 +2,15 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Users } from "lucide-react";
+import { MessageSquare } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Index = () => {
   const navigate = useNavigate();
   const { isAuthenticated, logout } = useAuth();
   const [showAnimation, setShowAnimation] = useState(false);
+  const isMobile = useIsMobile();
 
   // Control animation on mount
   useEffect(() => {
@@ -27,91 +29,106 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Header */}
-      <header className="w-full py-4 px-6 bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-fashion-navy">
+    <div className="min-h-screen flex flex-col bg-white">
+      {/* Simple Header */}
+      <header className="w-full pt-12 pb-6 px-6">
+        <div className="max-w-md mx-auto flex justify-center items-center">
+          <h1 className="text-2xl font-bold text-fashion-navy text-center">
             Echo<span className="text-fashion-teal">Wear</span>
           </h1>
-          <div className="flex gap-4">
+        </div>
+      </header>
+
+      {/* App Tagline */}
+      <div className={`px-6 text-center mb-8 transition-all duration-700 ease-in-out transform ${showAnimation ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <h2 className="text-xl text-fashion-charcoal font-light tracking-wide">
+          Your AI stylist for every occasion
+        </h2>
+      </div>
+
+      {/* Main Interactive Area */}
+      <div className="flex-1 flex flex-col items-center justify-center px-6 pb-16">
+        <div className={`w-full max-w-sm mx-auto transition-all duration-700 ease-in-out transform ${showAnimation ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+          
+          {/* Grid for the two buttons */}
+          <div className="grid grid-cols-2 gap-4 perspective-[1200px]">
+            
+            {/* Virtual Closet Button */}
+            <div 
+              className="aspect-square rounded-2xl overflow-hidden transform transition-all duration-300 cursor-pointer preserve-3d hover:translate-z-4 hover:-translate-y-2 active:translate-y-1 active:shadow-inner"
+              onClick={() => navigate("/closet")}
+              style={{
+                transform: "translateZ(0)",
+                transformStyle: "preserve-3d",
+                boxShadow: "0 15px 30px -10px rgba(0, 0, 0, 0.2), 0 -6px 0 0 rgba(0, 0, 0, 0.05) inset, 8px 0 15px -5px rgba(0, 0, 0, 0.05) inset"
+              }}
+            >
+              {/* Closet Background Image */}
+              <div className="absolute inset-0 w-full h-full">
+                <img 
+                  src="/lovable-uploads/a5e5209b-37ed-404a-aca4-c4984df06eff.png" 
+                  alt="Virtual Closet" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              
+              {/* Dark overlay for text visibility */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+              
+              {/* Button Label */}
+              <div className="absolute bottom-0 left-0 right-0 p-4 text-center">
+                <span className="text-white font-semibold text-shadow shadow-black/90">
+                  Virtual Closet
+                </span>
+              </div>
+              
+              {/* 3D effect overlay */}
+              <div className="absolute inset-0 bg-fashion-navy opacity-5 rounded-2xl" 
+                   style={{ 
+                     boxShadow: "inset 0 2px 15px rgba(255,255,255,0.2), inset 0 -2px 15px rgba(0,0,0,0.2)"
+                   }}>
+              </div>
+            </div>
+            
+            {/* Social Feed Button */}
+            <div
+              className="aspect-square bg-fashion-teal rounded-2xl overflow-hidden transform transition-all duration-300 cursor-pointer preserve-3d hover:translate-z-4 hover:-translate-y-2 active:translate-y-1 active:shadow-inner relative"
+              onClick={() => navigate("/social")}
+              style={{
+                transform: "translateZ(0)",
+                transformStyle: "preserve-3d",
+                boxShadow: "0 15px 30px -10px rgba(0, 0, 0, 0.2), 0 -6px 0 0 rgba(0, 0, 0, 0.05) inset, -8px 0 15px -5px rgba(0, 0, 0, 0.05) inset"
+              }}
+            >
+              {/* Social Feed Icon */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <MessageSquare className="h-16 w-16 text-white mb-2 opacity-90" />
+                <span className="text-white font-semibold text-shadow shadow-black/50">
+                  Social Feed
+                </span>
+              </div>
+              
+              {/* 3D effect overlay */}
+              <div className="absolute inset-0 bg-white opacity-5 rounded-2xl" 
+                   style={{ 
+                     boxShadow: "inset 0 2px 15px rgba(255,255,255,0.2), inset 0 -2px 15px rgba(0,0,0,0.2)"
+                   }}>
+              </div>
+            </div>
+          </div>
+          
+          {/* Logout Button - Moved to bottom for cleaner interface */}
+          <div className="mt-12 text-center">
             <Button 
-              variant="outline" 
-              className="text-fashion-navy"
+              variant="ghost" 
+              className="text-fashion-navy/70 text-sm"
               onClick={logout}
             >
               Logout
             </Button>
           </div>
         </div>
-      </header>
-
-      {/* Hero Section with Animation */}
-      <section className={`flex-1 flex flex-col items-center justify-center p-6 transition-all duration-700 ease-in-out transform ${showAnimation ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-        <h1 className="text-4xl md:text-6xl font-bold text-center mb-6 text-fashion-navy">
-          Your AI stylist for every occasion!
-        </h1>
-        <p className="text-xl text-gray-600 text-center max-w-2xl mb-10">
-          Organize your wardrobe, get AI outfit suggestions, and connect with fashion enthusiasts
-          all in one place.
-        </p>
-        
-        {/* Door-like button container with no gap */}
-        <div className="w-full max-w-2xl mx-auto">
-          <div className="grid grid-cols-2 gap-0 perspective-[1000px]">
-            {/* Left side - Virtual Closet */}
-            <div 
-              className={`h-auto py-16 bg-fashion-navy text-white rounded-l-xl rounded-r-none flex flex-col items-center justify-center gap-2 shadow-xl transition-all duration-500 border-r border-white/10 overflow-hidden relative cursor-pointer transform hover:translate-z-4 hover:-translate-y-2 hover:shadow-2xl active:translate-y-1 active:shadow-inner ${showAnimation ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
-              onClick={() => navigate("/closet")}
-              style={{
-                transform: "translateZ(0)",
-                transformStyle: "preserve-3d",
-                boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1), 0 -4px 0 0 rgba(0, 0, 0, 0.1) inset, 6px 0 0 0 rgba(255, 255, 255, 0.05) inset"
-              }}
-            >
-              {/* Background image */}
-              <div className="absolute inset-0 w-full h-full opacity-30">
-                <img 
-                  src="/lovable-uploads/a5e5209b-37ed-404a-aca4-c4984df06eff.png" 
-                  alt="" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              
-              {/* Content with z-index to appear above the background */}
-              <div className="relative z-10 flex flex-col items-center justify-center">
-                <span className="text-base font-bold text-shadow shadow-black/50">Virtual Closet</span>
-              </div>
-            </div>
-            
-            {/* Right side - Fashion Social */}
-            <Button 
-              className={`h-auto py-16 bg-fashion-teal hover:bg-fashion-teal/90 text-white rounded-r-xl rounded-l-none flex flex-col items-center justify-center gap-2 shadow-xl transition-all duration-500 ${showAnimation ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
-              onClick={() => navigate("/social")}
-              style={{
-                transform: "translateZ(0)",
-                transformStyle: "preserve-3d",
-                boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1), 0 -4px 0 0 rgba(0, 0, 0, 0.1) inset, -6px 0 0 0 rgba(255, 255, 255, 0.05) inset"
-              }}
-            >
-              <Users className="h-8 w-8" />
-              <span className="text-base font-bold text-shadow shadow-black/50">Fashion Social</span>
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="py-8 px-6 bg-fashion-navy text-white">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-lg font-bold">
-            Echo<span className="text-fashion-teal">Wear</span>
-          </p>
-          <p className="text-sm text-gray-400">
-            &copy; {new Date().getFullYear()} EchoWear. All rights reserved.
-          </p>
-        </div>
-      </footer>
+      </div>
     </div>
   );
 };

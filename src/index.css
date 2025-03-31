@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -105,6 +104,10 @@
     perspective: 1000px;
   }
   
+  .perspective-1200 {
+    perspective: 1200px;
+  }
+  
   .preserve-3d {
     transform-style: preserve-3d;
   }
@@ -119,8 +122,15 @@
 }
 
 /* Global 3D perspective container */
-.perspective-\[1000px\] {
-  perspective: 1000px;
+.perspective-\[1000px\], .perspective-\[1200px\] {
+  perspective: 1200px;
+}
+
+/* Mobile-friendly adjustments */
+@media (max-width: 640px) {
+  .perspective-\[1200px\] {
+    perspective: 800px; /* Less intense on mobile */
+  }
 }
 
 #root {
