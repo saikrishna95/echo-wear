@@ -1,7 +1,7 @@
 
 import React, { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { OrbitControls, useGLTF } from '@react-three/drei';
+import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 
 // Define the measurement types
@@ -26,101 +26,154 @@ interface AvatarModelProps {
 
 function AvatarModel({ measurements, rotation }: AvatarModelProps) {
   const group = useRef<THREE.Group>(null);
-  const { scene, camera } = useThree();
-  const [modelLoaded, setModelLoaded] = useState(false);
+  const { camera } = useThree();
   
-  // Load the 3D model
-  const { scene: modelScene } = useGLTF('/avatar.glb');
-
-  // Apply measurements-based scaling and rotation
+  // Create avatar parts directly with Three.js primitives
   useEffect(() => {
     if (group.current) {
-      // Base scaling factors
-      const heightFactor = measurements.height / 175; // Base height is 175cm
-      const shoulderFactor = measurements.shoulder / 45; // Base shoulder width is 45cm
-      const weightFactor = measurements.weight / 70;  // Base weight is 70kg
-      
-      // Apply overall scaling based on height
-      group.current.scale.y = heightFactor;
-      
-      // Apply width scaling based on shoulder width
-      group.current.scale.x = shoulderFactor;
-      
-      // Apply depth scaling based on weight and chest
-      const depthFactor = (weightFactor + measurements.chest / 95) / 2;
-      group.current.scale.z = depthFactor;
-      
-      // Apply rotation
-      group.current.rotation.y = (rotation * Math.PI) / 180;
-
-      // Center camera on model when it loads
-      if (modelLoaded) {
-        const box = new THREE.Box3().setFromObject(group.current);
-        const center = box.getCenter(new THREE.Vector3());
-        camera.lookAt(center);
-      }
-    }
-  }, [measurements, rotation, camera, modelLoaded]);
-
-  // Model initialization
-  useEffect(() => {
-    if (group.current && modelScene) {
-      // Clone the model scene to avoid modifying the cached original
-      const model = modelScene.clone();
-      
       // Clear any existing children
       while (group.current.children.length) {
         group.current.remove(group.current.children[0]);
       }
       
-      // Add the model to our group
-      group.current.add(model);
+      // Scale factors based on measurements
+      const heightFactor = measurements.height / 175; // Base height is 175cm
+      const shoulderFactor = measurements.shoulder / 45; // Base shoulder width is 45cm
+      const weightFactor = measurements.weight / 70;  // Base weight is 70kg
+      const chestFactor = measurements.chest / 95; // Base chest is 95cm
+      const waistFactor = measurements.waist / 85; // Base waist is 85cm
+      const hipsFactor = measurements.hips / 95; // Base hips is 95cm
       
-      // Adjust model position if needed
-      model.position.y = -0.9; // Adjust based on your model's center point
+      // Create materials
+      const skinMaterial = new THREE.MeshStandardMaterial({ 
+        color: '#f2d2bd',
+        roughness: 0.7
+      });
       
-      setModelLoaded(true);
-    }
-  }, [modelScene]);
-
-  // Fallback model if GLB fails to load
-  const createFallbackModel = () => {
-    if (!modelLoaded && group.current) {
-      // Skin color
-      const skinColor = "#f2d2bd";
-      
-      // Create a simple humanoid figure
+      // Head
       const head = new THREE.Mesh(
-        new THREE.SphereGeometry(0.125, 32, 32),
-        new THREE.MeshStandardMaterial({ color: skinColor })
+        new THREE.SphereGeometry(0.125 * heightFactor, 32, 32),
+        skinMaterial
       );
-      head.position.y = 1.65;
+      head.position.y = 0.75 * heightFactor;
       
-      const torso = new THREE.Mesh(
-        new THREE.BoxGeometry(
-          0.4 * (measurements.shoulder/45), 
-          0.5, 
-          0.25 * (measurements.chest/95)
+      // Neck
+      const neck = new THREE.Mesh(
+        new THREE.CylinderGeometry(
+          0.07 * measurements.neck / 38, 
+          0.08 * measurements.neck / 38, 
+          0.1 * heightFactor, 
+          16
         ),
-        new THREE.MeshStandardMaterial({ color: skinColor })
+        skinMaterial
       );
-      torso.position.y = 1.25;
+      neck.position.y = 0.7 * heightFactor;
       
-      group.current.add(head, torso);
+      // Torso
+      const torso = new THREE.Mesh(
+        new THREE.CylinderGeometry(
+          0.2 * shoulderFactor, // Upper width (shoulders)
+          0.18 * waistFactor, // Lower width (waist)
+          0.4 * heightFactor, // Height
+          16
+        ),
+        skinMaterial
+      );
+      torso.position.y = 0.45 * heightFactor;
+      
+      // Hips
+      const hips = new THREE.Mesh(
+        new THREE.CylinderGeometry(
+          0.18 * waistFactor, // Upper width (waist)
+          0.22 * hipsFactor, // Lower width (hips)
+          0.15 * heightFactor, // Height
+          16
+        ),
+        skinMaterial
+      );
+      hips.position.y = 0.175 * heightFactor;
+      
+      // Left arm
+      const leftArm = new THREE.Mesh(
+        new THREE.CylinderGeometry(
+          0.06 * weightFactor,
+          0.05 * weightFactor,
+          0.4 * heightFactor,
+          16
+        ),
+        skinMaterial
+      );
+      leftArm.position.set(
+        -0.25 * shoulderFactor,
+        0.45 * heightFactor,
+        0
+      );
+      leftArm.rotation.z = -Math.PI / 8;
+      
+      // Right arm
+      const rightArm = new THREE.Mesh(
+        new THREE.CylinderGeometry(
+          0.06 * weightFactor,
+          0.05 * weightFactor,
+          0.4 * heightFactor,
+          16
+        ),
+        skinMaterial
+      );
+      rightArm.position.set(
+        0.25 * shoulderFactor,
+        0.45 * heightFactor,
+        0
+      );
+      rightArm.rotation.z = Math.PI / 8;
+      
+      // Left leg
+      const leftLeg = new THREE.Mesh(
+        new THREE.CylinderGeometry(
+          0.09 * measurements.thigh / 55,
+          0.07 * measurements.thigh / 55,
+          0.5 * measurements.inseam / 80,
+          16
+        ),
+        skinMaterial
+      );
+      leftLeg.position.set(
+        -0.1 * hipsFactor,
+        -0.1,
+        0
+      );
+      
+      // Right leg
+      const rightLeg = new THREE.Mesh(
+        new THREE.CylinderGeometry(
+          0.09 * measurements.thigh / 55,
+          0.07 * measurements.thigh / 55,
+          0.5 * measurements.inseam / 80,
+          16
+        ),
+        skinMaterial
+      );
+      rightLeg.position.set(
+        0.1 * hipsFactor,
+        -0.1,
+        0
+      );
+      
+      // Add all parts to the group
+      group.current.add(head, neck, torso, hips, leftArm, rightArm, leftLeg, rightLeg);
+      
+      // Position the whole model
+      group.current.position.y = -0.25;
+      
+      // Apply rotation
+      group.current.rotation.y = (rotation * Math.PI) / 180;
+      
+      // Adjust camera to focus on model
+      const box = new THREE.Box3().setFromObject(group.current);
+      const center = box.getCenter(new THREE.Vector3());
+      camera.lookAt(center);
     }
-  };
-  
-  // If model fails to load, use fallback
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!modelLoaded) {
-        createFallbackModel();
-        console.warn("GLB model failed to load, using fallback model");
-      }
-    }, 3000); // Wait 3 seconds before showing fallback
-    
-    return () => clearTimeout(timer);
-  }, [modelLoaded]);
+  }, [measurements, rotation, camera]);
 
   return (
     <group ref={group} />
