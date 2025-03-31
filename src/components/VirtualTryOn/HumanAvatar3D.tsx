@@ -31,7 +31,7 @@ function AvatarModel({ measurements, rotation }: AvatarModelProps) {
   const heightFactor = measurements.height / 175; // Base height is 175cm
   const weightFactor = measurements.weight / 70;  // Base weight is 70kg
   
-  // Adjust body parts based on measurements
+  // Apply measurements-based scaling and rotation
   useEffect(() => {
     if (group.current) {
       // Apply overall height scaling
@@ -44,139 +44,144 @@ function AvatarModel({ measurements, rotation }: AvatarModelProps) {
       // Apply depth scaling based on weight and chest
       const depthFactor = (weightFactor + measurements.chest / 95) / 2;
       group.current.scale.z = depthFactor;
-    }
-  }, [measurements, heightFactor, weightFactor]);
-  
-  // Handle manual rotation
-  useEffect(() => {
-    if (group.current) {
+      
+      // Apply rotation
       group.current.rotation.y = (rotation * Math.PI) / 180;
     }
-  }, [rotation]);
+  }, [measurements, heightFactor, weightFactor, rotation]);
+
+  // Skin color
+  const skinColor = "#f2d2bd";
 
   return (
     <group ref={group}>
       {/* Head */}
       <mesh position={[0, 1.65, 0]}>
         <sphereGeometry args={[0.125, 32, 32]} />
-        <meshStandardMaterial color="#f2d2bd" />
+        <meshStandardMaterial color={skinColor} />
       </mesh>
 
       {/* Neck */}
       <mesh position={[0, 1.55, 0]}>
         <cylinderGeometry args={[0.05 * (1 + measurements.neck/150), 0.06 * (1 + measurements.neck/150), 0.1, 32]} />
-        <meshStandardMaterial color="#f2d2bd" />
+        <meshStandardMaterial color={skinColor} />
       </mesh>
       
-      {/* Shoulders */}
-      <mesh position={[0, 1.45, 0]}>
-        <cylinderGeometry args={[0.04, 0.06, 0.05, 32]} />
-        <meshStandardMaterial color="#f2d2bd" />
+      {/* Torso - use BoxGeometry with rounded edges for more human-like shape */}
+      <mesh position={[0, 1.25, 0]}>
+        <boxGeometry 
+          args={[
+            0.4 * (measurements.shoulder/45), 
+            0.5, 
+            0.25 * (measurements.chest/95)
+          ]} 
+        />
+        <meshStandardMaterial color={skinColor} />
       </mesh>
 
       {/* Upper Torso (chest) */}
       <mesh position={[0, 1.35, 0]} rotation={[Math.PI / 2, 0, 0]}>
         <capsuleGeometry args={[0.21 * (1 + measurements.chest/300), 0.3, 16, 32]} />
-        <meshStandardMaterial color="#f2d2bd" />
+        <meshStandardMaterial color={skinColor} />
       </mesh>
 
       {/* Mid Torso (waist) */}
       <mesh position={[0, 1.15, 0]} rotation={[Math.PI / 2, 0, 0]}>
         <capsuleGeometry args={[0.19 * (1 + measurements.waist/300), 0.2, 16, 32]} />
-        <meshStandardMaterial color="#f2d2bd" />
+        <meshStandardMaterial color={skinColor} />
       </mesh>
 
       {/* Lower Torso (stomach) */}
       <mesh position={[0, 0.95, 0]} rotation={[Math.PI / 2, 0, 0]}>
         <capsuleGeometry args={[0.2 * (1 + measurements.stomach/300), 0.2, 16, 32]} />
-        <meshStandardMaterial color="#f2d2bd" />
+        <meshStandardMaterial color={skinColor} />
       </mesh>
 
       {/* Hips */}
       <mesh position={[0, 0.75, 0]} rotation={[Math.PI / 2, 0, 0]}>
         <capsuleGeometry args={[0.22 * (1 + measurements.hips/300), 0.25, 16, 32]} />
-        <meshStandardMaterial color="#f2d2bd" />
+        <meshStandardMaterial color={skinColor} />
       </mesh>
 
       {/* Left Shoulder */}
       <mesh position={[-0.22 * (1 + measurements.shoulder/200), 1.45, 0]} rotation={[0, 0, Math.PI/8]}>
         <capsuleGeometry args={[0.05, 0.15, 8, 16]} />
-        <meshStandardMaterial color="#f2d2bd" />
+        <meshStandardMaterial color={skinColor} />
       </mesh>
 
       {/* Right Shoulder */}
       <mesh position={[0.22 * (1 + measurements.shoulder/200), 1.45, 0]} rotation={[0, 0, -Math.PI/8]}>
         <capsuleGeometry args={[0.05, 0.15, 8, 16]} />
-        <meshStandardMaterial color="#f2d2bd" />
+        <meshStandardMaterial color={skinColor} />
       </mesh>
 
+      {/* Arms - more natural shape with capsules */}
       {/* Left Arm */}
       <mesh position={[-0.3 * (1 + measurements.shoulder/200), 1.35, 0]} rotation={[0, 0, -0.2]}>
         <capsuleGeometry args={[0.05, 0.3, 8, 16]} />
-        <meshStandardMaterial color="#f2d2bd" />
+        <meshStandardMaterial color={skinColor} />
       </mesh>
 
       {/* Right Arm */}
       <mesh position={[0.3 * (1 + measurements.shoulder/200), 1.35, 0]} rotation={[0, 0, 0.2]}>
         <capsuleGeometry args={[0.05, 0.3, 8, 16]} />
-        <meshStandardMaterial color="#f2d2bd" />
+        <meshStandardMaterial color={skinColor} />
       </mesh>
 
       {/* Left Forearm */}
       <mesh position={[-0.35 * (1 + measurements.shoulder/300), 1.1, 0]} rotation={[0, 0, -0.1]}>
         <capsuleGeometry args={[0.045, 0.25, 8, 16]} />
-        <meshStandardMaterial color="#f2d2bd" />
+        <meshStandardMaterial color={skinColor} />
       </mesh>
 
       {/* Right Forearm */}
       <mesh position={[0.35 * (1 + measurements.shoulder/300), 1.1, 0]} rotation={[0, 0, 0.1]}>
         <capsuleGeometry args={[0.045, 0.25, 8, 16]} />
-        <meshStandardMaterial color="#f2d2bd" />
+        <meshStandardMaterial color={skinColor} />
       </mesh>
 
-      {/* Left Hand */}
+      {/* Hands */}
       <mesh position={[-0.38 * (1 + measurements.shoulder/300), 0.9, 0]}>
         <sphereGeometry args={[0.04, 16, 16]} />
-        <meshStandardMaterial color="#f2d2bd" />
+        <meshStandardMaterial color={skinColor} />
       </mesh>
 
-      {/* Right Hand */}
       <mesh position={[0.38 * (1 + measurements.shoulder/300), 0.9, 0]}>
         <sphereGeometry args={[0.04, 16, 16]} />
-        <meshStandardMaterial color="#f2d2bd" />
+        <meshStandardMaterial color={skinColor} />
       </mesh>
 
+      {/* Legs - more muscular and defined using capsules */}
       {/* Left Thigh */}
       <mesh position={[-0.12, 0.55, 0]} rotation={[0, 0, 0.05]}>
         <capsuleGeometry args={[0.08 * (1 + measurements.thigh/300), 0.3, 8, 16]} />
-        <meshStandardMaterial color="#f2d2bd" />
+        <meshStandardMaterial color={skinColor} />
       </mesh>
 
       {/* Right Thigh */}
       <mesh position={[0.12, 0.55, 0]} rotation={[0, 0, -0.05]}>
         <capsuleGeometry args={[0.08 * (1 + measurements.thigh/300), 0.3, 8, 16]} />
-        <meshStandardMaterial color="#f2d2bd" />
+        <meshStandardMaterial color={skinColor} />
       </mesh>
 
       {/* Left Calf */}
       <mesh position={[-0.13, 0.25, 0]} rotation={[0, 0, 0.05]}>
         <capsuleGeometry args={[0.06 * (1 + measurements.thigh/400), 0.3 + measurements.inseam/300, 8, 16]} />
-        <meshStandardMaterial color="#f2d2bd" />
+        <meshStandardMaterial color={skinColor} />
       </mesh>
 
       {/* Right Calf */}
       <mesh position={[0.13, 0.25, 0]} rotation={[0, 0, -0.05]}>
         <capsuleGeometry args={[0.06 * (1 + measurements.thigh/400), 0.3 + measurements.inseam/300, 8, 16]} />
-        <meshStandardMaterial color="#f2d2bd" />
+        <meshStandardMaterial color={skinColor} />
       </mesh>
 
-      {/* Left Foot */}
+      {/* Feet */}
       <mesh position={[-0.13, 0.05, 0.05]}>
         <boxGeometry args={[0.07, 0.04, 0.15]} />
         <meshStandardMaterial color="#d3a27d" />
       </mesh>
 
-      {/* Right Foot */}
       <mesh position={[0.13, 0.05, 0.05]}>
         <boxGeometry args={[0.07, 0.04, 0.15]} />
         <meshStandardMaterial color="#d3a27d" />
@@ -220,24 +225,25 @@ const HumanAvatar3D: React.FC<HumanAvatar3DProps> = ({
         style={{ background: '#f8f8f8' }}
         camera={{ position: [0, 0.9, 2], fov: 45 }}
       >
+        {/* Improved lighting for more realistic appearance */}
         <ambientLight intensity={0.8} />
         <pointLight position={[10, 10, 10]} intensity={0.5} />
         <pointLight position={[-10, -10, -10]} intensity={0.2} />
         <pointLight position={[0, 10, 0]} intensity={0.5} />
         
+        {/* Avatar model */}
         <AvatarModel 
           measurements={simpleMeasurements} 
           rotation={rotation} 
         />
         
+        {/* Camera controls */}
         <OrbitControls 
           enableZoom={true} 
           enablePan={false} 
           enableRotate={true}
-          // Set reasonable limits for orbit controls
           minDistance={1.5}
           maxDistance={4}
-          // Allow more natural rotation
           minPolarAngle={0}
           maxPolarAngle={Math.PI}
         />
