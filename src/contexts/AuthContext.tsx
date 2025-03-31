@@ -10,7 +10,7 @@ type User = {
 
 type AuthContextType = {
   user: User | null;
-  login: (email: string, password: string) => Promise<boolean>;
+  login: (email: string, password: string, rememberMe?: boolean) => Promise<boolean>;
   logout: () => void;
   isAuthenticated: boolean;
 };
@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const login = async (email: string, password: string, rememberMe = false): Promise<boolean> => {
     // For test user - in a real app, you'd verify with an API
     if (email === "test@example.com" && password === "password") {
       const testUser = {
@@ -40,8 +40,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         email: "test@example.com",
       };
       
-      // Store user in localStorage
-      localStorage.setItem("user", JSON.stringify(testUser));
+      // Store user in localStorage if rememberMe is true, otherwise in sessionStorage
+      if (rememberMe) {
+        localStorage.setItem("user", JSON.stringify(testUser));
+      } else {
+        sessionStorage.setItem("user", JSON.stringify(testUser));
+        // Remove from localStorage if it was previously stored there
+        localStorage.removeItem("user");
+      }
       
       setUser(testUser);
       setIsAuthenticated(true);
@@ -52,6 +58,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const logout = () => {
     localStorage.removeItem("user");
+    sessionStorage.removeItem("user");
     setUser(null);
     setIsAuthenticated(false);
     navigate("/login");
