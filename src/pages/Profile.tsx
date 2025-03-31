@@ -1,95 +1,31 @@
-
-import { useState, useEffect } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Home, ShoppingBag, Users, UserIcon, Settings } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { 
+  ArrowLeft, 
+  Home, 
+  ShoppingBag, 
+  Users, 
+  UserIcon,
+  Settings,
+  Camera,
+  MessageCircle,
+  Grid3X3,
+  Bookmark,
+  Edit
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import HumanAvatar3D from "@/components/3d/HumanAvatar3D";
-
-const defaultMeasurements = {
-  height: 175,
-  weight: 70,
-  neck: 38,
-  shoulder: 45,
-  chest: 95,
-  waist: 85,
-  stomach: 90,
-  hips: 95,
-  thigh: 55,
-  inseam: 80,
-};
-
-const MeasurementForm = ({ onChange }: { onChange: (m: any) => void }) => {
-  const [values, setValues] = useState(defaultMeasurements);
-
-  useEffect(() => {
-    const saved = localStorage.getItem("avatarMeasurements");
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      setValues(parsed);
-      onChange(parsed);
-    }
-  }, [onChange]);
-
-  const handleChange = (key: string, value: string) => {
-    const updated = { ...values, [key]: parseFloat(value) };
-    setValues(updated);
-    localStorage.setItem("avatarMeasurements", JSON.stringify(updated));
-    onChange(updated);
-  };
-
-  return (
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-      {Object.keys(values).map((key) => (
-        <div key={key} className="flex flex-col">
-          <Label>{key.toUpperCase()}</Label>
-          <Input
-            type="number"
-            value={values[key as keyof typeof values]}
-            onChange={(e) => handleChange(key, e.target.value)}
-          />
-        </div>
-      ))}
-    </div>
-  );
-};
 
 const Profile = () => {
   const { toast } = useToast();
-  const [measurements, setMeasurements] = useState(defaultMeasurements);
 
-  const formatted = Object.entries(measurements).reduce((acc, [k, v]) => {
-    acc[k] = {
-      value: v,
-      min: 10,
-      max: 300,
-      unit: "cm",
-      label: k.toUpperCase(),
-      category: "general",
-    };
-    return acc;
-  }, {} as any);
-
-  const downloadAvatarImage = async () => {
-    const canvas = document.querySelector("canvas");
-    if (!canvas) return;
-    const blob = await new Promise<Blob | null>((resolve) => {
-      canvas.toBlob((blob) => resolve(blob), "image/png");
+  const handleEditProfile = () => {
+    toast({
+      title: "Profile Editing Coming Soon",
+      description: "The ability to edit your profile will be available in a future update!",
     });
-    if (blob) {
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = "echowear_avatar.png";
-      link.click();
-      
-      toast({
-        title: "Avatar Saved",
-        description: "Your avatar image has been downloaded successfully.",
-      });
-    }
   };
 
   return (
@@ -123,25 +59,144 @@ const Profile = () => {
 
       {/* Main Content */}
       <main className="flex-1 max-w-3xl mx-auto w-full pb-20 px-4">
-        <div className="p-6 space-y-6">
-          <Card className="p-4 shadow-xl bg-gradient-to-br from-white to-slate-100 mt-6">
-            <h2 className="text-xl font-semibold mb-2">3D Avatar</h2>
-            <div className="h-[500px] relative">
-              <HumanAvatar3D measurements={formatted} highlightedPart={null} rotation={180} />
-              <button
-                onClick={downloadAvatarImage}
-                className="absolute bottom-2 right-2 bg-black/70 text-white px-3 py-1 rounded text-xs"
-              >
-                Save Avatar
-              </button>
+        {/* Profile Header */}
+        <div className="mt-6 bg-white rounded-xl shadow p-6 relative">
+          <div className="h-24 bg-gradient-to-r from-fashion-teal to-fashion-pink rounded-t-lg absolute top-0 left-0 right-0"></div>
+          
+          <div className="relative flex flex-col items-center">
+            <Avatar className="w-24 h-24 border-4 border-white">
+              <AvatarImage src="https://placehold.co/200x200/f6f6f7/333333?text=You" />
+              <AvatarFallback>U</AvatarFallback>
+            </Avatar>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="absolute bottom-0 right-24 bg-white rounded-full shadow-sm"
+              onClick={() => {
+                toast({
+                  title: "Photo Upload Coming Soon",
+                  description: "The ability to change your profile photo will be available soon!",
+                });
+              }}
+            >
+              <Camera className="h-4 w-4" />
+            </Button>
+            
+            <h2 className="text-xl font-bold mt-3">Alex Johnson</h2>
+            <p className="text-gray-500">@fashionalex</p>
+            
+            <div className="flex gap-8 mt-4">
+              <div className="text-center">
+                <p className="font-bold">52</p>
+                <p className="text-sm text-gray-500">Posts</p>
+              </div>
+              <div className="text-center">
+                <p className="font-bold">843</p>
+                <p className="text-sm text-gray-500">Followers</p>
+              </div>
+              <div className="text-center">
+                <p className="font-bold">267</p>
+                <p className="text-sm text-gray-500">Following</p>
+              </div>
             </div>
-          </Card>
-
-          <Card className="p-4">
-            <h2 className="text-lg font-semibold mb-2">Measurements</h2>
-            <MeasurementForm onChange={setMeasurements} />
-          </Card>
+            
+            <div className="mt-6 w-full flex gap-3">
+              <Button 
+                className="flex-1 bg-fashion-teal hover:bg-fashion-teal/90"
+                onClick={handleEditProfile}
+              >
+                <Edit className="mr-2 h-4 w-4" />
+                Edit Profile
+              </Button>
+              <Button 
+                variant="outline" 
+                className="flex-1"
+                onClick={() => {
+                  toast({
+                    title: "Messaging Coming Soon",
+                    description: "The messaging feature will be available in a future update!",
+                  });
+                }}
+              >
+                <MessageCircle className="mr-2 h-4 w-4" />
+                Messages
+              </Button>
+            </div>
+          </div>
         </div>
+        
+        {/* Profile Content Tabs */}
+        <Tabs defaultValue="posts" className="mt-6">
+          <TabsList className="w-full grid grid-cols-3">
+            <TabsTrigger value="posts">
+              <Grid3X3 className="h-5 w-5" />
+            </TabsTrigger>
+            <TabsTrigger value="saved">
+              <Bookmark className="h-5 w-5" />
+            </TabsTrigger>
+            <TabsTrigger value="outfits">
+              <ShoppingBag className="h-5 w-5" />
+            </TabsTrigger>
+          </TabsList>
+          
+          {/* Posts Tab */}
+          <TabsContent value="posts" className="animate-fade-in">
+            <div className="grid grid-cols-3 gap-1">
+              {Array.from({ length: 9 }).map((_, index) => (
+                <div key={index} className="aspect-square">
+                  <img 
+                    src={`https://placehold.co/300x300/${index % 2 === 0 ? 'eeeeee/333333' : '333333/ffffff'}?text=Post+${index + 1}`} 
+                    alt={`Post ${index + 1}`} 
+                    className="w-full h-full object-cover" 
+                  />
+                </div>
+              ))}
+            </div>
+          </TabsContent>
+          
+          {/* Saved Tab */}
+          <TabsContent value="saved" className="animate-fade-in">
+            <div className="grid grid-cols-3 gap-1">
+              {Array.from({ length: 6 }).map((_, index) => (
+                <div key={index} className="aspect-square">
+                  <img 
+                    src={`https://placehold.co/300x300/ffdee2/333333?text=Saved+${index + 1}`} 
+                    alt={`Saved ${index + 1}`} 
+                    className="w-full h-full object-cover" 
+                  />
+                </div>
+              ))}
+            </div>
+          </TabsContent>
+          
+          {/* Outfits Tab */}
+          <TabsContent value="outfits" className="animate-fade-in">
+            <div className="grid grid-cols-2 gap-4">
+              {Array.from({ length: 4 }).map((_, index) => (
+                <div key={index} className="bg-white rounded-lg overflow-hidden shadow">
+                  <div className="p-2 bg-fashion-navy text-white text-sm">
+                    Outfit {index + 1}
+                  </div>
+                  <div className="p-3">
+                    <div className="grid grid-cols-3 gap-1">
+                      {Array.from({ length: 3 }).map((_, itemIndex) => (
+                        <img 
+                          key={itemIndex} 
+                          src={`https://placehold.co/100x100/${itemIndex % 2 === 0 ? 'eeeeee/333333' : '333333/ffffff'}?text=Item`} 
+                          alt="Outfit item" 
+                          className="w-full aspect-square object-cover" 
+                        />
+                      ))}
+                    </div>
+                    <p className="text-xs text-gray-500 mt-2">
+                      Created 3 days ago
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </TabsContent>
+        </Tabs>
       </main>
 
       {/* Bottom Navigation */}
