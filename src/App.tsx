@@ -11,6 +11,7 @@ import Social from "./pages/Social";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
+import VirtualTryOn from "./pages/VirtualTryOn";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ const App = () => (
             <Route path="/closet" element={<Closet />} />
             <Route path="/social" element={<Social />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/virtual-tryon" element={<VirtualTryOn />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>

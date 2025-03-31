@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -114,6 +115,11 @@
   
   .translate-z-4 {
     transform: translateZ(4px);
+  }
+  
+  .transform-gpu {
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
   }
   
   .text-shadow {
