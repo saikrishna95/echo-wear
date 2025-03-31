@@ -2,7 +2,7 @@
 import React from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment, ContactShadows } from '@react-three/drei';
-import AvatarModel from './AvatarModel';
+import HybridAvatarModel from './HybridAvatarModel';
 import { MeasurementKey, Measurements } from './types';
 
 interface HumanAvatar3DProps {
@@ -57,8 +57,8 @@ const HumanAvatar3D: React.FC<HumanAvatar3DProps> = ({
           position={[0, -0.5, 0]}
         />
         
-        {/* Avatar model */}
-        <AvatarModel 
+        {/* Hybrid Avatar model - uses realistic GLB if available, falls back to primitive */}
+        <HybridAvatarModel 
           measurements={simpleMeasurements} 
           rotation={rotation} 
         />
