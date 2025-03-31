@@ -11,7 +11,7 @@ import {
   Camera,
   SunIcon,
   CloudRainIcon,
-  SnowflakeIcon,
+  Snowflake,
   Calendar,
   Plus,
   Users,
@@ -77,7 +77,7 @@ const Closet = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-fashion-gray">
-      <header className="w-full py-4 px-6 bg-white shadow-sm z-10">
+      <header className="w-full py-4 px-6 bg-white shadow-sm z-10 fixed top-0">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-4">
             <Link to="/" className="text-fashion-navy">
@@ -88,12 +88,10 @@ const Closet = () => {
             </h1>
           </div>
           <div className="flex items-center gap-3">
-            <Link to="/virtual-tryon">
-              <Button variant="outline" size="sm" className="flex items-center gap-1">
-                <Ruler className="h-4 w-4" />
-                <span className="hidden sm:inline">Virtual Try-On</span>
-              </Button>
-            </Link>
+            <Button variant="outline" size="sm" className="flex items-center gap-1">
+              <Ruler className="h-4 w-4" />
+              <span className="hidden sm:inline">Virtual Try-On</span>
+            </Button>
             <Link to="/profile" className="text-fashion-navy">
               <UserIcon className="h-5 w-5" />
             </Link>
@@ -101,13 +99,13 @@ const Closet = () => {
         </div>
       </header>
 
-      <main className="flex-1 p-6 max-w-7xl mx-auto w-full">
+      <main className="flex-1 p-6 max-w-7xl mx-auto w-full mt-16 mb-20">
         <Tabs 
           defaultValue="closet" 
           className="w-full"
           onValueChange={setSelectedTab}
         >
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-3 mb-6">
             <TabsTrigger value="closet">Closet</TabsTrigger>
             <TabsTrigger value="outfits">AI Outfits</TabsTrigger>
             <TabsTrigger value="insights">Insights</TabsTrigger>
@@ -253,7 +251,7 @@ const Closet = () => {
                         <div className="flex items-center gap-2">
                           {outfit.weather === "Sunny" && <SunIcon className="h-4 w-4" />}
                           {outfit.weather === "Rainy" && <CloudRainIcon className="h-4 w-4" />}
-                          {outfit.weather === "Cold" && <SnowflakeIcon className="h-4 w-4" />}
+                          {outfit.weather === "Cold" && <Snowflake className="h-4 w-4" />}
                           <span className="text-xs bg-white/20 px-2 py-1 rounded">
                             {outfit.occasion}
                           </span>
@@ -368,13 +366,6 @@ const Closet = () => {
               <span className="text-xs mt-1">Closet</span>
             </Link>
             <Link 
-              to="/virtual-tryon" 
-              className="flex flex-col items-center py-3 px-4 text-fashion-navy"
-            >
-              <Ruler className="h-6 w-6" />
-              <span className="text-xs mt-1">Try-On</span>
-            </Link>
-            <Link 
               to="/social" 
               className="flex flex-col items-center py-3 px-4 text-fashion-navy"
             >
@@ -391,8 +382,6 @@ const Closet = () => {
           </div>
         </div>
       </nav>
-
-      <div className="h-20"></div>
     </div>
   );
 };
