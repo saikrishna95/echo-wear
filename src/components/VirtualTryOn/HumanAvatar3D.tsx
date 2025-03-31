@@ -75,26 +75,26 @@ function AvatarModel({ measurements, rotation }: AvatarModelProps) {
       </mesh>
 
       {/* Upper Torso (chest) */}
-      <mesh position={[0, 1.35, 0]}>
-        <capsuleGeometry args={[0.21 * (1 + measurements.chest/300), 0.3, 16, 32]} rotation={[Math.PI / 2, 0, 0]} />
+      <mesh position={[0, 1.35, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <capsuleGeometry args={[0.21 * (1 + measurements.chest/300), 0.3, 16, 32]} />
         <meshStandardMaterial color="#f2d2bd" />
       </mesh>
 
       {/* Mid Torso (waist) */}
-      <mesh position={[0, 1.15, 0]}>
-        <capsuleGeometry args={[0.19 * (1 + measurements.waist/300), 0.2, 16, 32]} rotation={[Math.PI / 2, 0, 0]} />
+      <mesh position={[0, 1.15, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <capsuleGeometry args={[0.19 * (1 + measurements.waist/300), 0.2, 16, 32]} />
         <meshStandardMaterial color="#f2d2bd" />
       </mesh>
 
       {/* Lower Torso (stomach) */}
-      <mesh position={[0, 0.95, 0]}>
-        <capsuleGeometry args={[0.2 * (1 + measurements.stomach/300), 0.2, 16, 32]} rotation={[Math.PI / 2, 0, 0]} />
+      <mesh position={[0, 0.95, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <capsuleGeometry args={[0.2 * (1 + measurements.stomach/300), 0.2, 16, 32]} />
         <meshStandardMaterial color="#f2d2bd" />
       </mesh>
 
       {/* Hips */}
-      <mesh position={[0, 0.75, 0]}>
-        <capsuleGeometry args={[0.22 * (1 + measurements.hips/300), 0.25, 16, 32]} rotation={[Math.PI / 2, 0, 0]} />
+      <mesh position={[0, 0.75, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <capsuleGeometry args={[0.22 * (1 + measurements.hips/300), 0.25, 16, 32]} />
         <meshStandardMaterial color="#f2d2bd" />
       </mesh>
 
