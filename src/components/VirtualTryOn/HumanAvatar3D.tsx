@@ -1,6 +1,6 @@
 
-import React, { useRef, useEffect } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import React, { useRef, useEffect, useState } from 'react';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 
@@ -26,19 +26,24 @@ interface AvatarModelProps {
 
 function AvatarModel({ measurements, rotation }: AvatarModelProps) {
   const group = useRef<THREE.Group>(null);
+  const { scene, camera } = useThree();
+  const [modelLoaded, setModelLoaded] = useState(false);
   
-  // Calculate scaling factors based on measurements
-  const heightFactor = measurements.height / 175; // Base height is 175cm
-  const weightFactor = measurements.weight / 70;  // Base weight is 70kg
-  
+  // Load the 3D model
+  const { scene: modelScene } = useGLTF('/avatar.glb');
+
   // Apply measurements-based scaling and rotation
   useEffect(() => {
     if (group.current) {
-      // Apply overall height scaling
+      // Base scaling factors
+      const heightFactor = measurements.height / 175; // Base height is 175cm
+      const shoulderFactor = measurements.shoulder / 45; // Base shoulder width is 45cm
+      const weightFactor = measurements.weight / 70;  // Base weight is 70kg
+      
+      // Apply overall scaling based on height
       group.current.scale.y = heightFactor;
       
       // Apply width scaling based on shoulder width
-      const shoulderFactor = measurements.shoulder / 45;
       group.current.scale.x = shoulderFactor;
       
       // Apply depth scaling based on weight and chest
@@ -47,146 +52,78 @@ function AvatarModel({ measurements, rotation }: AvatarModelProps) {
       
       // Apply rotation
       group.current.rotation.y = (rotation * Math.PI) / 180;
-    }
-  }, [measurements, heightFactor, weightFactor, rotation]);
 
-  // Skin color
-  const skinColor = "#f2d2bd";
+      // Center camera on model when it loads
+      if (modelLoaded) {
+        const box = new THREE.Box3().setFromObject(group.current);
+        const center = box.getCenter(new THREE.Vector3());
+        camera.lookAt(center);
+      }
+    }
+  }, [measurements, rotation, camera, modelLoaded]);
+
+  // Model initialization
+  useEffect(() => {
+    if (group.current && modelScene) {
+      // Clone the model scene to avoid modifying the cached original
+      const model = modelScene.clone();
+      
+      // Clear any existing children
+      while (group.current.children.length) {
+        group.current.remove(group.current.children[0]);
+      }
+      
+      // Add the model to our group
+      group.current.add(model);
+      
+      // Adjust model position if needed
+      model.position.y = -0.9; // Adjust based on your model's center point
+      
+      setModelLoaded(true);
+    }
+  }, [modelScene]);
+
+  // Fallback model if GLB fails to load
+  const createFallbackModel = () => {
+    if (!modelLoaded && group.current) {
+      // Skin color
+      const skinColor = "#f2d2bd";
+      
+      // Create a simple humanoid figure
+      const head = new THREE.Mesh(
+        new THREE.SphereGeometry(0.125, 32, 32),
+        new THREE.MeshStandardMaterial({ color: skinColor })
+      );
+      head.position.y = 1.65;
+      
+      const torso = new THREE.Mesh(
+        new THREE.BoxGeometry(
+          0.4 * (measurements.shoulder/45), 
+          0.5, 
+          0.25 * (measurements.chest/95)
+        ),
+        new THREE.MeshStandardMaterial({ color: skinColor })
+      );
+      torso.position.y = 1.25;
+      
+      group.current.add(head, torso);
+    }
+  };
+  
+  // If model fails to load, use fallback
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!modelLoaded) {
+        createFallbackModel();
+        console.warn("GLB model failed to load, using fallback model");
+      }
+    }, 3000); // Wait 3 seconds before showing fallback
+    
+    return () => clearTimeout(timer);
+  }, [modelLoaded]);
 
   return (
-    <group ref={group}>
-      {/* Head */}
-      <mesh position={[0, 1.65, 0]}>
-        <sphereGeometry args={[0.125, 32, 32]} />
-        <meshStandardMaterial color={skinColor} />
-      </mesh>
-
-      {/* Neck */}
-      <mesh position={[0, 1.55, 0]}>
-        <cylinderGeometry args={[0.05 * (1 + measurements.neck/150), 0.06 * (1 + measurements.neck/150), 0.1, 32]} />
-        <meshStandardMaterial color={skinColor} />
-      </mesh>
-      
-      {/* Torso - use BoxGeometry with rounded edges for more human-like shape */}
-      <mesh position={[0, 1.25, 0]}>
-        <boxGeometry 
-          args={[
-            0.4 * (measurements.shoulder/45), 
-            0.5, 
-            0.25 * (measurements.chest/95)
-          ]} 
-        />
-        <meshStandardMaterial color={skinColor} />
-      </mesh>
-
-      {/* Upper Torso (chest) */}
-      <mesh position={[0, 1.35, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <capsuleGeometry args={[0.21 * (1 + measurements.chest/300), 0.3, 16, 32]} />
-        <meshStandardMaterial color={skinColor} />
-      </mesh>
-
-      {/* Mid Torso (waist) */}
-      <mesh position={[0, 1.15, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <capsuleGeometry args={[0.19 * (1 + measurements.waist/300), 0.2, 16, 32]} />
-        <meshStandardMaterial color={skinColor} />
-      </mesh>
-
-      {/* Lower Torso (stomach) */}
-      <mesh position={[0, 0.95, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <capsuleGeometry args={[0.2 * (1 + measurements.stomach/300), 0.2, 16, 32]} />
-        <meshStandardMaterial color={skinColor} />
-      </mesh>
-
-      {/* Hips */}
-      <mesh position={[0, 0.75, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <capsuleGeometry args={[0.22 * (1 + measurements.hips/300), 0.25, 16, 32]} />
-        <meshStandardMaterial color={skinColor} />
-      </mesh>
-
-      {/* Left Shoulder */}
-      <mesh position={[-0.22 * (1 + measurements.shoulder/200), 1.45, 0]} rotation={[0, 0, Math.PI/8]}>
-        <capsuleGeometry args={[0.05, 0.15, 8, 16]} />
-        <meshStandardMaterial color={skinColor} />
-      </mesh>
-
-      {/* Right Shoulder */}
-      <mesh position={[0.22 * (1 + measurements.shoulder/200), 1.45, 0]} rotation={[0, 0, -Math.PI/8]}>
-        <capsuleGeometry args={[0.05, 0.15, 8, 16]} />
-        <meshStandardMaterial color={skinColor} />
-      </mesh>
-
-      {/* Arms - more natural shape with capsules */}
-      {/* Left Arm */}
-      <mesh position={[-0.3 * (1 + measurements.shoulder/200), 1.35, 0]} rotation={[0, 0, -0.2]}>
-        <capsuleGeometry args={[0.05, 0.3, 8, 16]} />
-        <meshStandardMaterial color={skinColor} />
-      </mesh>
-
-      {/* Right Arm */}
-      <mesh position={[0.3 * (1 + measurements.shoulder/200), 1.35, 0]} rotation={[0, 0, 0.2]}>
-        <capsuleGeometry args={[0.05, 0.3, 8, 16]} />
-        <meshStandardMaterial color={skinColor} />
-      </mesh>
-
-      {/* Left Forearm */}
-      <mesh position={[-0.35 * (1 + measurements.shoulder/300), 1.1, 0]} rotation={[0, 0, -0.1]}>
-        <capsuleGeometry args={[0.045, 0.25, 8, 16]} />
-        <meshStandardMaterial color={skinColor} />
-      </mesh>
-
-      {/* Right Forearm */}
-      <mesh position={[0.35 * (1 + measurements.shoulder/300), 1.1, 0]} rotation={[0, 0, 0.1]}>
-        <capsuleGeometry args={[0.045, 0.25, 8, 16]} />
-        <meshStandardMaterial color={skinColor} />
-      </mesh>
-
-      {/* Hands */}
-      <mesh position={[-0.38 * (1 + measurements.shoulder/300), 0.9, 0]}>
-        <sphereGeometry args={[0.04, 16, 16]} />
-        <meshStandardMaterial color={skinColor} />
-      </mesh>
-
-      <mesh position={[0.38 * (1 + measurements.shoulder/300), 0.9, 0]}>
-        <sphereGeometry args={[0.04, 16, 16]} />
-        <meshStandardMaterial color={skinColor} />
-      </mesh>
-
-      {/* Legs - more muscular and defined using capsules */}
-      {/* Left Thigh */}
-      <mesh position={[-0.12, 0.55, 0]} rotation={[0, 0, 0.05]}>
-        <capsuleGeometry args={[0.08 * (1 + measurements.thigh/300), 0.3, 8, 16]} />
-        <meshStandardMaterial color={skinColor} />
-      </mesh>
-
-      {/* Right Thigh */}
-      <mesh position={[0.12, 0.55, 0]} rotation={[0, 0, -0.05]}>
-        <capsuleGeometry args={[0.08 * (1 + measurements.thigh/300), 0.3, 8, 16]} />
-        <meshStandardMaterial color={skinColor} />
-      </mesh>
-
-      {/* Left Calf */}
-      <mesh position={[-0.13, 0.25, 0]} rotation={[0, 0, 0.05]}>
-        <capsuleGeometry args={[0.06 * (1 + measurements.thigh/400), 0.3 + measurements.inseam/300, 8, 16]} />
-        <meshStandardMaterial color={skinColor} />
-      </mesh>
-
-      {/* Right Calf */}
-      <mesh position={[0.13, 0.25, 0]} rotation={[0, 0, -0.05]}>
-        <capsuleGeometry args={[0.06 * (1 + measurements.thigh/400), 0.3 + measurements.inseam/300, 8, 16]} />
-        <meshStandardMaterial color={skinColor} />
-      </mesh>
-
-      {/* Feet */}
-      <mesh position={[-0.13, 0.05, 0.05]}>
-        <boxGeometry args={[0.07, 0.04, 0.15]} />
-        <meshStandardMaterial color="#d3a27d" />
-      </mesh>
-
-      <mesh position={[0.13, 0.05, 0.05]}>
-        <boxGeometry args={[0.07, 0.04, 0.15]} />
-        <meshStandardMaterial color="#d3a27d" />
-      </mesh>
-    </group>
+    <group ref={group} />
   );
 }
 
