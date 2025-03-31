@@ -1,278 +1,168 @@
 
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { 
-  ShoppingBag, 
-  Shirt, 
-  ArrowLeft, 
-  Home, 
-  Footprints, 
-  UserIcon,
-  Camera,
-  SunIcon,
-  Calendar,
-  Plus,
-  Users,
-  Scissors,
-  Ruler
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { showToast } from "@/utils/toast";
-import { getAllClothes, getOutfits } from "@/services/closetService";
+import { Button } from "@/components/ui/button";
+import { PlusIcon, ShirtIcon, PantsIcon, ShoesIcon } from "lucide-react";
 import { ClothingCard } from "./components/ClothingCard";
 import { AddClothingCard } from "./components/AddClothingCard";
 import { OutfitCard } from "./components/OutfitCard";
-import { Outfit } from "@/types";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ClothingItem, Outfit } from "@/types";
+import { showToast } from "@/utils/toast";
+
+// Mock data
+const MOCK_CLOTHING: Record<string, ClothingItem[]> = {
+  tops: [
+    { id: 1, name: "White T-Shirt", color: "White", type: "T-Shirt", image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&auto=format" },
+    { id: 2, name: "Blue Oxford Shirt", color: "Blue", type: "Dress Shirt", image: "https://images.unsplash.com/photo-1594938291221-94f18cbb5660?w=500&auto=format" },
+    { id: 3, name: "Black Sweater", color: "Black", type: "Sweater", image: "https://images.unsplash.com/photo-1543076499-a6133cb495ba?w=500&auto=format" },
+  ],
+  bottoms: [
+    { id: 4, name: "Blue Jeans", color: "Blue", type: "Jeans", image: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=500&auto=format" },
+    { id: 5, name: "Black Slacks", color: "Black", type: "Dress Pants", image: "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=500&auto=format" },
+  ],
+  shoes: [
+    { id: 6, name: "White Sneakers", color: "White", type: "Casual", image: "https://images.unsplash.com/photo-1600269452121-4f2416e55c28?w=500&auto=format" },
+    { id: 7, name: "Brown Dress Shoes", color: "Brown", type: "Formal", image: "https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=500&auto=format" },
+  ]
+};
+
+const MOCK_OUTFITS: Outfit[] = [
+  {
+    id: 1,
+    name: "Casual Friday",
+    items: [MOCK_CLOTHING.tops[0], MOCK_CLOTHING.bottoms[0], MOCK_CLOTHING.shoes[0]],
+    occasion: "Casual",
+    weather: "Sunny",
+  },
+  {
+    id: 2,
+    name: "Business Meeting",
+    items: [MOCK_CLOTHING.tops[1], MOCK_CLOTHING.bottoms[1], MOCK_CLOTHING.shoes[1]],
+    occasion: "Formal",
+    weather: "Any",
+  },
+];
 
 const Closet = () => {
-  const [selectedTab, setSelectedTab] = useState("closet");
-  const mockClothes = getAllClothes();
-  const mockOutfits = getOutfits();
+  const [clothing, setClothing] = useState(MOCK_CLOTHING);
+  const [outfits, setOutfits] = useState(MOCK_OUTFITS);
+  const [selectedOutfit, setSelectedOutfit] = useState<Outfit | null>(null);
+  const [tryOnDialogOpen, setTryOnDialogOpen] = useState(false);
 
-  const handleAddClothes = () => {
-    showToast(
-      "Upload Feature Coming Soon",
-      "The ability to upload and scan your clothes will be available in future updates!"
-    );
+  const handleAddItem = () => {
+    showToast("Coming Soon", "The Add Item feature is coming soon!");
   };
 
   const handleTryOn = (outfit: Outfit) => {
-    showToast(
-      "Virtual Try-On",
-      `Try-on for "${outfit.name}" will be available soon!`
-    );
+    setSelectedOutfit(outfit);
+    setTryOnDialogOpen(true);
+    showToast("Virtual Try-On", "Virtual try-on feature is coming soon with AI visualizations");
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-fashion-gray">
-      <header className="w-full py-4 px-6 bg-white shadow-sm z-10">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-4">
-            <Link to="/" className="text-fashion-navy">
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
-            <h1 className="text-xl font-bold text-fashion-navy">
-              Your Virtual Closet
-            </h1>
-          </div>
-          <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm" className="flex items-center gap-1">
-              <Ruler className="h-4 w-4" />
-              <span className="hidden sm:inline">Virtual Try-On</span>
-            </Button>
-            <Link to="/profile" className="text-fashion-navy">
-              <UserIcon className="h-5 w-5" />
-            </Link>
-          </div>
-        </div>
-      </header>
-
-      <main className="flex-1 p-6 max-w-7xl mx-auto w-full">
-        <Tabs 
-          defaultValue="closet" 
-          className="w-full"
-          onValueChange={setSelectedTab}
-        >
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="closet">Closet</TabsTrigger>
-            <TabsTrigger value="outfits">AI Outfits</TabsTrigger>
-            <TabsTrigger value="insights">Insights</TabsTrigger>
+    <div className="min-h-screen bg-gray-50 p-4">
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-2xl font-bold mb-6">My Closet</h1>
+        
+        <Tabs defaultValue="items" className="mb-6">
+          <TabsList>
+            <TabsTrigger value="items">Clothing Items</TabsTrigger>
+            <TabsTrigger value="outfits">Outfits</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="closet" className="animate-fade-in">
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-semibold">My Clothes</h2>
-                  <Button 
-                    onClick={handleAddClothes}
-                    className="bg-fashion-teal hover:bg-fashion-teal/90"
-                  >
-                    <Camera className="mr-2 h-4 w-4" />
-                    Add Clothes
-                  </Button>
+          <TabsContent value="items" className="pt-4">
+            <div className="grid grid-cols-1 gap-6">
+              {/* Tops Section */}
+              <div>
+                <div className="flex items-center mb-4">
+                  <ShirtIcon className="mr-2 h-5 w-5 text-fashion-teal" />
+                  <h2 className="text-xl font-semibold">Tops</h2>
                 </div>
-                
-                <Tabs defaultValue="tops" className="w-full">
-                  <TabsList className="mb-6">
-                    <TabsTrigger value="tops" className="flex gap-2 items-center">
-                      <Shirt className="h-4 w-4" />
-                      Tops
-                    </TabsTrigger>
-                    <TabsTrigger value="bottoms" className="flex gap-2 items-center">
-                      <Scissors className="h-4 w-4" />
-                      Bottoms
-                    </TabsTrigger>
-                    <TabsTrigger value="shoes" className="flex gap-2 items-center">
-                      <Footprints className="h-4 w-4" />
-                      Shoes
-                    </TabsTrigger>
-                  </TabsList>
-                  
-                  <TabsContent value="tops">
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                      {mockClothes.tops.map((item) => (
-                        <ClothingCard key={item.id} item={item} />
-                      ))}
-                      <AddClothingCard onClick={handleAddClothes} />
-                    </div>
-                  </TabsContent>
-                  
-                  <TabsContent value="bottoms">
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                      {mockClothes.bottoms.map((item) => (
-                        <ClothingCard key={item.id} item={item} />
-                      ))}
-                      <AddClothingCard onClick={handleAddClothes} />
-                    </div>
-                  </TabsContent>
-                  
-                  <TabsContent value="shoes">
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                      {mockClothes.shoes.map((item) => (
-                        <ClothingCard key={item.id} item={item} />
-                      ))}
-                      <AddClothingCard onClick={handleAddClothes} />
-                    </div>
-                  </TabsContent>
-                </Tabs>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="outfits" className="animate-fade-in">
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-semibold">AI Outfit Suggestions</h2>
-                  <div className="flex gap-3">
-                    <Button variant="outline">
-                      <Calendar className="mr-2 h-4 w-4" />
-                      Events
-                    </Button>
-                    <Button variant="outline">
-                      <SunIcon className="mr-2 h-4 w-4" />
-                      Weather
-                    </Button>
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {mockOutfits.map((outfit) => (
-                    <OutfitCard 
-                      key={outfit.id} 
-                      outfit={outfit} 
-                      onTryOn={handleTryOn} 
-                    />
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {clothing.tops.map(item => (
+                    <ClothingCard key={item.id} item={item} />
                   ))}
+                  <AddClothingCard onClick={handleAddItem} />
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+              
+              {/* Bottoms Section */}
+              <div>
+                <div className="flex items-center mb-4">
+                  <PantsIcon className="mr-2 h-5 w-5 text-fashion-teal" />
+                  <h2 className="text-xl font-semibold">Bottoms</h2>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {clothing.bottoms.map(item => (
+                    <ClothingCard key={item.id} item={item} />
+                  ))}
+                  <AddClothingCard onClick={handleAddItem} />
+                </div>
+              </div>
+              
+              {/* Shoes Section */}
+              <div>
+                <div className="flex items-center mb-4">
+                  <ShoesIcon className="mr-2 h-5 w-5 text-fashion-teal" />
+                  <h2 className="text-xl font-semibold">Shoes</h2>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {clothing.shoes.map(item => (
+                    <ClothingCard key={item.id} item={item} />
+                  ))}
+                  <AddClothingCard onClick={handleAddItem} />
+                </div>
+              </div>
+            </div>
           </TabsContent>
           
-          <TabsContent value="insights" className="animate-fade-in">
-            <Card>
-              <CardContent className="p-6">
-                <h2 className="text-2xl font-semibold mb-6">Wardrobe Insights</h2>
-                <div className="space-y-8">
-                  <div className="bg-white p-6 rounded-xl shadow">
-                    <h3 className="text-lg font-medium mb-3">Clothing Rotation</h3>
-                    <p className="text-gray-600 mb-4">
-                      You haven't worn these items in a while:
-                    </p>
-                    <div className="flex gap-4 overflow-x-auto pb-2">
-                      {mockClothes.tops.slice(1, 3).map((item) => (
-                        <div key={item.id} className="flex-shrink-0 w-32">
-                          <img 
-                            src={item.image} 
-                            alt={item.name} 
-                            className="w-full h-32 object-cover rounded border border-gray-200" 
-                          />
-                          <p className="text-sm mt-2 text-center">{item.name}</p>
-                          <p className="text-xs text-gray-500 text-center">Last worn: 3 months ago</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div className="bg-white p-6 rounded-xl shadow">
-                    <h3 className="text-lg font-medium mb-3">Sustainable Fashion</h3>
-                    <p className="text-gray-600 mb-4">
-                      Consider these eco-friendly recommendations:
-                    </p>
-                    <div className="space-y-3">
-                      <div className="flex items-center p-3 bg-green-50 rounded-lg">
-                        <div className="bg-green-100 p-2 rounded-full mr-3">
-                          <Shirt className="h-5 w-5 text-green-600" />
-                        </div>
-                        <div>
-                          <p className="font-medium">Donate unused clothes</p>
-                          <p className="text-sm text-gray-600">You have 5 items you haven't worn in over a year</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center p-3 bg-blue-50 rounded-lg">
-                        <div className="bg-blue-100 p-2 rounded-full mr-3">
-                          <Shirt className="h-5 w-5 text-blue-600" />
-                        </div>
-                        <div>
-                          <p className="font-medium">Missing essentials</p>
-                          <p className="text-sm text-gray-600">Your wardrobe could use a basic white button-down</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+          <TabsContent value="outfits" className="pt-4">
+            <div className="flex justify-end mb-4">
+              <Button className="bg-fashion-teal hover:bg-fashion-teal/90">
+                <PlusIcon className="mr-2 h-4 w-4" />
+                Create New Outfit
+              </Button>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {outfits.map(outfit => (
+                <OutfitCard 
+                  key={outfit.id} 
+                  outfit={outfit} 
+                  onTryOn={handleTryOn}
+                />
+              ))}
+            </div>
           </TabsContent>
         </Tabs>
-      </main>
-
-      <nav className="bg-white border-t border-gray-200 fixed bottom-0 left-0 right-0 z-10">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex justify-around">
-            <Link 
-              to="/" 
-              className="flex flex-col items-center py-3 px-4 text-fashion-navy"
-            >
-              <Home className="h-6 w-6" />
-              <span className="text-xs mt-1">Home</span>
-            </Link>
-            <Link 
-              to="/closet" 
-              className={`flex flex-col items-center py-3 px-4 ${selectedTab === "closet" ? "text-fashion-teal" : "text-fashion-navy"}`}
-            >
-              <ShoppingBag className="h-6 w-6" />
-              <span className="text-xs mt-1">Closet</span>
-            </Link>
-            <Link 
-              to="/virtual-tryon" 
-              className="flex flex-col items-center py-3 px-4 text-fashion-navy"
-            >
-              <Ruler className="h-6 w-6" />
-              <span className="text-xs mt-1">Try-On</span>
-            </Link>
-            <Link 
-              to="/social" 
-              className="flex flex-col items-center py-3 px-4 text-fashion-navy"
-            >
-              <Users className="h-6 w-6" />
-              <span className="text-xs mt-1">Social</span>
-            </Link>
-            <Link 
-              to="/profile" 
-              className="flex flex-col items-center py-3 px-4 text-fashion-navy"
-            >
-              <UserIcon className="h-6 w-6" />
-              <span className="text-xs mt-1">Profile</span>
-            </Link>
-          </div>
-        </div>
-      </nav>
-
-      <div className="h-20"></div>
+        
+        {/* Virtual Try-On Dialog */}
+        <Dialog open={tryOnDialogOpen} onOpenChange={setTryOnDialogOpen}>
+          <DialogContent className="sm:max-w-[600px]">
+            <DialogHeader>
+              <DialogTitle>Virtual Try-On: {selectedOutfit?.name}</DialogTitle>
+            </DialogHeader>
+            <div className="flex flex-col items-center p-4">
+              <div className="bg-gray-100 w-full h-64 rounded-lg flex items-center justify-center mb-4">
+                <p className="text-gray-400">AI-generated visualization coming soon</p>
+              </div>
+              <div className="flex gap-4">
+                {selectedOutfit?.items.map((item, idx) => (
+                  <div key={idx} className="text-center">
+                    <img 
+                      src={item.image} 
+                      alt={item.name} 
+                      className="w-20 h-20 object-cover rounded" 
+                    />
+                    <p className="text-xs mt-1">{item.name}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 };
