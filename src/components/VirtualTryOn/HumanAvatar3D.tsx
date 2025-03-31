@@ -1,7 +1,7 @@
 
 import React, { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
+import { OrbitControls, Environment, ContactShadows } from '@react-three/drei';
 import * as THREE from 'three';
 
 // Define the measurement types
@@ -44,10 +44,23 @@ function AvatarModel({ measurements, rotation }: AvatarModelProps) {
       const waistFactor = measurements.waist / 85; // Base waist is 85cm
       const hipsFactor = measurements.hips / 95; // Base hips is 95cm
       
-      // Create materials
+      // Create materials with more realistic human appearance
       const skinMaterial = new THREE.MeshStandardMaterial({ 
-        color: '#f2d2bd',
-        roughness: 0.7
+        color: '#FDE1D3', // Soft peach skin tone
+        roughness: 0.5,
+        metalness: 0.1,
+      });
+      
+      const hairMaterial = new THREE.MeshStandardMaterial({
+        color: '#333333', // Dark hair
+        roughness: 0.7,
+        metalness: 0.1
+      });
+      
+      const clothMaterial = new THREE.MeshStandardMaterial({
+        color: '#9b87f5', // Purple clothing
+        roughness: 0.5,
+        metalness: 0.1
       });
       
       // Head
@@ -57,113 +70,284 @@ function AvatarModel({ measurements, rotation }: AvatarModelProps) {
       );
       head.position.y = 0.75 * heightFactor;
       
-      // Neck
+      // Hair - simple cap-like shape
+      const hair = new THREE.Mesh(
+        new THREE.SphereGeometry(0.130 * heightFactor, 32, 32, 0, Math.PI * 2, 0, Math.PI / 2),
+        hairMaterial
+      );
+      hair.position.y = 0.79 * heightFactor;
+      hair.rotation.x = Math.PI;
+      
+      // Face details - simple eyes
+      const leftEye = new THREE.Mesh(
+        new THREE.SphereGeometry(0.015 * heightFactor, 16, 16),
+        new THREE.MeshBasicMaterial({ color: '#FFFFFF' })
+      );
+      leftEye.position.set(-0.05 * heightFactor, 0.77 * heightFactor, 0.11 * heightFactor);
+      
+      const rightEye = new THREE.Mesh(
+        new THREE.SphereGeometry(0.015 * heightFactor, 16, 16),
+        new THREE.MeshBasicMaterial({ color: '#FFFFFF' })
+      );
+      rightEye.position.set(0.05 * heightFactor, 0.77 * heightFactor, 0.11 * heightFactor);
+      
+      // Eye pupils
+      const leftPupil = new THREE.Mesh(
+        new THREE.SphereGeometry(0.007 * heightFactor, 16, 16),
+        new THREE.MeshBasicMaterial({ color: '#000000' })
+      );
+      leftPupil.position.set(-0.05 * heightFactor, 0.77 * heightFactor, 0.122 * heightFactor);
+      
+      const rightPupil = new THREE.Mesh(
+        new THREE.SphereGeometry(0.007 * heightFactor, 16, 16),
+        new THREE.MeshBasicMaterial({ color: '#000000' })
+      );
+      rightPupil.position.set(0.05 * heightFactor, 0.77 * heightFactor, 0.122 * heightFactor);
+      
+      // Neck with more realistic shape
       const neck = new THREE.Mesh(
         new THREE.CylinderGeometry(
           0.07 * measurements.neck / 38, 
           0.08 * measurements.neck / 38, 
           0.1 * heightFactor, 
-          16
+          32
         ),
         skinMaterial
       );
       neck.position.y = 0.7 * heightFactor;
       
-      // Torso
+      // Upper body clothing (top/shirt) rather than bare skin
       const torso = new THREE.Mesh(
         new THREE.CylinderGeometry(
-          0.2 * shoulderFactor, // Upper width (shoulders)
+          0.20 * shoulderFactor, // Upper width (shoulders)
           0.18 * waistFactor, // Lower width (waist)
           0.4 * heightFactor, // Height
-          16
+          32
         ),
-        skinMaterial
+        clothMaterial
       );
       torso.position.y = 0.45 * heightFactor;
       
-      // Hips
+      // Additional chest details for more human-like shape
+      const chest = new THREE.Mesh(
+        new THREE.SphereGeometry(0.21 * chestFactor / 95, 32, 32, 0, Math.PI * 2, 0, Math.PI / 2),
+        clothMaterial
+      );
+      chest.position.y = 0.55 * heightFactor;
+      chest.position.z = 0.06 * heightFactor;
+      chest.rotation.x = -Math.PI / 2;
+      chest.scale.z = 0.7;
+      
+      // Lower clothing (pants/trousers)
       const hips = new THREE.Mesh(
         new THREE.CylinderGeometry(
           0.18 * waistFactor, // Upper width (waist)
           0.22 * hipsFactor, // Lower width (hips)
           0.15 * heightFactor, // Height
-          16
+          32
         ),
-        skinMaterial
+        new THREE.MeshStandardMaterial({ color: '#7E69AB' }) // Darker purple for pants
       );
       hips.position.y = 0.175 * heightFactor;
       
-      // Left arm
-      const leftArm = new THREE.Mesh(
+      // Arms with better shape and joints
+      // Left arm - upper
+      const leftUpperArm = new THREE.Mesh(
         new THREE.CylinderGeometry(
           0.06 * weightFactor,
-          0.05 * weightFactor,
-          0.4 * heightFactor,
-          16
+          0.055 * weightFactor,
+          0.2 * heightFactor,
+          32
         ),
         skinMaterial
       );
-      leftArm.position.set(
+      leftUpperArm.position.set(
         -0.25 * shoulderFactor,
-        0.45 * heightFactor,
+        0.55 * heightFactor,
         0
       );
-      leftArm.rotation.z = -Math.PI / 8;
+      leftUpperArm.rotation.z = -Math.PI / 8;
       
-      // Right arm
-      const rightArm = new THREE.Mesh(
+      // Left arm - lower
+      const leftLowerArm = new THREE.Mesh(
+        new THREE.CylinderGeometry(
+          0.055 * weightFactor,
+          0.045 * weightFactor,
+          0.2 * heightFactor,
+          32
+        ),
+        skinMaterial
+      );
+      leftLowerArm.position.set(
+        -0.32 * shoulderFactor,
+        0.38 * heightFactor,
+        0
+      );
+      leftLowerArm.rotation.z = -Math.PI / 6;
+      
+      // Left hand
+      const leftHand = new THREE.Mesh(
+        new THREE.SphereGeometry(0.04 * weightFactor, 16, 16),
+        skinMaterial
+      );
+      leftHand.position.set(
+        -0.39 * shoulderFactor,
+        0.25 * heightFactor,
+        0
+      );
+      
+      // Right arm - upper
+      const rightUpperArm = new THREE.Mesh(
         new THREE.CylinderGeometry(
           0.06 * weightFactor,
-          0.05 * weightFactor,
-          0.4 * heightFactor,
-          16
+          0.055 * weightFactor,
+          0.2 * heightFactor,
+          32
         ),
         skinMaterial
       );
-      rightArm.position.set(
+      rightUpperArm.position.set(
         0.25 * shoulderFactor,
-        0.45 * heightFactor,
+        0.55 * heightFactor,
         0
       );
-      rightArm.rotation.z = Math.PI / 8;
+      rightUpperArm.rotation.z = Math.PI / 8;
       
-      // Left leg
-      const leftLeg = new THREE.Mesh(
+      // Right arm - lower
+      const rightLowerArm = new THREE.Mesh(
         new THREE.CylinderGeometry(
-          0.09 * measurements.thigh / 55,
-          0.07 * measurements.thigh / 55,
-          0.5 * measurements.inseam / 80,
-          16
+          0.055 * weightFactor,
+          0.045 * weightFactor,
+          0.2 * heightFactor,
+          32
         ),
         skinMaterial
       );
-      leftLeg.position.set(
+      rightLowerArm.position.set(
+        0.32 * shoulderFactor,
+        0.38 * heightFactor,
+        0
+      );
+      rightLowerArm.rotation.z = Math.PI / 6;
+      
+      // Right hand
+      const rightHand = new THREE.Mesh(
+        new THREE.SphereGeometry(0.04 * weightFactor, 16, 16),
+        skinMaterial
+      );
+      rightHand.position.set(
+        0.39 * shoulderFactor,
+        0.25 * heightFactor,
+        0
+      );
+      
+      // Legs with better joints and shape
+      // Left leg - upper (thigh)
+      const leftThigh = new THREE.Mesh(
+        new THREE.CylinderGeometry(
+          0.09 * measurements.thigh / 55,
+          0.08 * measurements.thigh / 55,
+          0.25 * measurements.inseam / 80,
+          32
+        ),
+        new THREE.MeshStandardMaterial({ color: '#7E69AB' }) // Pants color
+      );
+      leftThigh.position.set(
         -0.1 * hipsFactor,
-        -0.1,
+        0.05 * heightFactor,
         0
       );
       
-      // Right leg
-      const rightLeg = new THREE.Mesh(
+      // Left leg - lower (calf)
+      const leftCalf = new THREE.Mesh(
+        new THREE.CylinderGeometry(
+          0.07 * measurements.thigh / 55,
+          0.05 * measurements.thigh / 55,
+          0.25 * measurements.inseam / 80,
+          32
+        ),
+        new THREE.MeshStandardMaterial({ color: '#7E69AB' }) // Pants color
+      );
+      leftCalf.position.set(
+        -0.1 * hipsFactor,
+        -0.2 * heightFactor,
+        0
+      );
+      
+      // Left foot
+      const leftFoot = new THREE.Mesh(
+        new THREE.BoxGeometry(
+          0.08 * heightFactor,
+          0.04 * heightFactor,
+          0.12 * heightFactor
+        ),
+        new THREE.MeshStandardMaterial({ color: '#111111' }) // Dark shoes
+      );
+      leftFoot.position.set(
+        -0.1 * hipsFactor,
+        -0.37 * heightFactor,
+        0.04 * heightFactor
+      );
+      
+      // Right leg - upper (thigh)
+      const rightThigh = new THREE.Mesh(
         new THREE.CylinderGeometry(
           0.09 * measurements.thigh / 55,
-          0.07 * measurements.thigh / 55,
-          0.5 * measurements.inseam / 80,
-          16
+          0.08 * measurements.thigh / 55,
+          0.25 * measurements.inseam / 80,
+          32
         ),
-        skinMaterial
+        new THREE.MeshStandardMaterial({ color: '#7E69AB' }) // Pants color
       );
-      rightLeg.position.set(
+      rightThigh.position.set(
         0.1 * hipsFactor,
-        -0.1,
+        0.05 * heightFactor,
         0
+      );
+      
+      // Right leg - lower (calf)
+      const rightCalf = new THREE.Mesh(
+        new THREE.CylinderGeometry(
+          0.07 * measurements.thigh / 55,
+          0.05 * measurements.thigh / 55,
+          0.25 * measurements.inseam / 80,
+          32
+        ),
+        new THREE.MeshStandardMaterial({ color: '#7E69AB' }) // Pants color
+      );
+      rightCalf.position.set(
+        0.1 * hipsFactor,
+        -0.2 * heightFactor,
+        0
+      );
+      
+      // Right foot
+      const rightFoot = new THREE.Mesh(
+        new THREE.BoxGeometry(
+          0.08 * heightFactor,
+          0.04 * heightFactor,
+          0.12 * heightFactor
+        ),
+        new THREE.MeshStandardMaterial({ color: '#111111' }) // Dark shoes
+      );
+      rightFoot.position.set(
+        0.1 * hipsFactor,
+        -0.37 * heightFactor,
+        0.04 * heightFactor
       );
       
       // Add all parts to the group
-      group.current.add(head, neck, torso, hips, leftArm, rightArm, leftLeg, rightLeg);
+      group.current.add(
+        head, hair, leftEye, rightEye, leftPupil, rightPupil, 
+        neck, torso, chest, hips, 
+        leftUpperArm, leftLowerArm, leftHand,
+        rightUpperArm, rightLowerArm, rightHand,
+        leftThigh, leftCalf, leftFoot,
+        rightThigh, rightCalf, rightFoot
+      );
       
       // Position the whole model
-      group.current.position.y = -0.25;
+      group.current.position.y = -0.1;
       
       // Apply rotation
       group.current.rotation.y = (rotation * Math.PI) / 180;
@@ -221,11 +405,25 @@ const HumanAvatar3D: React.FC<HumanAvatar3DProps> = ({
         <pointLight position={[-10, -10, -10]} intensity={0.2} />
         <pointLight position={[0, 10, 0]} intensity={0.5} />
         
+        {/* Add subtle shadows for more realism */}
+        <ContactShadows 
+          opacity={0.5}
+          scale={10}
+          blur={1}
+          far={10}
+          resolution={256}
+          color="#000000"
+          position={[0, -0.5, 0]}
+        />
+        
         {/* Avatar model */}
         <AvatarModel 
           measurements={simpleMeasurements} 
           rotation={rotation} 
         />
+        
+        {/* Environment lighting for better material rendering */}
+        <Environment preset="city" />
         
         {/* Camera controls */}
         <OrbitControls 
