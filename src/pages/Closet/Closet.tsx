@@ -1,8 +1,7 @@
-
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { PlusIcon, ShirtIcon, PantsIcon, ShoesIcon } from "lucide-react";
+import { PlusIcon, ShirtIcon, Scissors, Footprints } from "lucide-react";
 import { ClothingCard } from "./components/ClothingCard";
 import { AddClothingCard } from "./components/AddClothingCard";
 import { OutfitCard } from "./components/OutfitCard";
@@ -10,7 +9,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { ClothingItem, Outfit } from "@/types";
 import { showToast } from "@/utils/toast";
 
-// Mock data
 const MOCK_CLOTHING: Record<string, ClothingItem[]> = {
   tops: [
     { id: 1, name: "White T-Shirt", color: "White", type: "T-Shirt", image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&auto=format" },
@@ -90,7 +88,7 @@ const Closet = () => {
               {/* Bottoms Section */}
               <div>
                 <div className="flex items-center mb-4">
-                  <PantsIcon className="mr-2 h-5 w-5 text-fashion-teal" />
+                  <Scissors className="mr-2 h-5 w-5 text-fashion-teal" />
                   <h2 className="text-xl font-semibold">Bottoms</h2>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -104,7 +102,7 @@ const Closet = () => {
               {/* Shoes Section */}
               <div>
                 <div className="flex items-center mb-4">
-                  <ShoesIcon className="mr-2 h-5 w-5 text-fashion-teal" />
+                  <Footprints className="mr-2 h-5 w-5 text-fashion-teal" />
                   <h2 className="text-xl font-semibold">Shoes</h2>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -137,7 +135,6 @@ const Closet = () => {
           </TabsContent>
         </Tabs>
         
-        {/* Virtual Try-On Dialog */}
         <Dialog open={tryOnDialogOpen} onOpenChange={setTryOnDialogOpen}>
           <DialogContent className="sm:max-w-[600px]">
             <DialogHeader>

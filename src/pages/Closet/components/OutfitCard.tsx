@@ -2,7 +2,7 @@
 import { Outfit } from "@/types";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { SunIcon, CloudRainIcon, SnowflakeIcon } from "lucide-react";
+import { SunIcon, CloudRainIcon, Snowflake } from "lucide-react";
 
 interface OutfitCardProps {
   outfit: Outfit;
@@ -17,7 +17,7 @@ export const OutfitCard = ({ outfit, onTryOn }: OutfitCardProps) => {
         <div className="flex items-center gap-2">
           {outfit.weather === "Sunny" && <SunIcon className="h-4 w-4" />}
           {outfit.weather === "Rainy" && <CloudRainIcon className="h-4 w-4" />}
-          {outfit.weather === "Cold" && <SnowflakeIcon className="h-4 w-4" />}
+          {outfit.weather === "Cold" && <Snowflake className="h-4 w-4" />}
           <span className="text-xs bg-white/20 px-2 py-1 rounded">
             {outfit.occasion}
           </span>
