@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { 
@@ -14,7 +15,8 @@ import {
   Calendar,
   Plus,
   Users,
-  Scissors
+  Scissors,
+  Ruler
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -85,9 +87,17 @@ const Closet = () => {
               Your Virtual Closet
             </h1>
           </div>
-          <Link to="/profile" className="text-fashion-navy">
-            <UserIcon className="h-5 w-5" />
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link to="/virtual-tryon">
+              <Button variant="outline" size="sm" className="flex items-center gap-1">
+                <Ruler className="h-4 w-4" />
+                <span className="hidden sm:inline">Virtual Try-On</span>
+              </Button>
+            </Link>
+            <Link to="/profile" className="text-fashion-navy">
+              <UserIcon className="h-5 w-5" />
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -356,6 +366,13 @@ const Closet = () => {
             >
               <ShoppingBag className="h-6 w-6" />
               <span className="text-xs mt-1">Closet</span>
+            </Link>
+            <Link 
+              to="/virtual-tryon" 
+              className="flex flex-col items-center py-3 px-4 text-fashion-navy"
+            >
+              <Ruler className="h-6 w-6" />
+              <span className="text-xs mt-1">Try-On</span>
             </Link>
             <Link 
               to="/social" 
