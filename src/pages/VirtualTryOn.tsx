@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
@@ -7,8 +6,8 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChevronLeft, Undo2, RotateCcw } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import MannequinView from "@/components/VirtualTryOn/MannequinView";
 import { BodyTypeSelector } from "@/components/VirtualTryOn/BodyTypeSelector";
+import HumanAvatar3D from "@/components/VirtualTryOn/HumanAvatar3D";
 
 interface Measurement {
   value: number;
@@ -110,7 +109,7 @@ const VirtualTryOn = () => {
           <div className="w-8"></div> {/* Spacer for centering */}
         </div>
         <p className="text-center text-sm text-gray-500">
-          Adjust your measurements to match your body
+          Adjust your measurements to create your 3D avatar
         </p>
       </header>
 
@@ -119,10 +118,10 @@ const VirtualTryOn = () => {
         <BodyTypeSelector onSelectBodyType={applyBodyType} />
       </div>
 
-      {/* Mannequin Preview */}
+      {/* 3D Avatar Preview */}
       <div className="px-6 mb-2">
         <div className="relative aspect-[3/5] w-full max-w-xs mx-auto perspective-[1200px] preserve-3d">
-          <MannequinView 
+          <HumanAvatar3D 
             measurements={measurements} 
             highlightedPart={highlightedPart}
             rotation={rotation}
@@ -236,7 +235,6 @@ const VirtualTryOn = () => {
   );
 };
 
-// Slider component for each measurement
 const SliderControl = ({ 
   measurementKey, 
   measurement, 
