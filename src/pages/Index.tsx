@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { MessageSquare, ShoppingBag, User } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -11,7 +10,6 @@ const Index = () => {
   const navigate = useNavigate();
   const { isAuthenticated, logout } = useAuth();
   const [showAnimation, setShowAnimation] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState("featured");
   const isMobile = useIsMobile();
 
   // Control animation on mount
@@ -30,16 +28,12 @@ const Index = () => {
     return null; // Don't render anything while checking auth state
   }
 
-  const handleCategoryChange = (value: string) => {
-    if (value) setSelectedCategory(value);
-  };
-
   return (
     <div className="min-h-screen w-full flex flex-col bg-black relative">
       {/* Full screen background image */}
       <div className="fixed inset-0 w-full h-full z-0">
         <img 
-          src="/lovable-uploads/6d5869e6-335e-43b2-9095-3cba3298e969.png" 
+          src="/lovable-uploads/5e62aadd-496b-44e3-84c8-e8f40d379fd5.png" 
           alt="Fashion background" 
           className="w-full h-full object-cover"
         />
@@ -57,40 +51,8 @@ const Index = () => {
           </div>
         </header>
 
-        {/* Category selection buttons */}
-        <div className="px-6 mb-6">
-          <ToggleGroup 
-            type="single" 
-            value={selectedCategory}
-            onValueChange={handleCategoryChange}
-            className="flex justify-center bg-white/10 backdrop-blur-sm rounded-full p-1 w-full max-w-xs mx-auto"
-          >
-            <ToggleGroupItem 
-              value="featured" 
-              aria-label="Featured" 
-              className="text-white data-[state=on]:bg-fashion-teal data-[state=on]:text-white rounded-full flex-1 text-xs py-2"
-            >
-              Featured
-            </ToggleGroupItem>
-            <ToggleGroupItem 
-              value="new" 
-              aria-label="New"
-              className="text-white data-[state=on]:bg-fashion-teal data-[state=on]:text-white rounded-full flex-1 text-xs py-2"
-            >
-              New In
-            </ToggleGroupItem>
-            <ToggleGroupItem 
-              value="trending" 
-              aria-label="Trending"
-              className="text-white data-[state=on]:bg-fashion-teal data-[state=on]:text-white rounded-full flex-1 text-xs py-2"
-            >
-              Trending
-            </ToggleGroupItem>
-          </ToggleGroup>
-        </div>
-
         {/* App Tagline */}
-        <div className={`px-6 text-center mt-6 mb-8 transition-all duration-700 ease-in-out transform ${showAnimation ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <div className={`px-6 text-center mt-8 mb-8 transition-all duration-700 ease-in-out transform ${showAnimation ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           <h2 className="text-2xl text-white font-light tracking-wide">
             Your AI stylist for every occasion
           </h2>
@@ -126,9 +88,9 @@ const Index = () => {
                 </div>
               </div>
               
-              {/* Social Feed Button */}
+              {/* Social Feed Button - now transparent like Virtual Closet */}
               <div
-                className="aspect-square bg-fashion-teal/70 backdrop-blur-sm rounded-2xl overflow-hidden transform transition-all duration-300 cursor-pointer hover:-translate-y-2 active:translate-y-1 active:shadow-inner relative"
+                className="aspect-square bg-black/40 backdrop-blur-sm rounded-2xl overflow-hidden transform transition-all duration-300 cursor-pointer hover:-translate-y-2 active:translate-y-1 active:shadow-inner relative"
                 onClick={() => navigate("/social")}
               >
                 {/* Social Feed Icon */}
