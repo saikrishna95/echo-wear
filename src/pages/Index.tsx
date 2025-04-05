@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, ShoppingBag, User } from "lucide-react";
+import { MessageSquare, ShoppingBag } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -106,56 +106,6 @@ const Index = () => {
                 </div>
                 
                 {/* 3D effect overlay with warm glow */}
-                <div className="absolute inset-0 bg-fashion-amber/5 rounded-2xl" 
-                     style={{ 
-                       boxShadow: "inset 0 2px 15px rgba(255,228,196,0.2), inset 0 -2px 15px rgba(0,0,0,0.2)"
-                     }}>
-                </div>
-              </div>
-              
-              {/* Profile Button */}
-              <div
-                className="aspect-square bg-black/40 backdrop-blur-sm rounded-2xl overflow-hidden transform transition-all duration-300 cursor-pointer hover:-translate-y-2 active:translate-y-1 active:shadow-inner relative"
-                onClick={() => navigate("/profile")}
-              >
-                {/* Profile Icon */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <div className="w-16 h-16 flex items-center justify-center">
-                    <User className="h-10 w-10 text-white opacity-90" />
-                  </div>
-                  <span className="text-white font-semibold text-shadow shadow-black/50 mt-1">
-                    Profile
-                  </span>
-                </div>
-                
-                {/* 3D effect overlay */}
-                <div className="absolute inset-0 bg-fashion-amber/5 rounded-2xl" 
-                     style={{ 
-                       boxShadow: "inset 0 2px 15px rgba(255,228,196,0.2), inset 0 -2px 15px rgba(0,0,0,0.2)"
-                     }}>
-                </div>
-              </div>
-              
-              {/* Virtual Try-On Button */}
-              <div
-                className="aspect-square bg-black/40 backdrop-blur-sm rounded-2xl overflow-hidden transform transition-all duration-300 cursor-pointer hover:-translate-y-2 active:translate-y-1 active:shadow-inner relative"
-                onClick={() => navigate("/virtual-tryon")}
-              >
-                {/* Virtual Try-On Icon */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <div className="w-16 h-16 flex items-center justify-center">
-                    <svg className="h-10 w-10 text-white opacity-90" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M12 4a4 4 0 1 0 0 8 4 4 0 1 0 0-8z"/>
-                      <path d="M4 16v-1a5 5 0 0 1 5-5h6a5 5 0 0 1 5 5v1"/>
-                      <path d="M6 16v4h12v-4"/>
-                    </svg>
-                  </div>
-                  <span className="text-white font-semibold text-shadow shadow-black/50 mt-1">
-                    Try-On
-                  </span>
-                </div>
-                
-                {/* 3D effect overlay */}
                 <div className="absolute inset-0 bg-fashion-amber/5 rounded-2xl" 
                      style={{ 
                        boxShadow: "inset 0 2px 15px rgba(255,228,196,0.2), inset 0 -2px 15px rgba(0,0,0,0.2)"
