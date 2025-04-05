@@ -38,9 +38,8 @@ const CustomMannequin: React.FC<CustomMannequinProps> = ({
 
     // Apply scale from measurement values
     model.scale.set(
-      shoulderFactor * 0.8 + chestFactor * 0.2,
-      heightFactor,
-      waistFactor * 0.5 + hipsFactor * 0.5
+      model.scale.set(1, 1, 1);             // Reset scale for visibility
+      model.position.set(0, -1, 0);         // Raise the model up from ground
     );
 
     // Apply rotation
@@ -63,7 +62,7 @@ const CustomMannequin: React.FC<CustomMannequinProps> = ({
     }
   });
 
-  return <group ref={group} position={[0, -0.9, 0]} />;
+  return <group ref={group} position={[0, 0, 0]} />;
 };
 
 export default CustomMannequin;
