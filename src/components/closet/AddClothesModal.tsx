@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -290,7 +291,7 @@ const AddClothesModal: React.FC<AddClothesModalProps> = ({ open, onClose, onSave
                     </>
                   ) : (
                     <div className="flex flex-col items-center justify-center h-full">
-                      <Plus className="h-5 w-5 text-gray-400" />
+                      <Plus className="h-4 w-4 text-gray-400" />
                       <span className="text-xs text-gray-500 mt-1">Front</span>
                     </div>
                   )}
@@ -322,7 +323,7 @@ const AddClothesModal: React.FC<AddClothesModalProps> = ({ open, onClose, onSave
                     </>
                   ) : (
                     <div className="flex flex-col items-center justify-center h-full">
-                      <Plus className="h-5 w-5 text-gray-400" />
+                      <Plus className="h-4 w-4 text-gray-400" />
                       <span className="text-xs text-gray-500 mt-1">Back</span>
                     </div>
                   )}
@@ -354,7 +355,7 @@ const AddClothesModal: React.FC<AddClothesModalProps> = ({ open, onClose, onSave
                     </>
                   ) : (
                     <div className="flex flex-col items-center justify-center h-full">
-                      <Plus className="h-5 w-5 text-gray-400" />
+                      <Plus className="h-4 w-4 text-gray-400" />
                       <span className="text-xs text-gray-500 mt-1">Side</span>
                     </div>
                   )}
@@ -368,15 +369,15 @@ const AddClothesModal: React.FC<AddClothesModalProps> = ({ open, onClose, onSave
               <Tabs value={addMethod} onValueChange={(value) => setAddMethod(value as "capture" | "upload" | "link")}>
                 <TabsList className="w-full grid grid-cols-3 mb-2">
                   <TabsTrigger value="capture">
-                    <Camera className="h-4 w-4 mr-1" />
+                    <Camera className="h-3.5 w-3.5 mr-1" />
                     Capture
                   </TabsTrigger>
                   <TabsTrigger value="upload">
-                    <Upload className="h-4 w-4 mr-1" />
+                    <Upload className="h-3.5 w-3.5 mr-1" />
                     Upload
                   </TabsTrigger>
                   <TabsTrigger value="link">
-                    <LinkIcon className="h-4 w-4 mr-1" />
+                    <LinkIcon className="h-3.5 w-3.5 mr-1" />
                     URL
                   </TabsTrigger>
                 </TabsList>
@@ -390,8 +391,8 @@ const AddClothesModal: React.FC<AddClothesModalProps> = ({ open, onClose, onSave
                     onChange={handleCameraCapture}
                     className="hidden"
                   />
-                  <Button onClick={handleCapture} variant="outline" className="w-full">
-                    <Camera className="h-4 w-4 mr-2" />
+                  <Button onClick={handleCapture} variant="outline" className="w-full" size="sm">
+                    <Camera className="h-3.5 w-3.5 mr-2" />
                     Take Photo
                   </Button>
                 </TabsContent>
@@ -404,8 +405,8 @@ const AddClothesModal: React.FC<AddClothesModalProps> = ({ open, onClose, onSave
                     onChange={handleFileChange}
                     className="hidden"
                   />
-                  <Button onClick={handleFileUpload} variant="outline" className="w-full">
-                    <Upload className="h-4 w-4 mr-2" />
+                  <Button onClick={handleFileUpload} variant="outline" className="w-full" size="sm">
+                    <Upload className="h-3.5 w-3.5 mr-2" />
                     Choose File
                   </Button>
                 </TabsContent>
@@ -416,8 +417,9 @@ const AddClothesModal: React.FC<AddClothesModalProps> = ({ open, onClose, onSave
                       placeholder="Paste image URL"
                       value={linkUrl}
                       onChange={(e) => setLinkUrl(e.target.value)}
+                      size={12}
                     />
-                    <Button onClick={handleLinkSubmit} type="button">
+                    <Button onClick={handleLinkSubmit} type="button" size="sm">
                       Add
                     </Button>
                   </div>
@@ -428,8 +430,8 @@ const AddClothesModal: React.FC<AddClothesModalProps> = ({ open, onClose, onSave
         </div>
 
         <DialogFooter className="flex space-x-2 justify-end">
-          <Button variant="outline" onClick={onClose}>Cancel</Button>
-          <Button onClick={handleSave} className="bg-fashion-amber hover:bg-fashion-amber/90 text-white">
+          <Button variant="outline" onClick={onClose} size="sm">Cancel</Button>
+          <Button onClick={handleSave} className="bg-fashion-amber hover:bg-fashion-amber/90 text-white" size="sm">
             Save {getCategorySingularName()}
           </Button>
         </DialogFooter>

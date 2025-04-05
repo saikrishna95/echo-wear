@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { 
@@ -220,8 +221,9 @@ const Closet = () => {
                     <Button 
                       onClick={() => handleAddClothes()}
                       className="bg-fashion-amber hover:bg-fashion-amber/90 text-white"
+                      size="sm"
                     >
-                      <Camera className="mr-2 h-4 w-4" />
+                      <Camera className="mr-2 h-3.5 w-3.5" />
                       Add Clothes
                     </Button>
                   )}
@@ -229,8 +231,9 @@ const Closet = () => {
                     <Button 
                       onClick={() => handleAddClothes(selectedCategory)}
                       className="bg-fashion-amber hover:bg-fashion-amber/90 text-white"
+                      size="sm"
                     >
-                      <Camera className="mr-2 h-4 w-4" />
+                      <Camera className="mr-2 h-3.5 w-3.5" />
                       Add {getCategorySingularName(selectedCategory)}
                     </Button>
                   )}
@@ -290,8 +293,8 @@ const Closet = () => {
                       style={{ aspectRatio: "1/1" }}
                     >
                       <div className="text-center p-4">
-                        <div className="w-12 h-12 rounded-full bg-fashion-amber/20 flex items-center justify-center mx-auto mb-2">
-                          <Plus className="h-6 w-6 text-fashion-amber" />
+                        <div className="w-10 h-10 rounded-full bg-fashion-amber/20 flex items-center justify-center mx-auto mb-2">
+                          <Plus className="h-5 w-5 text-fashion-amber" />
                         </div>
                         <p className="text-fashion-navy mt-2">Add {getCategorySingularName(selectedCategory)}</p>
                       </div>
@@ -309,11 +312,11 @@ const Closet = () => {
                   <h2 className="text-2xl font-semibold">AI Outfit Suggestions</h2>
                   <div className="flex gap-3">
                     <Button variant="outline" size="sm" className="border-fashion-amber/20 hover:bg-fashion-amber/10">
-                      <Calendar className="mr-2 h-4 w-4" />
+                      <Calendar className="mr-2 h-3.5 w-3.5" />
                       Events
                     </Button>
                     <Button variant="outline" size="sm" className="border-fashion-amber/20 hover:bg-fashion-amber/10">
-                      <SunIcon className="mr-2 h-4 w-4" />
+                      <SunIcon className="mr-2 h-3.5 w-3.5" />
                       Weather
                     </Button>
                   </div>
@@ -485,7 +488,7 @@ const Closet = () => {
         open={isAddModalOpen} 
         onClose={() => setIsAddModalOpen(false)} 
         onSave={handleSaveClothingItem}
-        category={selectedCategory || undefined}
+        category={selectedCategory || ""}
       />
 
       <ClothingItemDetail 
