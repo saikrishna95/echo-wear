@@ -11,23 +11,6 @@ type ExtendedClothingItem = ClothingItem & {
   style?: string;
 };
 
-// Define the filter option type with count
-type FilterOption = {
-  value: string;
-  count: number;
-};
-
-// Define the return type for getFilterOptions
-interface FilterOptionsResult {
-  colors: FilterOption[];
-  patterns: FilterOption[];
-  types: FilterOption[];
-  sleeveLengths?: FilterOption[];
-  necklines?: FilterOption[];
-  fits?: FilterOption[];
-  styles?: FilterOption[];
-}
-
 export function useCloset() {
   const [clothes, setClothes] = useState<{
     tops: ExtendedClothingItem[];
@@ -91,13 +74,13 @@ export function useCloset() {
     }));
   };
 
-  const getFilterOptions = (category: 'tops' | 'bottoms' | 'shoes' | 'accessories' | null): FilterOptionsResult => {
+  const getFilterOptions = (category: 'tops' | 'bottoms' | 'shoes' | 'accessories' | null) => {
     if (!category) return { colors: [], patterns: [], types: [] };
     
     const items = clothes[category];
     
     // Extract unique filter values with counts
-    const colors = items.reduce<FilterOption[]>((acc, item) => {
+    const colors = items.reduce<{value: string, count: number}[]>((acc, item) => {
       const existing = acc.find(c => c.value === item.color);
       if (existing) {
         existing.count += 1;
@@ -107,7 +90,7 @@ export function useCloset() {
       return acc;
     }, []);
     
-    const patterns = items.reduce<FilterOption[]>((acc, item) => {
+    const patterns = items.reduce<{value: string, count: number}[]>((acc, item) => {
       if (!item.pattern) return acc;
       const existing = acc.find(p => p.value === item.pattern);
       if (existing) {
@@ -118,7 +101,7 @@ export function useCloset() {
       return acc;
     }, []);
     
-    const types = items.reduce<FilterOption[]>((acc, item) => {
+    const types = items.reduce<{value: string, count: number}[]>((acc, item) => {
       const existing = acc.find(t => t.value === item.type);
       if (existing) {
         existing.count += 1;
@@ -129,10 +112,10 @@ export function useCloset() {
     }, []);
 
     // Category-specific filters
-    const result: FilterOptionsResult = { colors, patterns, types };
+    const categorySpecificFilters: Record<string, {value: string, count: number}[]> = {};
     
     if (category === 'tops') {
-      const sleeveLengths = items.reduce<FilterOption[]>((acc, item: ExtendedClothingItem) => {
+      const sleeveLengths = items.reduce<{value: string, count: number}[]>((acc, item: ExtendedClothingItem) => {
         if (!item.sleeveLength) return acc;
         const existing = acc.find(s => s.value === item.sleeveLength);
         if (existing) {
@@ -143,7 +126,7 @@ export function useCloset() {
         return acc;
       }, []);
       
-      const necklines = items.reduce<FilterOption[]>((acc, item: ExtendedClothingItem) => {
+      const necklines = items.reduce<{value: string, count: number}[]>((acc, item: ExtendedClothingItem) => {
         if (!item.neckline) return acc;
         const existing = acc.find(n => n.value === item.neckline);
         if (existing) {
@@ -154,10 +137,10 @@ export function useCloset() {
         return acc;
       }, []);
       
-      result.sleeveLengths = sleeveLengths;
-      result.necklines = necklines;
+      categorySpecificFilters.sleeveLengths = sleeveLengths;
+      categorySpecificFilters.necklines = necklines;
     } else if (category === 'bottoms') {
-      const fits = items.reduce<FilterOption[]>((acc, item: ExtendedClothingItem) => {
+      const fits = items.reduce<{value: string, count: number}[]>((acc, item: ExtendedClothingItem) => {
         if (!item.fit) return acc;
         const existing = acc.find(f => f.value === item.fit);
         if (existing) {
@@ -168,9 +151,9 @@ export function useCloset() {
         return acc;
       }, []);
       
-      result.fits = fits;
+      categorySpecificFilters.fits = fits;
     } else if (category === 'shoes') {
-      const styles = items.reduce<FilterOption[]>((acc, item: ExtendedClothingItem) => {
+      const styles = items.reduce<{value: string, count: number}[]>((acc, item: ExtendedClothingItem) => {
         if (!item.style) return acc;
         const existing = acc.find(s => s.value === item.style);
         if (existing) {
@@ -181,10 +164,15 @@ export function useCloset() {
         return acc;
       }, []);
       
-      result.styles = styles;
+      categorySpecificFilters.styles = styles;
     }
     
-    return result;
+    return {
+      colors,
+      patterns, 
+      types,
+      ...categorySpecificFilters
+    };
   };
 
   const setFilter = (filterType: string, value: string | null) => {
