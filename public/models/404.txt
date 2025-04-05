@@ -1,8 +1,6 @@
-
 This file is a placeholder to ensure the models directory exists.
-The application will create a basic mannequin using THREE.js primitives if no mannequin.glb file is found.
+The application will look for 'male_base (1).glb' in this directory.
 
-To use a custom 3D mannequin model:
-1. Place your model file named "mannequin.glb" in this directory
-2. Make sure the model is properly formatted as a glTF/GLB file
-3. The model should be in a T-pose or A-pose for best results
+If the file is not found, the application will create a basic mannequin using THREE.js primitives.
+
+The male_base (1).glb file should be placed in this directory.

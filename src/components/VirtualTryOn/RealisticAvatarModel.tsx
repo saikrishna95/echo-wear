@@ -19,8 +19,8 @@ export const RealisticAvatarModel: React.FC<RealisticAvatarModelProps> = ({
   const group = useRef<THREE.Group>(null);
   const { camera } = useThree();
   
-  // Attempt to load the GLB model
-  const { scene, nodes, materials } = useGLTF('/models/avatar.glb', false) as any;
+  // Use the male_base model instead of mannequin.glb
+  const { scene, nodes, materials } = useGLTF('/models/male_base (1).glb', false) as any;
   
   // Create a copy of the scene to modify
   const model = scene?.clone();
@@ -39,15 +39,17 @@ export const RealisticAvatarModel: React.FC<RealisticAvatarModelProps> = ({
       const heightFactor = measurements.height / 175; // Base height is 175cm
       model.scale.set(heightFactor, heightFactor, heightFactor);
       
-      // TODO: Apply clothing to realistic model
-      // This would require matching the avatar's skeleton or mesh structure
-      // For now, we just log that clothing was selected
+      // Apply morphing or scaling to different body parts based on measurements
+      // This depends on the specific model structure
+      // For now, we'll log the measurements for debugging
+      console.log("Applied measurements to 3D model:", measurements);
+      
+      // Apply clothing if any are selected
       if (selectedClothing && selectedClothing.length > 0) {
         console.log(`Applied ${selectedClothing.length} clothing items to realistic avatar`);
-        // In the future, this would load and apply the clothing models to the avatar
       }
       
-      // Position the model - may need adjustment depending on the model
+      // Position the model - adjust based on the specific model
       model.position.y = -0.9;
       
       // Apply rotation

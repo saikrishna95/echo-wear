@@ -35,7 +35,8 @@ export const HybridAvatarModel: React.FC<HybridAvatarModelProps> = ({
   useEffect(() => {
     const checkModelExists = async () => {
       try {
-        const response = await fetch('/models/avatar.glb');
+        // Check for the male_base model instead of avatar.glb
+        const response = await fetch('/models/male_base (1).glb');
         if (!response.ok) {
           setUseRealistic(false);
           console.log('GLB model not found, using primitive fallback');
