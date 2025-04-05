@@ -109,21 +109,18 @@ const Index = () => {
                 </div>
               </div>
             </div>
-            
-            {/* Spacer to push logout button to bottom */}
-            <div className="flex-grow" />
-            
-            {/* Logout Button - positioned at the bottom */}
-            <div className="mt-auto pt-16 pb-8 text-center">
-              <Button 
-                variant="outline" 
-                className="text-white border-white/30 bg-black/20 backdrop-blur-sm text-sm hover:bg-white/10"
-                onClick={logout}
-              >
-                Logout
-              </Button>
-            </div>
           </div>
+        </div>
+        
+        {/* Logout Button - fixed to bottom of screen */}
+        <div className="w-full flex justify-center pb-8 pt-4 absolute bottom-0 left-0">
+          <Button 
+            variant="outline" 
+            className="text-white border-white/30 bg-black/20 backdrop-blur-sm text-sm hover:bg-white/10"
+            onClick={logout}
+          >
+            Logout
+          </Button>
         </div>
       </div>
     </div>
