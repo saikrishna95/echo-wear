@@ -1,13 +1,18 @@
+
 import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ChevronLeft, Undo2, RotateCcw } from "lucide-react";
+import { ChevronLeft, Undo2, RotateCcw, Save } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { BodyTypeSelector } from "@/components/VirtualTryOn/BodyTypeSelector";
 import HumanAvatar3D from "@/components/VirtualTryOn/HumanAvatar3D";
+import ClothingSelector from "@/components/VirtualTryOn/ClothingSelector";
+import { useClothingItems } from "@/hooks/useClothingItems";
+import { useToast } from "@/hooks/use-toast";
+import { ClothingItem } from "@/components/VirtualTryOn/types";
 
 interface Measurement {
   value: number;
@@ -64,10 +69,15 @@ const bodyTypePresets = {
 
 const VirtualTryOn = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [measurements, setMeasurements] = useState<MeasurementsState>(initialMeasurements);
   const [activeTab, setActiveTab] = useState("upper");
   const [highlightedPart, setHighlightedPart] = useState<MeasurementKey | null>(null);
   const [rotation, setRotation] = useState(0);
+  const [selectedClothing, setSelectedClothing] = useState<ClothingItem[]>([]);
+  const [viewMode, setViewMode] = useState<"measurements" | "clothing">("measurements");
+  
+  const { clothingItems, isLoading } = useClothingItems();
 
   const handleSliderChange = (key: MeasurementKey, value: number[]) => {
     setMeasurements((prev) => ({
@@ -78,6 +88,11 @@ const VirtualTryOn = () => {
 
   const resetMeasurements = () => {
     setMeasurements(initialMeasurements);
+    setSelectedClothing([]);
+    toast({
+      title: "Reset Complete",
+      description: "Your measurements and clothing selection have been reset.",
+    });
   };
 
   const applyBodyType = (type: keyof typeof bodyTypePresets) => {
@@ -93,6 +108,53 @@ const VirtualTryOn = () => {
     
     setMeasurements(newMeasurements);
   };
+  
+  const handleSelectClothing = (item: ClothingItem) => {
+    // Check if this is a top or bottom item
+    const isTopItem = ['shirt', 'blouse', 'sweater', 'jacket', 't-shirt'].includes(item.type.toLowerCase());
+    const isBottomItem = ['pants', 'jeans', 'skirt', 'shorts'].includes(item.type.toLowerCase());
+    
+    setSelectedClothing(prev => {
+      // Create a new array without any items of the same type category
+      const filteredItems = prev.filter(prevItem => {
+        const isPrevTopItem = ['shirt', 'blouse', 'sweater', 'jacket', 't-shirt'].includes(prevItem.type.toLowerCase());
+        const isPrevBottomItem = ['pants', 'jeans', 'skirt', 'shorts'].includes(prevItem.type.toLowerCase());
+        
+        if (isTopItem && isPrevTopItem) {
+          return false; // Remove previous top items
+        }
+        if (isBottomItem && isPrevBottomItem) {
+          return false; // Remove previous bottom items
+        }
+        return true; // Keep all other items
+      });
+      
+      return [...filteredItems, item];
+    });
+  };
+  
+  const handleRemoveClothing = (itemId: string) => {
+    setSelectedClothing(prev => prev.filter(item => item.id !== itemId));
+  };
+
+  const saveOutfit = () => {
+    // In a real app, you would save this to a database
+    console.log('Saved outfit:', {
+      measurements: Object.entries(measurements).reduce((acc, [key, m]) => {
+        acc[key as MeasurementKey] = m.value;
+        return acc;
+      }, {} as Record<MeasurementKey, number>),
+      clothing: selectedClothing.map(item => item.id)
+    });
+    
+    toast({
+      title: "Outfit Saved",
+      description: "Your measurements and clothing selection have been saved.",
+    });
+    
+    // Navigate back to closet
+    setTimeout(() => navigate('/closet'), 1500);
+  };
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -105,18 +167,44 @@ const VirtualTryOn = () => {
           >
             <ChevronLeft size={24} />
           </button>
-          <h1 className="text-xl font-semibold text-fashion-navy">Customize Your Fit</h1>
+          <h1 className="text-xl font-semibold text-fashion-navy">Virtual Try-On</h1>
           <div className="w-8"></div> {/* Spacer for centering */}
         </div>
         <p className="text-center text-sm text-gray-500">
-          Adjust your measurements to create your 3D avatar
+          Customize your avatar and try on different clothes
         </p>
       </header>
 
-      {/* Body Type Selector */}
+      {/* View Mode Tabs */}
       <div className="px-6 mb-4">
-        <BodyTypeSelector onSelectBodyType={applyBodyType} />
+        <div className="flex border-b border-gray-200">
+          <button
+            onClick={() => setViewMode("measurements")}
+            className={`flex-1 py-3 text-center text-sm font-medium border-b-2 ${
+              viewMode === "measurements" ? "border-primary text-primary" : "border-transparent text-gray-500"
+            }`}
+          >
+            Measurements
+          </button>
+          <button
+            onClick={() => setViewMode("clothing")}
+            className={`flex-1 py-3 text-center text-sm font-medium border-b-2 ${
+              viewMode === "clothing" ? "border-primary text-primary" : "border-transparent text-gray-500"
+            }`}
+          >
+            Clothing
+          </button>
+        </div>
       </div>
+
+      {viewMode === "measurements" && (
+        <>
+          {/* Body Type Selector */}
+          <div className="px-6 mb-4">
+            <BodyTypeSelector onSelectBodyType={applyBodyType} />
+          </div>
+        </>
+      )}
 
       {/* 3D Avatar Preview */}
       <div className="px-6 mb-2">
@@ -125,6 +213,7 @@ const VirtualTryOn = () => {
             measurements={measurements} 
             highlightedPart={highlightedPart}
             rotation={rotation}
+            selectedClothing={selectedClothing}
           />
           
           {/* Rotation controls */}
@@ -141,67 +230,76 @@ const VirtualTryOn = () => {
         </div>
       </div>
 
-      {/* Measurement Tabs and Sliders */}
+      {/* Measurement Tabs and Sliders OR Clothing Selection */}
       <div className="flex-1 px-6 pb-6 overflow-hidden flex flex-col">
-        <Tabs 
-          defaultValue="upper" 
-          value={activeTab} 
-          onValueChange={setActiveTab}
-          className="w-full flex-1 flex flex-col"
-        >
-          <TabsList className="grid grid-cols-3 mb-4">
-            <TabsTrigger value="upper">Upper Body</TabsTrigger>
-            <TabsTrigger value="lower">Lower Body</TabsTrigger>
-            <TabsTrigger value="general">General</TabsTrigger>
-          </TabsList>
-          
-          <div className="flex-1 overflow-y-auto">
-            <TabsContent value="upper" className="mt-0 space-y-4">
-              {Object.entries(measurements)
-                .filter(([_, m]) => m.category === "upper")
-                .map(([key, measurement]) => (
-                  <SliderControl
-                    key={key}
-                    measurementKey={key as MeasurementKey}
-                    measurement={measurement}
-                    onChange={handleSliderChange}
-                    onFocus={() => setHighlightedPart(key as MeasurementKey)}
-                    onBlur={() => setHighlightedPart(null)}
-                  />
-                ))}
-            </TabsContent>
+        {viewMode === "measurements" ? (
+          <Tabs 
+            defaultValue="upper" 
+            value={activeTab} 
+            onValueChange={setActiveTab}
+            className="w-full flex-1 flex flex-col"
+          >
+            <TabsList className="grid grid-cols-3 mb-4">
+              <TabsTrigger value="upper">Upper Body</TabsTrigger>
+              <TabsTrigger value="lower">Lower Body</TabsTrigger>
+              <TabsTrigger value="general">General</TabsTrigger>
+            </TabsList>
             
-            <TabsContent value="lower" className="mt-0 space-y-4">
-              {Object.entries(measurements)
-                .filter(([_, m]) => m.category === "lower")
-                .map(([key, measurement]) => (
-                  <SliderControl
-                    key={key}
-                    measurementKey={key as MeasurementKey}
-                    measurement={measurement}
-                    onChange={handleSliderChange}
-                    onFocus={() => setHighlightedPart(key as MeasurementKey)}
-                    onBlur={() => setHighlightedPart(null)}
-                  />
-                ))}
-            </TabsContent>
-            
-            <TabsContent value="general" className="mt-0 space-y-4">
-              {Object.entries(measurements)
-                .filter(([_, m]) => m.category === "general")
-                .map(([key, measurement]) => (
-                  <SliderControl
-                    key={key}
-                    measurementKey={key as MeasurementKey}
-                    measurement={measurement}
-                    onChange={handleSliderChange}
-                    onFocus={() => setHighlightedPart(key as MeasurementKey)}
-                    onBlur={() => setHighlightedPart(null)}
-                  />
-                ))}
-            </TabsContent>
-          </div>
-        </Tabs>
+            <div className="flex-1 overflow-y-auto">
+              <TabsContent value="upper" className="mt-0 space-y-4">
+                {Object.entries(measurements)
+                  .filter(([_, m]) => m.category === "upper")
+                  .map(([key, measurement]) => (
+                    <SliderControl
+                      key={key}
+                      measurementKey={key as MeasurementKey}
+                      measurement={measurement}
+                      onChange={handleSliderChange}
+                      onFocus={() => setHighlightedPart(key as MeasurementKey)}
+                      onBlur={() => setHighlightedPart(null)}
+                    />
+                  ))}
+              </TabsContent>
+              
+              <TabsContent value="lower" className="mt-0 space-y-4">
+                {Object.entries(measurements)
+                  .filter(([_, m]) => m.category === "lower")
+                  .map(([key, measurement]) => (
+                    <SliderControl
+                      key={key}
+                      measurementKey={key as MeasurementKey}
+                      measurement={measurement}
+                      onChange={handleSliderChange}
+                      onFocus={() => setHighlightedPart(key as MeasurementKey)}
+                      onBlur={() => setHighlightedPart(null)}
+                    />
+                  ))}
+              </TabsContent>
+              
+              <TabsContent value="general" className="mt-0 space-y-4">
+                {Object.entries(measurements)
+                  .filter(([_, m]) => m.category === "general")
+                  .map(([key, measurement]) => (
+                    <SliderControl
+                      key={key}
+                      measurementKey={key as MeasurementKey}
+                      measurement={measurement}
+                      onChange={handleSliderChange}
+                      onFocus={() => setHighlightedPart(key as MeasurementKey)}
+                      onBlur={() => setHighlightedPart(null)}
+                    />
+                  ))}
+              </TabsContent>
+            </div>
+          </Tabs>
+        ) : (
+          <ClothingSelector
+            availableClothing={clothingItems}
+            selectedItems={selectedClothing}
+            onSelectItem={handleSelectClothing}
+            onRemoveItem={handleRemoveClothing}
+          />
+        )}
       </div>
 
       {/* Bottom Buttons */}
@@ -215,19 +313,10 @@ const VirtualTryOn = () => {
             <Undo2 className="mr-2 h-4 w-4" /> Reset
           </Button>
           <Button 
-            onClick={() => {
-              console.log("Measurements applied:", 
-                Object.entries(measurements).reduce((acc, [key, m]) => {
-                  acc[key as MeasurementKey] = m.value;
-                  return acc;
-                }, {} as Record<MeasurementKey, number>)
-              );
-              // Navigate back to closet
-              navigate('/closet');
-            }}
+            onClick={saveOutfit}
             className="flex-1"
           >
-            Apply Fit
+            <Save className="mr-2 h-4 w-4" /> Save Outfit
           </Button>
         </div>
       </div>

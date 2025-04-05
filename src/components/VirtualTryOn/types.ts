@@ -28,3 +28,19 @@ export interface AvatarProps {
   highlightedPart: MeasurementKey | null;
   rotation: number;
 }
+
+export interface ClothingItem {
+  id: string;
+  name: string;
+  type: string;
+  category: string;
+  color: string;
+  pattern: string;
+  size: string;
+  images: {
+    front: string;
+    back: string;
+    side: string;
+  };
+  modelUrl?: string; // 3D model URL if available
+}

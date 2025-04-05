@@ -3,16 +3,18 @@ import React, { useRef, useEffect } from 'react';
 import * as THREE from 'three';
 import { useThree, useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
-import { Measurements } from './types';
+import { Measurements, ClothingItem } from './types';
 
 interface RealisticAvatarModelProps {
   measurements: Measurements;
   rotation: number;
+  selectedClothing?: ClothingItem[];
 }
 
 export const RealisticAvatarModel: React.FC<RealisticAvatarModelProps> = ({ 
   measurements, 
-  rotation 
+  rotation,
+  selectedClothing = []
 }) => {
   const group = useRef<THREE.Group>(null);
   const { camera } = useThree();
@@ -37,8 +39,13 @@ export const RealisticAvatarModel: React.FC<RealisticAvatarModelProps> = ({
       const heightFactor = measurements.height / 175; // Base height is 175cm
       model.scale.set(heightFactor, heightFactor, heightFactor);
       
-      // Potentially apply other scaling based on measurements
-      // This would depend on the specific model's structure and bone names
+      // TODO: Apply clothing to realistic model
+      // This would require matching the avatar's skeleton or mesh structure
+      // For now, we just log that clothing was selected
+      if (selectedClothing && selectedClothing.length > 0) {
+        console.log(`Applied ${selectedClothing.length} clothing items to realistic avatar`);
+        // In the future, this would load and apply the clothing models to the avatar
+      }
       
       // Position the model - may need adjustment depending on the model
       model.position.y = -0.9;
@@ -51,7 +58,7 @@ export const RealisticAvatarModel: React.FC<RealisticAvatarModelProps> = ({
       const center = box.getCenter(new THREE.Vector3());
       camera.lookAt(center);
     }
-  }, [measurements, rotation, camera, model]);
+  }, [measurements, rotation, camera, model, selectedClothing]);
 
   // Add subtle animation
   useFrame((state) => {

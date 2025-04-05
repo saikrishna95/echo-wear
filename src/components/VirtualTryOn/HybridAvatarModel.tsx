@@ -3,21 +3,31 @@ import React, { useState, useEffect } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import AvatarModel from './AvatarModel';
 import { RealisticAvatarModel } from './RealisticAvatarModel';
-import { Measurements } from './types';
+import { Measurements, ClothingItem } from './types';
 
 interface HybridAvatarModelProps {
   measurements: Measurements;
   rotation: number;
+  selectedClothing?: ClothingItem[];
 }
 
 // Fallback component that uses the original primitive-based avatar
-const FallbackAvatar: React.FC<HybridAvatarModelProps> = ({ measurements, rotation }) => {
-  return <AvatarModel measurements={measurements} rotation={rotation} />;
+const FallbackAvatar: React.FC<HybridAvatarModelProps> = ({ 
+  measurements, 
+  rotation,
+  selectedClothing 
+}) => {
+  return <AvatarModel 
+    measurements={measurements} 
+    rotation={rotation}
+    selectedClothing={selectedClothing} 
+  />;
 };
 
 export const HybridAvatarModel: React.FC<HybridAvatarModelProps> = ({ 
   measurements, 
-  rotation 
+  rotation,
+  selectedClothing = []
 }) => {
   const [useRealistic, setUseRealistic] = useState(true);
 
@@ -53,11 +63,25 @@ export const HybridAvatarModel: React.FC<HybridAvatarModelProps> = ({
 
   // ErrorBoundary to catch errors in RealisticAvatarModel
   return (
-    <ErrorBoundary FallbackComponent={() => <FallbackAvatar measurements={measurements} rotation={rotation} />}>
+    <ErrorBoundary FallbackComponent={() => (
+      <FallbackAvatar 
+        measurements={measurements} 
+        rotation={rotation}
+        selectedClothing={selectedClothing} 
+      />
+    )}>
       {useRealistic ? (
-        <RealisticAvatarModel measurements={measurements} rotation={rotation} />
+        <RealisticAvatarModel 
+          measurements={measurements} 
+          rotation={rotation}
+          selectedClothing={selectedClothing}
+        />
       ) : (
-        <FallbackAvatar measurements={measurements} rotation={rotation} />
+        <FallbackAvatar 
+          measurements={measurements} 
+          rotation={rotation}
+          selectedClothing={selectedClothing}
+        />
       )}
     </ErrorBoundary>
   );

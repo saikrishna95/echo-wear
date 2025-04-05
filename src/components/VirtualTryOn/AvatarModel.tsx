@@ -8,13 +8,20 @@ import { createAvatarTorso } from './AvatarTorso';
 import { createAvatarLowerBody } from './AvatarLowerBody';
 import { createAvatarArms } from './AvatarArms';
 import { createAvatarLegs } from './AvatarLegs';
+import { createAvatarClothingLayer } from './AvatarClothingLayer';
+import { ClothingItem } from './types';
 
 interface AvatarModelProps {
   measurements: Measurements;
   rotation: number;
+  selectedClothing?: ClothingItem[];
 }
 
-export const AvatarModel: React.FC<AvatarModelProps> = ({ measurements, rotation }) => {
+export const AvatarModel: React.FC<AvatarModelProps> = ({ 
+  measurements, 
+  rotation,
+  selectedClothing = [] 
+}) => {
   const group = useRef<THREE.Group>(null);
   const { camera } = useThree();
   
@@ -33,10 +40,28 @@ export const AvatarModel: React.FC<AvatarModelProps> = ({ measurements, rotation
       const waistFactor = measurements.waist / 85; // Base waist is 85cm
       const hipsFactor = measurements.hips / 95; // Base hips is 95cm
       
-      // Create body parts
+      // Create body parts - hide parts that will be covered by clothing
+      const hasUpperClothing = selectedClothing.some(item => 
+        ['shirt', 'blouse', 'sweater', 'jacket', 't-shirt'].includes(item.type.toLowerCase())
+      );
+      
+      const hasLowerClothing = selectedClothing.some(item => 
+        ['pants', 'jeans', 'skirt', 'shorts'].includes(item.type.toLowerCase())
+      );
+      
+      // Always create the head
       createAvatarHead(heightFactor, group.current);
-      createAvatarTorso(heightFactor, shoulderFactor, waistFactor, chestFactor, group.current);
-      createAvatarLowerBody(heightFactor, waistFactor, hipsFactor, group.current);
+      
+      // Create body parts that aren't covered by clothing
+      if (!hasUpperClothing) {
+        createAvatarTorso(heightFactor, shoulderFactor, waistFactor, chestFactor, group.current);
+      }
+      
+      if (!hasLowerClothing) {
+        createAvatarLowerBody(heightFactor, waistFactor, hipsFactor, group.current);
+      }
+      
+      // Always create arms and legs
       createAvatarArms(heightFactor, shoulderFactor, weightFactor, group.current);
       createAvatarLegs(
         heightFactor, 
@@ -45,6 +70,20 @@ export const AvatarModel: React.FC<AvatarModelProps> = ({ measurements, rotation
         measurements.inseam, 
         group.current
       );
+      
+      // Add clothing layers
+      if (selectedClothing && selectedClothing.length > 0) {
+        selectedClothing.forEach(item => {
+          createAvatarClothingLayer(
+            item,
+            heightFactor,
+            chestFactor,
+            waistFactor,
+            hipsFactor,
+            group.current
+          );
+        });
+      }
       
       // Position the whole model
       group.current.position.y = -0.1;
@@ -57,7 +96,7 @@ export const AvatarModel: React.FC<AvatarModelProps> = ({ measurements, rotation
       const center = box.getCenter(new THREE.Vector3());
       camera.lookAt(center);
     }
-  }, [measurements, rotation, camera]);
+  }, [measurements, rotation, camera, selectedClothing]);
 
   return (
     <group ref={group} />

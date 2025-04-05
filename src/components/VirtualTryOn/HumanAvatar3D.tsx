@@ -3,7 +3,7 @@ import React from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment, ContactShadows } from '@react-three/drei';
 import HybridAvatarModel from './HybridAvatarModel';
-import { MeasurementKey, Measurements } from './types';
+import { MeasurementKey, Measurements, ClothingItem } from './types';
 
 interface HumanAvatar3DProps {
   measurements: {
@@ -18,12 +18,14 @@ interface HumanAvatar3DProps {
   };
   highlightedPart: MeasurementKey | null;
   rotation: number;
+  selectedClothing?: ClothingItem[];
 }
 
 const HumanAvatar3D: React.FC<HumanAvatar3DProps> = ({ 
   measurements, 
   highlightedPart,
-  rotation 
+  rotation,
+  selectedClothing = []
 }) => {
   // Convert measurements format to simplified record
   const simpleMeasurements: Measurements = Object.entries(measurements).reduce(
@@ -60,7 +62,8 @@ const HumanAvatar3D: React.FC<HumanAvatar3DProps> = ({
         {/* Hybrid Avatar model - uses realistic GLB if available, falls back to primitive */}
         <HybridAvatarModel 
           measurements={simpleMeasurements} 
-          rotation={rotation} 
+          rotation={rotation}
+          selectedClothing={selectedClothing}
         />
         
         {/* Environment lighting for better material rendering */}
