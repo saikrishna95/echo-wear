@@ -7,10 +7,12 @@ export function useCloset() {
     tops: ClothingItem[];
     bottoms: ClothingItem[];
     shoes: ClothingItem[];
+    accessories: ClothingItem[];
   }>({
     tops: [],
     bottoms: [],
-    shoes: []
+    shoes: [],
+    accessories: []
   });
 
   // Load clothes from localStorage on initial render
@@ -31,14 +33,14 @@ export function useCloset() {
   }, [clothes]);
 
   const addClothingItem = (item: ClothingItem) => {
-    const category = item.category.toLowerCase() as 'tops' | 'bottoms' | 'shoes';
+    const category = item.category.toLowerCase() as 'tops' | 'bottoms' | 'shoes' | 'accessories';
     setClothes(prev => ({
       ...prev,
       [category]: [...prev[category], item]
     }));
   };
 
-  const removeClothingItem = (itemId: string, category: 'tops' | 'bottoms' | 'shoes') => {
+  const removeClothingItem = (itemId: string, category: 'tops' | 'bottoms' | 'shoes' | 'accessories') => {
     setClothes(prev => ({
       ...prev,
       [category]: prev[category].filter(item => item.id !== itemId)

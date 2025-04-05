@@ -1,5 +1,6 @@
+
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { 
   ShoppingBag, 
   Shirt, 
@@ -15,7 +16,10 @@ import {
   Plus,
   Users,
   Scissors,
-  Ruler
+  Ruler,
+  ChevronRight,
+  PanelsTopLeft,
+  Briefcase
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -27,7 +31,9 @@ import AddClothesModal from "@/components/closet/AddClothesModal";
 import ClothingItemDetail from "@/components/closet/ClothingItemDetail";
 import { useCloset } from "@/hooks/useCloset";
 import { ClothingItem } from "@/components/closet/AddClothesModal";
+import { Badge } from "@/components/ui/badge";
 
+// Mock outfits for the Outfits tab
 const mockOutfits = [
   {
     id: 1,
@@ -89,15 +95,27 @@ const mockOutfits = [
   },
 ];
 
+// Category definitions for the closet view
+const clothingCategories = [
+  { id: 'tops', name: 'Tops', icon: <Shirt className="h-12 w-12" /> },
+  { id: 'bottoms', name: 'Bottoms', icon: <Scissors className="h-12 w-12" /> },
+  { id: 'shoes', name: 'Shoes', icon: <Footprints className="h-12 w-12" /> },
+  { id: 'accessories', name: 'Accessories', icon: <Briefcase className="h-12 w-12" /> },
+];
+
 const Closet = () => {
-  const [selectedTab, setSelectedTab] = useState("closet");
-  const [clothingCategory, setClothingCategory] = useState("tops");
+  const [mainTab, setMainTab] = useState("closet");
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<ClothingItem | null>(null);
   const { toast } = useToast();
   const { clothes, addClothingItem } = useCloset();
+  const navigate = useNavigate();
 
-  const handleAddClothes = () => {
+  const handleAddClothes = (category?: string) => {
+    if (category) {
+      setSelectedCategory(category);
+    }
     setIsAddModalOpen(true);
   };
 
@@ -120,16 +138,38 @@ const Closet = () => {
     setSelectedItem(item);
   };
 
+  const handleSelectCategory = (categoryId: string) => {
+    setSelectedCategory(categoryId);
+  };
+
+  const handleBackToCategories = () => {
+    setSelectedCategory(null);
+  };
+
+  // Determine which items to show based on selected category
+  const getCategoryItems = () => {
+    if (!selectedCategory) return [];
+    return clothes[selectedCategory as keyof typeof clothes] || [];
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-fashion-light">
       <header className="w-full py-4 px-6 bg-white shadow-sm z-10 border-b border-fashion-amber/20">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-4">
-            <Link to="/" className="text-fashion-navy">
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
+            {selectedCategory ? (
+              <button onClick={handleBackToCategories} className="text-fashion-navy">
+                <ArrowLeft className="h-5 w-5" />
+              </button>
+            ) : (
+              <Link to="/" className="text-fashion-navy">
+                <ArrowLeft className="h-5 w-5" />
+              </Link>
+            )}
             <h1 className="text-xl font-bold text-fashion-navy">
-              Your Virtual Closet
+              {selectedCategory 
+                ? `${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}` 
+                : "Your Virtual Closet"}
             </h1>
           </div>
           <div className="flex items-center gap-3">
@@ -150,7 +190,7 @@ const Closet = () => {
         <Tabs 
           defaultValue="closet" 
           className="w-full"
-          onValueChange={setSelectedTab}
+          onValueChange={setMainTab}
         >
           <TabsList className="grid w-full grid-cols-3 mb-6 rounded-xl p-1 bg-white shadow-sm">
             <TabsTrigger value="closet" className="rounded-lg data-[state=active]:bg-fashion-amber/20 data-[state=active]:text-fashion-navy">
@@ -171,141 +211,91 @@ const Closet = () => {
             <Card className="bg-white shadow-sm border-0 rounded-xl overflow-hidden">
               <CardContent className="p-6">
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-semibold">My Clothes</h2>
-                  <Button 
-                    onClick={handleAddClothes}
-                    className="bg-fashion-amber hover:bg-fashion-amber/90 text-white"
-                  >
-                    <Camera className="mr-2 h-4 w-4" />
-                    Add Clothes
-                  </Button>
+                  <div className="flex items-center">
+                    <ShoppingBag className="h-5 w-5 mr-2 text-fashion-amber" />
+                    <h2 className="text-2xl font-semibold">My Clothes</h2>
+                  </div>
+                  {!selectedCategory && (
+                    <Button 
+                      onClick={() => handleAddClothes()}
+                      className="bg-fashion-amber hover:bg-fashion-amber/90 text-white"
+                    >
+                      <Camera className="mr-2 h-4 w-4" />
+                      Add Clothes
+                    </Button>
+                  )}
+                  {selectedCategory && (
+                    <Button 
+                      onClick={() => handleAddClothes(selectedCategory)}
+                      className="bg-fashion-amber hover:bg-fashion-amber/90 text-white"
+                    >
+                      <Camera className="mr-2 h-4 w-4" />
+                      Add {selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1, -1)}
+                    </Button>
+                  )}
                 </div>
                 
-                <Tabs 
-                  defaultValue="tops" 
-                  className="w-full"
-                  onValueChange={setClothingCategory}
-                >
-                  <TabsList className="mb-6 inline-flex bg-fashion-light rounded-lg p-1">
-                    <TabsTrigger value="tops" className="flex gap-2 items-center rounded-md data-[state=active]:bg-white">
-                      <Shirt className="h-4 w-4" />
-                      Tops
-                    </TabsTrigger>
-                    <TabsTrigger value="bottoms" className="flex gap-2 items-center rounded-md data-[state=active]:bg-white">
-                      <Scissors className="h-4 w-4" />
-                      Bottoms
-                    </TabsTrigger>
-                    <TabsTrigger value="shoes" className="flex gap-2 items-center rounded-md data-[state=active]:bg-white">
-                      <Footprints className="h-4 w-4" />
-                      Shoes
-                    </TabsTrigger>
-                  </TabsList>
-                  
-                  <TabsContent value="tops">
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                      {clothes.tops.map((item) => (
-                        <div 
-                          key={item.id} 
-                          className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-fashion-amber/10 cursor-pointer"
-                          onClick={() => handleItemClick(item)}
-                        >
-                          <AspectRatio ratio={1/1} className="bg-fashion-light/50">
-                            <img 
-                              src={item.images.front} 
-                              alt={item.name} 
-                              className="w-full h-full object-cover" 
-                            />
-                          </AspectRatio>
-                          <div className="p-3">
-                            <h3 className="font-medium">{item.name}</h3>
-                            <p className="text-sm text-gray-500">{item.color} • {item.type}</p>
-                          </div>
-                        </div>
-                      ))}
-                      <div 
-                        className="border-2 border-dashed border-fashion-amber/30 rounded-xl flex items-center justify-center h-full min-h-[200px] cursor-pointer hover:border-fashion-amber transition-colors bg-fashion-light/20"
-                        onClick={handleAddClothes}
+                {/* Category Selection View */}
+                {!selectedCategory && (
+                  <div className="grid grid-cols-2 gap-4">
+                    {clothingCategories.map(category => (
+                      <Card 
+                        key={category.id} 
+                        className="border border-fashion-amber/20 hover:border-fashion-amber/50 hover:shadow-md transition-all cursor-pointer bg-white"
+                        onClick={() => handleSelectCategory(category.id)}
                       >
-                        <div className="text-center p-4">
-                          <div className="w-12 h-12 rounded-full bg-fashion-amber/20 flex items-center justify-center mx-auto mb-2">
-                            <Plus className="h-6 w-6 text-fashion-amber" />
+                        <CardContent className="flex items-center justify-between p-6">
+                          <div className="flex flex-col items-center justify-center w-full">
+                            <div className="mb-3 text-fashion-amber">
+                              {category.icon}
+                            </div>
+                            <h3 className="text-lg font-medium">{category.name}</h3>
+                            <Badge variant="outline" className="mt-2 bg-fashion-amber/10 text-fashion-navy border-fashion-amber/30">
+                              {clothes[category.id as keyof typeof clothes]?.length || 0} items
+                            </Badge>
                           </div>
-                          <p className="text-fashion-navy mt-2">Add New</p>
+                          <ChevronRight className="h-5 w-5 text-fashion-amber/70" />
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+                
+                {/* Items View when category is selected */}
+                {selectedCategory && (
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    {getCategoryItems().map((item) => (
+                      <div 
+                        key={item.id} 
+                        className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-fashion-amber/10 cursor-pointer"
+                        onClick={() => handleItemClick(item)}
+                      >
+                        <AspectRatio ratio={1/1} className="bg-fashion-light/50">
+                          <img 
+                            src={item.images.front} 
+                            alt={item.name} 
+                            className="w-full h-full object-cover" 
+                          />
+                        </AspectRatio>
+                        <div className="p-3">
+                          <h3 className="font-medium">{item.name}</h3>
+                          <p className="text-sm text-gray-500">{item.color} • {item.type}</p>
                         </div>
                       </div>
-                    </div>
-                  </TabsContent>
-                  
-                  <TabsContent value="bottoms">
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                      {clothes.bottoms.map((item) => (
-                        <div 
-                          key={item.id} 
-                          className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-fashion-amber/10 cursor-pointer"
-                          onClick={() => handleItemClick(item)}
-                        >
-                          <AspectRatio ratio={1/1} className="bg-fashion-light/50">
-                            <img 
-                              src={item.images.front} 
-                              alt={item.name} 
-                              className="w-full h-full object-cover" 
-                            />
-                          </AspectRatio>
-                          <div className="p-3">
-                            <h3 className="font-medium">{item.name}</h3>
-                            <p className="text-sm text-gray-500">{item.color} • {item.type}</p>
-                          </div>
+                    ))}
+                    <div 
+                      className="border-2 border-dashed border-fashion-amber/30 rounded-xl flex items-center justify-center h-full min-h-[200px] cursor-pointer hover:border-fashion-amber transition-colors bg-fashion-light/20"
+                      onClick={() => handleAddClothes(selectedCategory)}
+                    >
+                      <div className="text-center p-4">
+                        <div className="w-12 h-12 rounded-full bg-fashion-amber/20 flex items-center justify-center mx-auto mb-2">
+                          <Plus className="h-6 w-6 text-fashion-amber" />
                         </div>
-                      ))}
-                      <div 
-                        className="border-2 border-dashed border-fashion-amber/30 rounded-xl flex items-center justify-center h-full min-h-[200px] cursor-pointer hover:border-fashion-amber transition-colors bg-fashion-light/20"
-                        onClick={handleAddClothes}
-                      >
-                        <div className="text-center p-4">
-                          <div className="w-12 h-12 rounded-full bg-fashion-amber/20 flex items-center justify-center mx-auto mb-2">
-                            <Plus className="h-6 w-6 text-fashion-amber" />
-                          </div>
-                          <p className="text-fashion-navy mt-2">Add New</p>
-                        </div>
+                        <p className="text-fashion-navy mt-2">Add {selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1, -1)}</p>
                       </div>
                     </div>
-                  </TabsContent>
-                  
-                  <TabsContent value="shoes">
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                      {clothes.shoes.map((item) => (
-                        <div 
-                          key={item.id} 
-                          className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-fashion-amber/10 cursor-pointer"
-                          onClick={() => handleItemClick(item)}
-                        >
-                          <AspectRatio ratio={1/1} className="bg-fashion-light/50">
-                            <img 
-                              src={item.images.front} 
-                              alt={item.name} 
-                              className="w-full h-full object-cover" 
-                            />
-                          </AspectRatio>
-                          <div className="p-3">
-                            <h3 className="font-medium">{item.name}</h3>
-                            <p className="text-sm text-gray-500">{item.color} • {item.type}</p>
-                          </div>
-                        </div>
-                      ))}
-                      <div 
-                        className="border-2 border-dashed border-fashion-amber/30 rounded-xl flex items-center justify-center h-full min-h-[200px] cursor-pointer hover:border-fashion-amber transition-colors bg-fashion-light/20"
-                        onClick={handleAddClothes}
-                      >
-                        <div className="text-center p-4">
-                          <div className="w-12 h-12 rounded-full bg-fashion-amber/20 flex items-center justify-center mx-auto mb-2">
-                            <Plus className="h-6 w-6 text-fashion-amber" />
-                          </div>
-                          <p className="text-fashion-navy mt-2">Add New</p>
-                        </div>
-                      </div>
-                    </div>
-                  </TabsContent>
-                </Tabs>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -457,7 +447,7 @@ const Closet = () => {
             </Link>
             <Link 
               to="/closet" 
-              className={`flex flex-col items-center py-3 px-4 ${selectedTab === "closet" ? "text-fashion-amber" : "text-fashion-navy"}`}
+              className={`flex flex-col items-center py-3 px-4 ${mainTab === "closet" ? "text-fashion-amber" : "text-fashion-navy"}`}
             >
               <ShoppingBag className="h-5 w-5" />
               <span className="text-xs mt-1">Closet</span>
@@ -493,7 +483,7 @@ const Closet = () => {
         open={isAddModalOpen} 
         onClose={() => setIsAddModalOpen(false)} 
         onSave={handleSaveClothingItem}
-        category={clothingCategory}
+        category={selectedCategory || undefined}
       />
 
       <ClothingItemDetail 
