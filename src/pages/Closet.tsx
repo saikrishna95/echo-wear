@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { 
@@ -24,35 +23,67 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-
-const mockClothes = {
-  tops: [
-    { id: 1, name: "White T-Shirt", image: "https://placehold.co/200x200/ffffff/000000?text=White+Tee", color: "White", type: "Casual" },
-    { id: 2, name: "Blue Dress Shirt", image: "https://placehold.co/200x200/3498db/ffffff?text=Blue+Shirt", color: "Blue", type: "Formal" },
-    { id: 3, name: "Black Sweater", image: "https://placehold.co/200x200/333333/ffffff?text=Black+Sweater", color: "Black", type: "Casual" },
-  ],
-  bottoms: [
-    { id: 1, name: "Blue Jeans", image: "https://placehold.co/200x200/3e5b76/ffffff?text=Blue+Jeans", color: "Blue", type: "Casual" },
-    { id: 2, name: "Black Slacks", image: "https://placehold.co/200x200/222222/ffffff?text=Black+Slacks", color: "Black", type: "Formal" },
-  ],
-  shoes: [
-    { id: 1, name: "White Sneakers", image: "https://placehold.co/200x200/eeeeee/333333?text=Sneakers", color: "White", type: "Casual" },
-    { id: 2, name: "Black Dress Shoes", image: "https://placehold.co/200x200/111111/ffffff?text=Dress+Shoes", color: "Black", type: "Formal" },
-  ],
-};
+import AddClothesModal from "@/components/closet/AddClothesModal";
+import ClothingItemDetail from "@/components/closet/ClothingItemDetail";
+import { useCloset } from "@/hooks/useCloset";
+import { ClothingItem } from "@/components/closet/AddClothesModal";
 
 const mockOutfits = [
   {
     id: 1,
     name: "Casual Day Out",
-    items: [mockClothes.tops[0], mockClothes.bottoms[0], mockClothes.shoes[0]],
+    items: [
+      { 
+        id: "mock1", 
+        name: "White T-Shirt", 
+        image: "https://placehold.co/200x200/ffffff/000000?text=White+Tee",
+        color: "White",
+        type: "Casual"
+      },
+      {
+        id: "mock2",
+        name: "Blue Jeans",
+        image: "https://placehold.co/200x200/3e5b76/ffffff?text=Blue+Jeans",
+        color: "Blue",
+        type: "Casual"
+      },
+      {
+        id: "mock3",
+        name: "White Sneakers",
+        image: "https://placehold.co/200x200/eeeeee/333333?text=Sneakers",
+        color: "White",
+        type: "Casual"
+      }
+    ],
     occasion: "Casual",
     weather: "Sunny",
   },
   {
     id: 2,
     name: "Business Meeting",
-    items: [mockClothes.tops[1], mockClothes.bottoms[1], mockClothes.shoes[1]],
+    items: [
+      {
+        id: "mock4",
+        name: "Blue Dress Shirt",
+        image: "https://placehold.co/200x200/3498db/ffffff?text=Blue+Shirt",
+        color: "Blue",
+        type: "Formal"
+      },
+      {
+        id: "mock5",
+        name: "Black Slacks",
+        image: "https://placehold.co/200x200/222222/ffffff?text=Black+Slacks",
+        color: "Black",
+        type: "Formal"
+      },
+      {
+        id: "mock6",
+        name: "Black Dress Shoes",
+        image: "https://placehold.co/200x200/111111/ffffff?text=Dress+Shoes",
+        color: "Black",
+        type: "Formal"
+      }
+    ],
     occasion: "Formal",
     weather: "Any",
   },
@@ -60,12 +91,21 @@ const mockOutfits = [
 
 const Closet = () => {
   const [selectedTab, setSelectedTab] = useState("closet");
+  const [clothingCategory, setClothingCategory] = useState("tops");
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<ClothingItem | null>(null);
   const { toast } = useToast();
+  const { clothes, addClothingItem } = useCloset();
 
   const handleAddClothes = () => {
+    setIsAddModalOpen(true);
+  };
+
+  const handleSaveClothingItem = (newItem: ClothingItem) => {
+    addClothingItem(newItem);
     toast({
-      title: "Upload Feature Coming Soon",
-      description: "The ability to upload and scan your clothes will be available in future updates!",
+      title: "Item Added",
+      description: `${newItem.name} has been added to your closet`,
     });
   };
 
@@ -74,6 +114,10 @@ const Closet = () => {
       title: "Virtual Try-On",
       description: `Try-on for "${outfit.name}" will be available soon!`,
     });
+  };
+
+  const handleItemClick = (item: ClothingItem) => {
+    setSelectedItem(item);
   };
 
   return (
@@ -137,7 +181,11 @@ const Closet = () => {
                   </Button>
                 </div>
                 
-                <Tabs defaultValue="tops" className="w-full">
+                <Tabs 
+                  defaultValue="tops" 
+                  className="w-full"
+                  onValueChange={setClothingCategory}
+                >
                   <TabsList className="mb-6 inline-flex bg-fashion-light rounded-lg p-1">
                     <TabsTrigger value="tops" className="flex gap-2 items-center rounded-md data-[state=active]:bg-white">
                       <Shirt className="h-4 w-4" />
@@ -155,11 +203,15 @@ const Closet = () => {
                   
                   <TabsContent value="tops">
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                      {mockClothes.tops.map((item) => (
-                        <div key={item.id} className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-fashion-amber/10">
+                      {clothes.tops.map((item) => (
+                        <div 
+                          key={item.id} 
+                          className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-fashion-amber/10 cursor-pointer"
+                          onClick={() => handleItemClick(item)}
+                        >
                           <AspectRatio ratio={1/1} className="bg-fashion-light/50">
                             <img 
-                              src={item.image} 
+                              src={item.images.front} 
                               alt={item.name} 
                               className="w-full h-full object-cover" 
                             />
@@ -186,11 +238,15 @@ const Closet = () => {
                   
                   <TabsContent value="bottoms">
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                      {mockClothes.bottoms.map((item) => (
-                        <div key={item.id} className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-fashion-amber/10">
+                      {clothes.bottoms.map((item) => (
+                        <div 
+                          key={item.id} 
+                          className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-fashion-amber/10 cursor-pointer"
+                          onClick={() => handleItemClick(item)}
+                        >
                           <AspectRatio ratio={1/1} className="bg-fashion-light/50">
                             <img 
-                              src={item.image} 
+                              src={item.images.front} 
                               alt={item.name} 
                               className="w-full h-full object-cover" 
                             />
@@ -217,11 +273,15 @@ const Closet = () => {
                   
                   <TabsContent value="shoes">
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                      {mockClothes.shoes.map((item) => (
-                        <div key={item.id} className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-fashion-amber/10">
+                      {clothes.shoes.map((item) => (
+                        <div 
+                          key={item.id} 
+                          className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-fashion-amber/10 cursor-pointer"
+                          onClick={() => handleItemClick(item)}
+                        >
                           <AspectRatio ratio={1/1} className="bg-fashion-light/50">
                             <img 
-                              src={item.image} 
+                              src={item.images.front} 
                               alt={item.name} 
                               className="w-full h-full object-cover" 
                             />
@@ -335,11 +395,11 @@ const Closet = () => {
                     </p>
                     <ScrollArea className="w-full whitespace-nowrap pb-4">
                       <div className="flex gap-4">
-                        {mockClothes.tops.slice(1, 3).map((item) => (
+                        {clothes.tops.slice(0, 2).map((item) => (
                           <div key={item.id} className="flex-shrink-0 w-32">
                             <AspectRatio ratio={1/1} className="bg-fashion-light/50 rounded-lg overflow-hidden">
                               <img 
-                                src={item.image} 
+                                src={item.images.front} 
                                 alt={item.name} 
                                 className="w-full h-full object-cover border border-fashion-amber/10" 
                               />
@@ -428,6 +488,19 @@ const Closet = () => {
       </nav>
 
       <div className="h-20"></div>
+
+      <AddClothesModal 
+        open={isAddModalOpen} 
+        onClose={() => setIsAddModalOpen(false)} 
+        onSave={handleSaveClothingItem}
+        category={clothingCategory}
+      />
+
+      <ClothingItemDetail 
+        item={selectedItem} 
+        open={!!selectedItem} 
+        onClose={() => setSelectedItem(null)} 
+      />
     </div>
   );
 };
