@@ -37,7 +37,7 @@ const CustomMannequin: React.FC<CustomMannequinProps> = ({
 
     const model = scene.clone();
 
-    // Apply scale from measurement values
+    // Apply scale from measurement values - fixed the syntax error here
     model.scale.set(1, 1, 1); // Reset scale for visibility
     model.position.set(0, -1, 0); // Raise the model up from ground
 
