@@ -31,7 +31,7 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col bg-white">
       {/* Simple Header */}
-      <header className="w-full pt-12 pb-6 px-6">
+      <header className="w-full pt-12 pb-6 px-6 bg-white z-10">
         <div className="max-w-md mx-auto flex justify-center items-center">
           <h1 className="text-2xl font-bold text-fashion-navy text-center">
             Echo<span className="text-fashion-teal">Wear</span>
@@ -39,8 +39,25 @@ const Index = () => {
         </div>
       </header>
 
-      {/* App Tagline */}
-      <div className={`px-6 text-center mb-8 transition-all duration-700 ease-in-out transform ${showAnimation ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+      {/* Hero Image Section */}
+      <div className="relative w-full mb-8">
+        <img 
+          src="/lovable-uploads/6d5869e6-335e-43b2-9095-3cba3298e969.png" 
+          alt="Fashion mirror and clothing rack" 
+          className="w-full h-64 md:h-96 object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6">
+          <h2 className="text-white text-xl md:text-2xl font-light mb-2">
+            Your AI stylist for every occasion
+          </h2>
+          <p className="text-white/90 text-sm md:text-base mb-6">
+            Discover your perfect style with virtual try-on and personalized recommendations
+          </p>
+        </div>
+      </div>
+
+      {/* App Tagline - only show on smaller screens */}
+      <div className={`px-6 text-center mb-8 transition-all duration-700 ease-in-out transform ${showAnimation ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'} md:hidden`}>
         <h2 className="text-xl text-fashion-charcoal font-light tracking-wide">
           Your AI stylist for every occasion
         </h2>
