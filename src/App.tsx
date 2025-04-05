@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import Closet from "./pages/Closet";
 import Social from "./pages/Social";
 import Profile from "./pages/Profile";
+import VirtualTryOn from "./pages/VirtualTryOn";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 
@@ -27,6 +28,7 @@ const App = () => (
             <Route path="/closet" element={<Closet />} />
             <Route path="/social" element={<Social />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/virtual-tryon" element={<VirtualTryOn />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
