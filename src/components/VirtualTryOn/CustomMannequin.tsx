@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
@@ -16,7 +17,7 @@ const CustomMannequin: React.FC<CustomMannequinProps> = ({
   highlightedPart
 }) => {
   const group = useRef<THREE.Group>(null);
-  const { scene } = useGLTF('/models/mannequin.glb', true);
+  const { scene } = useGLTF('/models/male_base (1).glb', true);
 
   // Extract measurement factors
   const heightFactor = measurements.height / 175;
@@ -37,10 +38,8 @@ const CustomMannequin: React.FC<CustomMannequinProps> = ({
     const model = scene.clone();
 
     // Apply scale from measurement values
-    model.scale.set(
-      model.scale.set(1, 1, 1);             // Reset scale for visibility
-      model.position.set(0, -1, 0);         // Raise the model up from ground
-    );
+    model.scale.set(1, 1, 1); // Reset scale for visibility
+    model.position.set(0, -1, 0); // Raise the model up from ground
 
     // Apply rotation
     model.rotation.y = (rotation * Math.PI) / 180;

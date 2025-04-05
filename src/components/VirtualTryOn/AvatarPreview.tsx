@@ -46,7 +46,7 @@ const AvatarPreview: React.FC<AvatarPreviewProps> = ({
             variant="secondary" 
             size="sm" 
             className="rounded-full p-2 h-8 w-8"
-            onClick={() => setRotation((prev) => (prev - 45) % 360)}
+            onClick={() => setRotation((rotation - 45) % 360)}
           >
             <RotateCcw size={16} />
           </Button>
