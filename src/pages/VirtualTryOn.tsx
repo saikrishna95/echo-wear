@@ -1,18 +1,16 @@
-
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
-import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ChevronLeft, Undo2, RotateCcw, Save } from "lucide-react";
+import { ChevronLeft, RotateCcw, Save } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { BodyTypeSelector } from "@/components/VirtualTryOn/BodyTypeSelector";
-import HumanAvatar3D from "@/components/VirtualTryOn/HumanAvatar3D";
+import SimplifiedHumanAvatar3D from "@/components/VirtualTryOn/SimplifiedHumanAvatar3D";
 import ClothingSelector from "@/components/VirtualTryOn/ClothingSelector";
 import { useClothingItems } from "@/hooks/useClothingItems";
 import { useToast } from "@/hooks/use-toast";
-import { ClothingItem } from "@/components/VirtualTryOn/types";
+import { ClothingItem, MeasurementKey } from "@/components/VirtualTryOn/types";
 
 interface Measurement {
   value: number;
@@ -23,7 +21,7 @@ interface Measurement {
   category: "upper" | "lower" | "general";
 }
 
-type MeasurementKey = 
+type MeasurementKeyType = 
   | "neck" 
   | "shoulder"
   | "chest"
@@ -36,7 +34,7 @@ type MeasurementKey =
   | "weight";
 
 type MeasurementsState = {
-  [key in MeasurementKey]: Measurement;
+  [key in MeasurementKeyType]: Measurement;
 };
 
 const initialMeasurements: MeasurementsState = {
@@ -157,31 +155,33 @@ const VirtualTryOn = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-white dark:bg-gray-900 flex flex-col">
       {/* Header */}
       <header className="pt-6 pb-4 px-6">
         <div className="flex items-center justify-between mb-4">
           <button
             onClick={() => navigate(-1)}
-            className="text-fashion-navy p-1 rounded-full hover:bg-gray-100"
+            className="text-fashion-navy dark:text-white p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
           >
             <ChevronLeft size={24} />
           </button>
-          <h1 className="text-xl font-semibold text-fashion-navy">Virtual Try-On</h1>
+          <h1 className="text-xl font-semibold text-fashion-navy dark:text-white">Virtual Try-On</h1>
           <div className="w-8"></div> {/* Spacer for centering */}
         </div>
-        <p className="text-center text-sm text-gray-500">
+        <p className="text-center text-sm text-gray-500 dark:text-gray-400">
           Customize your avatar and try on different clothes
         </p>
       </header>
 
       {/* View Mode Tabs */}
       <div className="px-6 mb-4">
-        <div className="flex border-b border-gray-200">
+        <div className="flex border-b border-gray-200 dark:border-gray-700">
           <button
             onClick={() => setViewMode("measurements")}
             className={`flex-1 py-3 text-center text-sm font-medium border-b-2 ${
-              viewMode === "measurements" ? "border-primary text-primary" : "border-transparent text-gray-500"
+              viewMode === "measurements" 
+                ? "border-primary text-primary dark:border-primary dark:text-primary" 
+                : "border-transparent text-gray-500 dark:text-gray-400"
             }`}
           >
             Measurements
@@ -189,7 +189,9 @@ const VirtualTryOn = () => {
           <button
             onClick={() => setViewMode("clothing")}
             className={`flex-1 py-3 text-center text-sm font-medium border-b-2 ${
-              viewMode === "clothing" ? "border-primary text-primary" : "border-transparent text-gray-500"
+              viewMode === "clothing" 
+                ? "border-primary text-primary dark:border-primary dark:text-primary" 
+                : "border-transparent text-gray-500 dark:text-gray-400"
             }`}
           >
             Clothing
@@ -209,11 +211,10 @@ const VirtualTryOn = () => {
       {/* 3D Avatar Preview */}
       <div className="px-6 mb-2">
         <div className="relative aspect-[3/5] w-full max-w-xs mx-auto perspective-[1200px] preserve-3d">
-          <HumanAvatar3D 
+          <SimplifiedHumanAvatar3D 
             measurements={measurements} 
             highlightedPart={highlightedPart}
             rotation={rotation}
-            selectedClothing={selectedClothing}
           />
           
           {/* Rotation controls */}
@@ -303,14 +304,14 @@ const VirtualTryOn = () => {
       </div>
 
       {/* Bottom Buttons */}
-      <div className="px-6 py-4 border-t border-gray-200">
+      <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-800">
         <div className="flex justify-between items-center gap-4">
           <Button
             variant="outline"
             onClick={resetMeasurements}
             className="flex-1"
           >
-            <Undo2 className="mr-2 h-4 w-4" /> Reset
+            <RotateCcw className="mr-2 h-4 w-4" /> Reset
           </Button>
           <Button 
             onClick={saveOutfit}
