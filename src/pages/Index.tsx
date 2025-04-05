@@ -29,15 +29,15 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen w-full flex flex-col bg-black relative">
-      {/* Full screen background image */}
+    <div className="min-h-screen w-full flex flex-col bg-fashion-light relative">
+      {/* Full screen background image with warm overlay */}
       <div className="fixed inset-0 w-full h-full z-0">
         <img 
           src="/lovable-uploads/5e62aadd-496b-44e3-84c8-e8f40d379fd5.png" 
           alt="Fashion background" 
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/30"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-fashion-amber/80 via-fashion-peach/40 to-fashion-sand/30"></div>
       </div>
 
       {/* Content container with z-index to appear above background */}
@@ -46,7 +46,7 @@ const Index = () => {
         <header className="w-full pt-20 pb-4 px-6">
           <div className="max-w-md mx-auto flex justify-center items-center">
             <h1 className="text-2xl font-bold text-white text-center">
-              Echo<span className="text-fashion-teal">Wear</span>
+              Echo<span className="text-fashion-amber">Wear</span>
             </h1>
           </div>
         </header>
@@ -80,10 +80,10 @@ const Index = () => {
                   </span>
                 </div>
                 
-                {/* 3D effect overlay */}
-                <div className="absolute inset-0 bg-white opacity-5 rounded-2xl" 
+                {/* 3D effect overlay with warm glow */}
+                <div className="absolute inset-0 bg-fashion-amber/5 rounded-2xl" 
                      style={{ 
-                       boxShadow: "inset 0 2px 15px rgba(255,255,255,0.2), inset 0 -2px 15px rgba(0,0,0,0.2)"
+                       boxShadow: "inset 0 2px 15px rgba(255,228,196,0.2), inset 0 -2px 15px rgba(0,0,0,0.2)"
                      }}>
                 </div>
               </div>
@@ -101,10 +101,10 @@ const Index = () => {
                   </span>
                 </div>
                 
-                {/* 3D effect overlay */}
-                <div className="absolute inset-0 bg-white opacity-5 rounded-2xl" 
+                {/* 3D effect overlay with warm glow */}
+                <div className="absolute inset-0 bg-fashion-amber/5 rounded-2xl" 
                      style={{ 
-                       boxShadow: "inset 0 2px 15px rgba(255,255,255,0.2), inset 0 -2px 15px rgba(0,0,0,0.2)"
+                       boxShadow: "inset 0 2px 15px rgba(255,228,196,0.2), inset 0 -2px 15px rgba(0,0,0,0.2)"
                      }}>
                 </div>
               </div>

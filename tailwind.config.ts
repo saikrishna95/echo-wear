@@ -63,14 +63,17 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        // EchoWear custom fashion colors
+        // EchoWear custom fashion colors - updated with warm tones
         fashion: {
           navy: "#1A1F2C",
-          teal: "#33C3F0",
-          pink: "#FFDEE2",
-          gray: "#F6F6F7",
+          teal: "#FF9D76", // Changed from teal to warm orange
+          pink: "#FFDEC3", // Warmer pink tone
+          gray: "#FFF9F0", // Warmer gray tone
           charcoal: "#403E43",
-          light: "#FFFFFF",
+          light: "#FFFAF2", // Slightly warmer white
+          amber: "#FFC4A3", // Added warm amber
+          peach: "#FFD7B5", // Added peach
+          sand: "#F2E2C6", // Added sand color
         },
       },
       borderRadius: {
