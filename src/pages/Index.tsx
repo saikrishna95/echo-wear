@@ -42,8 +42,8 @@ const Index = () => {
 
       {/* Content container with z-index to appear above background */}
       <div className="relative z-10 flex flex-col min-h-screen w-full">
-        {/* App header with logo */}
-        <header className="w-full pt-8 pb-4 px-6">
+        {/* App header with logo - moved down by increasing padding */}
+        <header className="w-full pt-12 pb-4 px-6">
           <div className="max-w-md mx-auto flex justify-center items-center">
             <h1 className="text-2xl font-bold text-white text-center">
               Echo<span className="text-fashion-teal">Wear</span>
@@ -52,7 +52,7 @@ const Index = () => {
         </header>
 
         {/* App Tagline */}
-        <div className={`px-6 text-center mt-8 mb-8 transition-all duration-700 ease-in-out transform ${showAnimation ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <div className={`px-6 text-center mt-4 mb-4 transition-all duration-700 ease-in-out transform ${showAnimation ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           <h2 className="text-2xl text-white font-light tracking-wide">
             Your AI stylist for every occasion
           </h2>
@@ -61,8 +61,8 @@ const Index = () => {
           </p>
         </div>
 
-        {/* Main Interactive Area */}
-        <div className="flex-1 flex flex-col items-center justify-end px-6 pb-16 mt-auto">
+        {/* Main Interactive Area - moved up by changing from pb-16 to pb-8 and reducing mt-auto */}
+        <div className="flex-1 flex flex-col items-center justify-center px-6 pb-8">
           <div className={`w-full max-w-sm mx-auto transition-all duration-700 ease-in-out transform ${showAnimation ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             
             {/* Navigation buttons */}
