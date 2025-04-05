@@ -5,6 +5,8 @@ import { OrbitControls, Environment, ContactShadows } from '@react-three/drei';
 import CustomMannequin from './CustomMannequin';
 import { MeasurementKey } from './types';
 import { ErrorBoundary } from 'react-error-boundary';
+import * as THREE from 'three';
+
 
 interface SimplifiedHumanAvatar3DProps {
   measurements: {
@@ -53,7 +55,7 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
     <div className="w-full h-full rounded-xl shadow-sm overflow-hidden bg-gray-50 dark:bg-gray-900">
       <ErrorBoundary FallbackComponent={FallbackAvatar}>
         <Canvas
-          camera={{ position: [0, 0.9, 2], fov: 45 }}
+          camera={{ position: [0, 1.5, 3], fov: 45 }}
           style={{ background: 'transparent' }}
         >
           <Suspense fallback={null}>
@@ -61,6 +63,9 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
             <ambientLight intensity={0.8} />
             <pointLight position={[10, 10, 10]} intensity={0.5} />
             <pointLight position={[-10, -10, -10]} intensity={0.2} />
+
+            {/* Add the grid here */}
+            <primitive object={new THREE.GridHelper(10, 10)} position={[0, -1, 0]} />
             
             {/* Add subtle shadows */}
             <ContactShadows 
