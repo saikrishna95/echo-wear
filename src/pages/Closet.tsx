@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { 
@@ -33,7 +32,6 @@ import { useCloset } from "@/hooks/useCloset";
 import { ClothingItem } from "@/components/closet/AddClothesModal";
 import { Badge } from "@/components/ui/badge";
 
-// Mock outfits for the Outfits tab
 const mockOutfits = [
   {
     id: 1,
@@ -95,7 +93,6 @@ const mockOutfits = [
   },
 ];
 
-// Category definitions for the closet view
 const clothingCategories = [
   { id: 'tops', name: 'Tops', icon: <Shirt className="h-12 w-12" /> },
   { id: 'bottoms', name: 'Bottoms', icon: <Scissors className="h-12 w-12" /> },
@@ -146,10 +143,13 @@ const Closet = () => {
     setSelectedCategory(null);
   };
 
-  // Determine which items to show based on selected category
   const getCategoryItems = () => {
     if (!selectedCategory) return [];
     return clothes[selectedCategory as keyof typeof clothes] || [];
+  };
+
+  const getCategorySingularName = (categoryId: string) => {
+    return categoryId.charAt(0).toUpperCase() + categoryId.slice(1, -1);
   };
 
   return (
@@ -168,7 +168,7 @@ const Closet = () => {
             )}
             <h1 className="text-xl font-bold text-fashion-navy">
               {selectedCategory 
-                ? `${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}` 
+                ? `My ${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}` 
                 : "Your Virtual Closet"}
             </h1>
           </div>
@@ -211,10 +211,11 @@ const Closet = () => {
             <Card className="bg-white shadow-sm border-0 rounded-xl overflow-hidden">
               <CardContent className="p-6">
                 <div className="flex justify-between items-center mb-6">
-                  <div className="flex items-center">
-                    <ShoppingBag className="h-5 w-5 mr-2 text-fashion-amber" />
-                    <h2 className="text-2xl font-semibold">My Clothes</h2>
-                  </div>
+                  <h2 className="text-2xl font-semibold">
+                    {selectedCategory 
+                      ? `My ${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}` 
+                      : "My Clothes"}
+                  </h2>
                   {!selectedCategory && (
                     <Button 
                       onClick={() => handleAddClothes()}
@@ -230,7 +231,7 @@ const Closet = () => {
                       className="bg-fashion-amber hover:bg-fashion-amber/90 text-white"
                     >
                       <Camera className="mr-2 h-4 w-4" />
-                      Add {selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1, -1)}
+                      Add {getCategorySingularName(selectedCategory)}
                     </Button>
                   )}
                 </div>
@@ -284,14 +285,15 @@ const Closet = () => {
                       </div>
                     ))}
                     <div 
-                      className="border-2 border-dashed border-fashion-amber/30 rounded-xl flex items-center justify-center h-full min-h-[200px] cursor-pointer hover:border-fashion-amber transition-colors bg-fashion-light/20"
+                      className="border-2 border-dashed border-fashion-amber/30 rounded-xl flex items-center justify-center cursor-pointer hover:border-fashion-amber transition-colors bg-fashion-light/20"
                       onClick={() => handleAddClothes(selectedCategory)}
+                      style={{ aspectRatio: "1/1" }}
                     >
                       <div className="text-center p-4">
                         <div className="w-12 h-12 rounded-full bg-fashion-amber/20 flex items-center justify-center mx-auto mb-2">
                           <Plus className="h-6 w-6 text-fashion-amber" />
                         </div>
-                        <p className="text-fashion-navy mt-2">Add {selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1, -1)}</p>
+                        <p className="text-fashion-navy mt-2">Add {getCategorySingularName(selectedCategory)}</p>
                       </div>
                     </div>
                   </div>
@@ -340,7 +342,7 @@ const Closet = () => {
                                   <img 
                                     src={item.image} 
                                     alt={item.name} 
-                                    className="w-full h-full object-cover" 
+                                    className="w-full h-full object-cover border border-fashion-amber/10" 
                                   />
                                 </AspectRatio>
                                 <p className="text-xs mt-2 text-center truncate">{item.name}</p>

@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -172,11 +171,16 @@ const AddClothesModal: React.FC<AddClothesModalProps> = ({ open, onClose, onSave
     return labels[view];
   };
 
+  const getCategorySingularName = () => {
+    if (!category) return "Item";
+    return category.charAt(0).toUpperCase() + category.slice(1, -1);
+  };
+
   return (
     <Dialog open={open} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md max-h-[90vh] overflow-auto">
         <DialogHeader>
-          <DialogTitle className="text-xl">Add New {category}</DialogTitle>
+          <DialogTitle className="text-xl">Add New {getCategorySingularName()}</DialogTitle>
         </DialogHeader>
         
         <div className="space-y-4 py-4">
@@ -187,7 +191,7 @@ const AddClothesModal: React.FC<AddClothesModalProps> = ({ open, onClose, onSave
                 id="itemName" 
                 value={name} 
                 onChange={(e) => setName(e.target.value)} 
-                placeholder="e.g. Blue Shirt"
+                placeholder={`e.g. Blue ${getCategorySingularName()}`}
               />
             </div>
             <div className="space-y-2">
@@ -264,8 +268,9 @@ const AddClothesModal: React.FC<AddClothesModalProps> = ({ open, onClose, onSave
               <div 
                 className={`relative border rounded-lg overflow-hidden cursor-pointer hover:border-fashion-amber transition-colors ${images.front ? 'border-fashion-amber/30' : 'border-dashed border-gray-300'}`}
                 onClick={() => setActiveView("front")}
+                style={{ aspectRatio: "3/4" }}
               >
-                <AspectRatio ratio={3/4} className="bg-gray-50">
+                <div className="w-full h-full bg-gray-50">
                   {images.front ? (
                     <>
                       <img 
@@ -289,14 +294,15 @@ const AddClothesModal: React.FC<AddClothesModalProps> = ({ open, onClose, onSave
                       <span className="text-xs text-gray-500 mt-1">Front</span>
                     </div>
                   )}
-                </AspectRatio>
+                </div>
               </div>
 
               <div 
                 className={`relative border rounded-lg overflow-hidden cursor-pointer hover:border-fashion-amber transition-colors ${images.back ? 'border-fashion-amber/30' : 'border-dashed border-gray-300'}`}
                 onClick={() => setActiveView("back")}
+                style={{ aspectRatio: "3/4" }}
               >
-                <AspectRatio ratio={3/4} className="bg-gray-50">
+                <div className="w-full h-full bg-gray-50">
                   {images.back ? (
                     <>
                       <img 
@@ -320,14 +326,15 @@ const AddClothesModal: React.FC<AddClothesModalProps> = ({ open, onClose, onSave
                       <span className="text-xs text-gray-500 mt-1">Back</span>
                     </div>
                   )}
-                </AspectRatio>
+                </div>
               </div>
 
               <div 
                 className={`relative border rounded-lg overflow-hidden cursor-pointer hover:border-fashion-amber transition-colors ${images.side ? 'border-fashion-amber/30' : 'border-dashed border-gray-300'}`}
                 onClick={() => setActiveView("side")}
+                style={{ aspectRatio: "3/4" }}
               >
-                <AspectRatio ratio={3/4} className="bg-gray-50">
+                <div className="w-full h-full bg-gray-50">
                   {images.side ? (
                     <>
                       <img 
@@ -351,11 +358,10 @@ const AddClothesModal: React.FC<AddClothesModalProps> = ({ open, onClose, onSave
                       <span className="text-xs text-gray-500 mt-1">Side</span>
                     </div>
                   )}
-                </AspectRatio>
+                </div>
               </div>
             </div>
 
-            {/* Image Addition Section */}
             <div className="mt-4 space-y-3">
               <p className="text-sm font-medium">{getViewLabel(activeView)}</p>
 
@@ -424,7 +430,7 @@ const AddClothesModal: React.FC<AddClothesModalProps> = ({ open, onClose, onSave
         <DialogFooter className="flex space-x-2 justify-end">
           <Button variant="outline" onClick={onClose}>Cancel</Button>
           <Button onClick={handleSave} className="bg-fashion-amber hover:bg-fashion-amber/90 text-white">
-            Save Item
+            Save {getCategorySingularName()}
           </Button>
         </DialogFooter>
       </DialogContent>
