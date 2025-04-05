@@ -42,8 +42,8 @@ const Index = () => {
 
       {/* Content container with z-index to appear above background */}
       <div className="relative z-10 flex flex-col min-h-screen w-full">
-        {/* App header with logo - moved further down by increasing padding */}
-        <header className="w-full pt-16 pb-4 px-6">
+        {/* App header with logo - moved even further down */}
+        <header className="w-full pt-20 pb-4 px-6">
           <div className="max-w-md mx-auto flex justify-center items-center">
             <h1 className="text-2xl font-bold text-white text-center">
               Echo<span className="text-fashion-teal">Wear</span>
@@ -61,9 +61,9 @@ const Index = () => {
           </p>
         </div>
 
-        {/* Main Interactive Area - moved up by adjusting positioning */}
-        <div className="flex-1 flex flex-col items-center justify-start px-6 pb-8 pt-12">
-          <div className={`w-full max-w-sm mx-auto transition-all duration-700 ease-in-out transform ${showAnimation ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        {/* Main Interactive Area - moved up further */}
+        <div className="flex-1 flex flex-col items-center px-6">
+          <div className={`w-full max-w-sm mx-auto mt-2 transition-all duration-700 ease-in-out transform ${showAnimation ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             
             {/* Navigation buttons */}
             <div className="grid grid-cols-2 gap-4">
@@ -110,8 +110,11 @@ const Index = () => {
               </div>
             </div>
             
-            {/* Logout Button */}
-            <div className="mt-12 text-center">
+            {/* Spacer to push logout button to bottom */}
+            <div className="flex-grow" />
+            
+            {/* Logout Button - positioned at the bottom */}
+            <div className="mt-auto pt-16 pb-8 text-center">
               <Button 
                 variant="outline" 
                 className="text-white border-white/30 bg-black/20 backdrop-blur-sm text-sm hover:bg-white/10"
