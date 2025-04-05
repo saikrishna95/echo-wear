@@ -1,14 +1,15 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { MessageSquare, ShoppingBag } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsMobile } from "@/hooks/use-mobile";
-
 const Index = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, logout } = useAuth();
+  const {
+    isAuthenticated,
+    logout
+  } = useAuth();
   const [showAnimation, setShowAnimation] = useState(false);
   const isMobile = useIsMobile();
 
@@ -23,25 +24,18 @@ const Index = () => {
       navigate("/login");
     }
   }, [isAuthenticated, navigate]);
-
   if (!isAuthenticated) {
     return null; // Don't render anything while checking auth state
   }
-
-  return (
-    <div className="min-h-screen w-full flex flex-col bg-fashion-light relative">
+  return <div className="min-h-screen w-full flex flex-col bg-fashion-light relative">
       {/* Full screen background image with warm overlay */}
       <div className="fixed inset-0 w-full h-full z-0">
-        <img 
-          src="/lovable-uploads/5e62aadd-496b-44e3-84c8-e8f40d379fd5.png" 
-          alt="Fashion background" 
-          className="w-full h-full object-cover"
-        />
+        <img src="/lovable-uploads/5e62aadd-496b-44e3-84c8-e8f40d379fd5.png" alt="Fashion background" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-fashion-amber/80 via-fashion-peach/40 to-fashion-sand/30"></div>
       </div>
 
       {/* Content container with z-index to appear above background */}
-      <div className="relative z-10 flex flex-col min-h-screen w-full">
+      <div className="relative z-10 flex flex-col min-h-screen w-full px-px">
         {/* App header with logo - moved even further down */}
         <header className="w-full pt-safe pt-16 pb-4 px-6">
           <div className="max-w-md mx-auto flex justify-center items-center">
@@ -69,10 +63,7 @@ const Index = () => {
             <div className="grid grid-cols-2 gap-5">
               
               {/* Virtual Closet Button */}
-              <div 
-                className="aspect-square bg-black/40 backdrop-blur-sm rounded-2xl overflow-hidden transform transition-all duration-300 cursor-pointer hover:-translate-y-2 active:translate-y-1 active:shadow-inner"
-                onClick={() => navigate("/closet")}
-              >
+              <div className="aspect-square bg-black/40 backdrop-blur-sm rounded-2xl overflow-hidden transform transition-all duration-300 cursor-pointer hover:-translate-y-2 active:translate-y-1 active:shadow-inner" onClick={() => navigate("/closet")}>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
                   <div className="w-16 h-16 flex items-center justify-center">
                     <ShoppingBag className="h-10 w-10 text-white opacity-90" />
@@ -83,18 +74,14 @@ const Index = () => {
                 </div>
                 
                 {/* 3D effect overlay with warm glow */}
-                <div className="absolute inset-0 bg-fashion-amber/5 rounded-2xl" 
-                     style={{ 
-                       boxShadow: "inset 0 2px 15px rgba(255,228,196,0.2), inset 0 -2px 15px rgba(0,0,0,0.2)"
-                     }}>
+                <div className="absolute inset-0 bg-fashion-amber/5 rounded-2xl" style={{
+                boxShadow: "inset 0 2px 15px rgba(255,228,196,0.2), inset 0 -2px 15px rgba(0,0,0,0.2)"
+              }}>
                 </div>
               </div>
               
               {/* Social Feed Button */}
-              <div
-                className="aspect-square bg-black/40 backdrop-blur-sm rounded-2xl overflow-hidden transform transition-all duration-300 cursor-pointer hover:-translate-y-2 active:translate-y-1 active:shadow-inner relative"
-                onClick={() => navigate("/social")}
-              >
+              <div className="aspect-square bg-black/40 backdrop-blur-sm rounded-2xl overflow-hidden transform transition-all duration-300 cursor-pointer hover:-translate-y-2 active:translate-y-1 active:shadow-inner relative" onClick={() => navigate("/social")}>
                 {/* Social Feed Icon */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
                   <div className="w-16 h-16 flex items-center justify-center">
@@ -106,10 +93,9 @@ const Index = () => {
                 </div>
                 
                 {/* 3D effect overlay with warm glow */}
-                <div className="absolute inset-0 bg-fashion-amber/5 rounded-2xl" 
-                     style={{ 
-                       boxShadow: "inset 0 2px 15px rgba(255,228,196,0.2), inset 0 -2px 15px rgba(0,0,0,0.2)"
-                     }}>
+                <div className="absolute inset-0 bg-fashion-amber/5 rounded-2xl" style={{
+                boxShadow: "inset 0 2px 15px rgba(255,228,196,0.2), inset 0 -2px 15px rgba(0,0,0,0.2)"
+              }}>
                 </div>
               </div>
             </div>
@@ -118,17 +104,11 @@ const Index = () => {
         
         {/* Logout Button - fixed to bottom of screen */}
         <div className="w-full flex justify-center pb-8 pt-4 absolute bottom-0 left-0">
-          <Button 
-            variant="outline" 
-            className="text-white border-white/30 bg-black/20 backdrop-blur-sm text-sm hover:bg-white/10"
-            onClick={logout}
-          >
+          <Button variant="outline" className="text-white border-white/30 bg-black/20 backdrop-blur-sm text-sm hover:bg-white/10" onClick={logout}>
             Logout
           </Button>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
