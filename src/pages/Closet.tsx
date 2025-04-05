@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { 
@@ -508,7 +509,7 @@ const Closet = () => {
                         className="bg-fashion-amber hover:bg-fashion-amber/90 text-white"
                         size="sm"
                       >
-                        <Camera className="mr-2 h-3.5 w-3.5" />
+                        <Camera className="mr-2 h-3 w-3" />
                         Add Clothes
                       </Button>
                     )}
@@ -518,7 +519,7 @@ const Closet = () => {
                         className="bg-fashion-amber hover:bg-fashion-amber/90 text-white"
                         size="sm"
                       >
-                        <Camera className="mr-2 h-3.5 w-3.5" />
+                        <Camera className="mr-2 h-3 w-3" />
                         Add {getCategorySingularName(selectedCategory)}
                       </Button>
                     )}
@@ -644,14 +645,17 @@ const Closet = () => {
                       <div 
                         className="border-2 border-dashed border-fashion-amber/30 rounded-xl flex items-center justify-center cursor-pointer hover:border-fashion-amber transition-colors bg-fashion-light/20"
                         onClick={() => handleAddClothes(selectedCategory)}
-                        style={{ aspectRatio: "1/1" }}
                       >
-                        <div className="text-center p-4">
-                          <div className="w-8 h-8 rounded-full bg-fashion-amber/20 flex items-center justify-center mx-auto mb-2">
-                            <Plus className="h-4 w-4 text-fashion-amber" />
+                        <AspectRatio ratio={1/1} className="w-full">
+                          <div className="flex items-center justify-center h-full">
+                            <div className="text-center">
+                              <div className="w-6 h-6 rounded-full bg-fashion-amber/20 flex items-center justify-center mx-auto">
+                                <Plus className="h-3 w-3 text-fashion-amber" />
+                              </div>
+                              <p className="text-fashion-navy mt-2 text-xs">Add {getCategorySingularName(selectedCategory)}</p>
+                            </div>
                           </div>
-                          <p className="text-fashion-navy mt-2 text-sm">Add {getCategorySingularName(selectedCategory)}</p>
-                        </div>
+                        </AspectRatio>
                       </div>
                     </div>
                   </>

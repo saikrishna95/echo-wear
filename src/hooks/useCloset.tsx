@@ -2,12 +2,21 @@
 import { useState, useEffect, useMemo } from 'react';
 import { ClothingItem } from '@/components/closet/AddClothesModal';
 
+// Extending ClothingItem with optional properties for different categories
+type ExtendedClothingItem = ClothingItem & {
+  pattern?: string;
+  sleeveLength?: string;
+  neckline?: string;
+  fit?: string;
+  style?: string;
+};
+
 export function useCloset() {
   const [clothes, setClothes] = useState<{
-    tops: ClothingItem[];
-    bottoms: ClothingItem[];
-    shoes: ClothingItem[];
-    accessories: ClothingItem[];
+    tops: ExtendedClothingItem[];
+    bottoms: ExtendedClothingItem[];
+    shoes: ExtendedClothingItem[];
+    accessories: ExtendedClothingItem[];
   }>({
     tops: [],
     bottoms: [],
@@ -54,7 +63,7 @@ export function useCloset() {
     const category = item.category.toLowerCase() as 'tops' | 'bottoms' | 'shoes' | 'accessories';
     setClothes(prev => ({
       ...prev,
-      [category]: [...prev[category], item]
+      [category]: [...prev[category], item as ExtendedClothingItem]
     }));
   };
 
@@ -106,7 +115,7 @@ export function useCloset() {
     const categorySpecificFilters: Record<string, {value: string, count: number}[]> = {};
     
     if (category === 'tops') {
-      const sleeveLengths = items.reduce<{value: string, count: number}[]>((acc, item: any) => {
+      const sleeveLengths = items.reduce<{value: string, count: number}[]>((acc, item: ExtendedClothingItem) => {
         if (!item.sleeveLength) return acc;
         const existing = acc.find(s => s.value === item.sleeveLength);
         if (existing) {
@@ -117,7 +126,7 @@ export function useCloset() {
         return acc;
       }, []);
       
-      const necklines = items.reduce<{value: string, count: number}[]>((acc, item: any) => {
+      const necklines = items.reduce<{value: string, count: number}[]>((acc, item: ExtendedClothingItem) => {
         if (!item.neckline) return acc;
         const existing = acc.find(n => n.value === item.neckline);
         if (existing) {
@@ -131,7 +140,7 @@ export function useCloset() {
       categorySpecificFilters.sleeveLengths = sleeveLengths;
       categorySpecificFilters.necklines = necklines;
     } else if (category === 'bottoms') {
-      const fits = items.reduce<{value: string, count: number}[]>((acc, item: any) => {
+      const fits = items.reduce<{value: string, count: number}[]>((acc, item: ExtendedClothingItem) => {
         if (!item.fit) return acc;
         const existing = acc.find(f => f.value === item.fit);
         if (existing) {
@@ -144,7 +153,7 @@ export function useCloset() {
       
       categorySpecificFilters.fits = fits;
     } else if (category === 'shoes') {
-      const styles = items.reduce<{value: string, count: number}[]>((acc, item: any) => {
+      const styles = items.reduce<{value: string, count: number}[]>((acc, item: ExtendedClothingItem) => {
         if (!item.style) return acc;
         const existing = acc.find(s => s.value === item.style);
         if (existing) {
@@ -197,14 +206,14 @@ export function useCloset() {
       let categorySpecificMatch = true;
       
       if (category === 'tops') {
-        const sleeveMatch = !activeFilters.sleeveLength || (item as any).sleeveLength === activeFilters.sleeveLength;
-        const necklineMatch = !activeFilters.neckline || (item as any).neckline === activeFilters.neckline;
+        const sleeveMatch = !activeFilters.sleeveLength || (item as ExtendedClothingItem).sleeveLength === activeFilters.sleeveLength;
+        const necklineMatch = !activeFilters.neckline || (item as ExtendedClothingItem).neckline === activeFilters.neckline;
         categorySpecificMatch = sleeveMatch && necklineMatch;
       } else if (category === 'bottoms') {
-        const fitMatch = !activeFilters.fit || (item as any).fit === activeFilters.fit;
+        const fitMatch = !activeFilters.fit || (item as ExtendedClothingItem).fit === activeFilters.fit;
         categorySpecificMatch = fitMatch;
       } else if (category === 'shoes') {
-        const styleMatch = !activeFilters.style || (item as any).style === activeFilters.style;
+        const styleMatch = !activeFilters.style || (item as ExtendedClothingItem).style === activeFilters.style;
         categorySpecificMatch = styleMatch;
       }
       
