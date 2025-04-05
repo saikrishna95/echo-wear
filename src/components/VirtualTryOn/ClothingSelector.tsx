@@ -2,7 +2,7 @@
 import React from 'react';
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ClothingItem } from './types';
-import { Gallery, Shirt } from 'lucide-react';
+import { ShoppingBag, Shirt } from 'lucide-react';
 
 interface ClothingSelectorProps {
   availableClothing: ClothingItem[];
@@ -34,7 +34,7 @@ const ClothingSelector: React.FC<ClothingSelectorProps> = ({
     <div className="bg-white rounded-xl shadow-sm overflow-hidden">
       <div className="px-4 py-3 border-b border-gray-100">
         <h3 className="text-sm font-medium text-gray-900 flex items-center">
-          <Gallery className="mr-2 h-4 w-4" />
+          <ShoppingBag className="mr-2 h-4 w-4" />
           Select Clothing Items
         </h3>
       </div>
