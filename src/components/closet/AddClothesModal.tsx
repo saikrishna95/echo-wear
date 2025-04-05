@@ -9,6 +9,7 @@ import { Camera, Upload, Link as LinkIcon, X, Plus, ChevronRight, Loader2 } from
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
 import { removeBackground } from "@/utils/imageProcessing";
+import { ClothingItem } from "@/hooks/useCloset";
 
 interface ImageData {
   url: string;
@@ -20,20 +21,6 @@ interface AddClothesModalProps {
   onClose: () => void;
   onSave: (clothingItem: ClothingItem) => void;
   category: string;
-}
-
-export interface ClothingItem {
-  id: string;
-  name: string;
-  category: string;
-  color: string;
-  type: string;
-  pattern: string;
-  images: {
-    front: string;
-    back: string;
-    side: string;
-  };
 }
 
 const AddClothesModal: React.FC<AddClothesModalProps> = ({ open, onClose, onSave, category }) => {

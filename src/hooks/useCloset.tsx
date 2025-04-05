@@ -7,7 +7,7 @@ export interface ClothingItem {
   category: string;
   color: string;
   type: string;
-  pattern?: string;
+  pattern: string; // Changed from optional to required
   // Optional category-specific properties
   sleevelength?: string;
   neckline?: string;

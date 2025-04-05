@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { 
@@ -29,9 +28,7 @@ import { useToast } from "@/hooks/use-toast";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import AddClothesModal from "@/components/closet/AddClothesModal";
 import ClothingItemDetail from "@/components/closet/ClothingItemDetail";
-import { useCloset } from "@/hooks/useCloset";
-import { ClothingItem } from "@/components/closet/AddClothesModal";
-import { Badge } from "@/components/ui/badge";
+import { useCloset, ClothingItem } from "@/hooks/useCloset";
 
 const mockOutfits = [
   {
@@ -239,7 +236,6 @@ const Closet = () => {
                   )}
                 </div>
                 
-                {/* Category Selection View */}
                 {!selectedCategory && (
                   <div className="grid grid-cols-2 gap-4">
                     {clothingCategories.map(category => (
@@ -265,7 +261,6 @@ const Closet = () => {
                   </div>
                 )}
                 
-                {/* Items View when category is selected */}
                 {selectedCategory && (
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     {getCategoryItems().map((item) => (

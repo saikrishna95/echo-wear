@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Badge } from "@/components/ui/badge";
-import { ClothingItem } from "./AddClothesModal";
+import { ClothingItem } from "@/hooks/useCloset"; // Import from useCloset instead
 
 interface ClothingItemDetailProps {
   item: ClothingItem | null;
