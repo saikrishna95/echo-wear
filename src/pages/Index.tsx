@@ -52,7 +52,7 @@ const Index = () => {
         </header>
 
         {/* App Tagline */}
-        <div className={`px-6 text-center mt-4 mb-4 transition-all duration-700 ease-in-out transform ${showAnimation ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <div className={`px-6 text-center mt-4 mb-8 transition-all duration-700 ease-in-out transform ${showAnimation ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           <h2 className="text-2xl text-white font-light tracking-wide">
             Your AI stylist for every occasion
           </h2>
@@ -66,7 +66,7 @@ const Index = () => {
           <div className={`w-full max-w-sm mx-auto mt-2 transition-all duration-700 ease-in-out transform ${showAnimation ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             
             {/* Navigation buttons */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-5">
               
               {/* Virtual Closet Button */}
               <div 
@@ -74,8 +74,10 @@ const Index = () => {
                 onClick={() => navigate("/closet")}
               >
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <ShoppingBag className="h-16 w-16 text-white mb-2 opacity-90" />
-                  <span className="text-white font-semibold text-shadow shadow-black/90">
+                  <div className="w-16 h-16 flex items-center justify-center">
+                    <ShoppingBag className="h-10 w-10 text-white opacity-90" />
+                  </div>
+                  <span className="text-white font-semibold text-shadow shadow-black/90 mt-1">
                     Virtual Closet
                   </span>
                 </div>
@@ -95,8 +97,10 @@ const Index = () => {
               >
                 {/* Social Feed Icon */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <MessageSquare className="h-16 w-16 text-white mb-2 opacity-90" />
-                  <span className="text-white font-semibold text-shadow shadow-black/50">
+                  <div className="w-16 h-16 flex items-center justify-center">
+                    <MessageSquare className="h-10 w-10 text-white opacity-90" />
+                  </div>
+                  <span className="text-white font-semibold text-shadow shadow-black/50 mt-1">
                     Social Feed
                   </span>
                 </div>
