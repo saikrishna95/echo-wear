@@ -19,10 +19,7 @@ import {
   Ruler,
   ChevronRight,
   PanelsTopLeft,
-  Briefcase,
-  Filter,
-  X,
-  CheckCircle2
+  Briefcase
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -35,12 +32,6 @@ import ClothingItemDetail from "@/components/closet/ClothingItemDetail";
 import { useCloset } from "@/hooks/useCloset";
 import { ClothingItem } from "@/components/closet/AddClothesModal";
 import { Badge } from "@/components/ui/badge";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { 
-  Popover,
-  PopoverContent,
-  PopoverTrigger
-} from "@/components/ui/popover";
 
 const mockOutfits = [
   {
@@ -115,17 +106,8 @@ const Closet = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<ClothingItem | null>(null);
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const { toast } = useToast();
-  const { 
-    clothes, 
-    addClothingItem, 
-    getFilterOptions, 
-    setFilter, 
-    clearFilters, 
-    activeFilters, 
-    filteredItems 
-  } = useCloset();
+  const { clothes, addClothingItem } = useCloset();
   const navigate = useNavigate();
 
   const handleAddClothes = (category?: string) => {
@@ -156,30 +138,20 @@ const Closet = () => {
 
   const handleSelectCategory = (categoryId: string) => {
     setSelectedCategory(categoryId);
-    setIsFilterOpen(false);
-    clearFilters();
   };
 
   const handleBackToCategories = () => {
     setSelectedCategory(null);
-    clearFilters();
   };
 
   const getCategoryItems = () => {
     if (!selectedCategory) return [];
-    return filteredItems(selectedCategory as 'tops' | 'bottoms' | 'shoes' | 'accessories');
+    return clothes[selectedCategory as keyof typeof clothes] || [];
   };
 
   const getCategorySingularName = (categoryId: string) => {
     return categoryId.charAt(0).toUpperCase() + categoryId.slice(1, -1);
   };
-
-  const getFilterOptionsForCategory = () => {
-    if (!selectedCategory) return { colors: [], patterns: [], types: [] };
-    return getFilterOptions(selectedCategory as 'tops' | 'bottoms' | 'shoes' | 'accessories');
-  };
-
-  const filterOptions = getFilterOptionsForCategory();
 
   return (
     <div className="min-h-screen flex flex-col bg-fashion-light">
@@ -245,287 +217,29 @@ const Closet = () => {
                       ? `My ${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}` 
                       : "My Clothes"}
                   </h2>
-                  <div className="flex gap-3">
-                    {selectedCategory && (
-                      <Popover open={isFilterOpen} onOpenChange={setIsFilterOpen}>
-                        <PopoverTrigger asChild>
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            className="border-fashion-amber/20 hover:bg-fashion-amber/10 text-fashion-navy"
-                          >
-                            <Filter className="h-4 w-4 mr-2" />
-                            Filters
-                            {Object.values(activeFilters).some(filter => filter !== null) && (
-                              <Badge className="ml-2 bg-fashion-amber text-white">
-                                {Object.values(activeFilters).filter(filter => filter !== null).length}
-                              </Badge>
-                            )}
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-80 p-3" align="end">
-                          <div className="space-y-4">
-                            <div className="flex items-center justify-between border-b pb-2">
-                              <h3 className="font-medium">Filters</h3>
-                              <Button 
-                                variant="ghost" 
-                                size="sm" 
-                                onClick={clearFilters} 
-                                className="h-8 px-2 text-muted-foreground hover:text-fashion-navy"
-                              >
-                                Clear All
-                              </Button>
-                            </div>
-                            
-                            {filterOptions.colors.length > 0 && (
-                              <Collapsible className="w-full">
-                                <div className="flex items-center justify-between">
-                                  <CollapsibleTrigger className="flex items-center justify-between w-full text-sm font-medium">
-                                    <span>Colors</span>
-                                    <ChevronRight className="h-4 w-4" />
-                                  </CollapsibleTrigger>
-                                </div>
-                                <CollapsibleContent className="mt-2 space-y-1">
-                                  <ScrollArea className="h-40">
-                                    <div className="space-y-1">
-                                      {filterOptions.colors.map((color) => (
-                                        <button
-                                          key={color.value}
-                                          onClick={() => setFilter('color', color.value)}
-                                          className={`flex items-center justify-between w-full p-1.5 text-sm rounded ${activeFilters.color === color.value ? 'bg-fashion-amber/10 text-fashion-navy' : 'hover:bg-gray-100'}`}
-                                        >
-                                          <div className="flex items-center gap-2">
-                                            <div 
-                                              className="w-4 h-4 rounded-full border border-gray-300" 
-                                              style={{ backgroundColor: color.value.toLowerCase() }}
-                                            />
-                                            <span>{color.value}</span>
-                                          </div>
-                                          <div className="flex items-center gap-2">
-                                            <span className="text-xs text-gray-500">{color.count}</span>
-                                            {activeFilters.color === color.value && (
-                                              <CheckCircle2 className="h-4 w-4 text-fashion-amber" />
-                                            )}
-                                          </div>
-                                        </button>
-                                      ))}
-                                    </div>
-                                  </ScrollArea>
-                                </CollapsibleContent>
-                              </Collapsible>
-                            )}
-                            
-                            {filterOptions.patterns && filterOptions.patterns.length > 0 && (
-                              <Collapsible className="w-full">
-                                <div className="flex items-center justify-between">
-                                  <CollapsibleTrigger className="flex items-center justify-between w-full text-sm font-medium">
-                                    <span>Patterns</span>
-                                    <ChevronRight className="h-4 w-4" />
-                                  </CollapsibleTrigger>
-                                </div>
-                                <CollapsibleContent className="mt-2 space-y-1">
-                                  <ScrollArea className="h-40">
-                                    <div className="space-y-1">
-                                      {filterOptions.patterns.map((pattern) => (
-                                        <button
-                                          key={pattern.value}
-                                          onClick={() => setFilter('pattern', pattern.value)}
-                                          className={`flex items-center justify-between w-full p-1.5 text-sm rounded ${activeFilters.pattern === pattern.value ? 'bg-fashion-amber/10 text-fashion-navy' : 'hover:bg-gray-100'}`}
-                                        >
-                                          <span>{pattern.value}</span>
-                                          <div className="flex items-center gap-2">
-                                            <span className="text-xs text-gray-500">{pattern.count}</span>
-                                            {activeFilters.pattern === pattern.value && (
-                                              <CheckCircle2 className="h-4 w-4 text-fashion-amber" />
-                                            )}
-                                          </div>
-                                        </button>
-                                      ))}
-                                    </div>
-                                  </ScrollArea>
-                                </CollapsibleContent>
-                              </Collapsible>
-                            )}
-                            
-                            {filterOptions.types && filterOptions.types.length > 0 && (
-                              <Collapsible className="w-full">
-                                <div className="flex items-center justify-between">
-                                  <CollapsibleTrigger className="flex items-center justify-between w-full text-sm font-medium">
-                                    <span>Types</span>
-                                    <ChevronRight className="h-4 w-4" />
-                                  </CollapsibleTrigger>
-                                </div>
-                                <CollapsibleContent className="mt-2 space-y-1">
-                                  <ScrollArea className="h-40">
-                                    <div className="space-y-1">
-                                      {filterOptions.types.map((type) => (
-                                        <button
-                                          key={type.value}
-                                          onClick={() => setFilter('type', type.value)}
-                                          className={`flex items-center justify-between w-full p-1.5 text-sm rounded ${activeFilters.type === type.value ? 'bg-fashion-amber/10 text-fashion-navy' : 'hover:bg-gray-100'}`}
-                                        >
-                                          <span>{type.value}</span>
-                                          <div className="flex items-center gap-2">
-                                            <span className="text-xs text-gray-500">{type.count}</span>
-                                            {activeFilters.type === type.value && (
-                                              <CheckCircle2 className="h-4 w-4 text-fashion-amber" />
-                                            )}
-                                          </div>
-                                        </button>
-                                      ))}
-                                    </div>
-                                  </ScrollArea>
-                                </CollapsibleContent>
-                              </Collapsible>
-                            )}
-                            
-                            {selectedCategory === 'tops' && filterOptions.sleeveLengths && filterOptions.sleeveLengths.length > 0 && (
-                              <Collapsible className="w-full">
-                                <div className="flex items-center justify-between">
-                                  <CollapsibleTrigger className="flex items-center justify-between w-full text-sm font-medium">
-                                    <span>Sleeve Length</span>
-                                    <ChevronRight className="h-4 w-4" />
-                                  </CollapsibleTrigger>
-                                </div>
-                                <CollapsibleContent className="mt-2 space-y-1">
-                                  <div className="space-y-1">
-                                    {filterOptions.sleeveLengths.map((sleeve) => (
-                                      <button
-                                        key={sleeve.value}
-                                        onClick={() => setFilter('sleeveLength', sleeve.value)}
-                                        className={`flex items-center justify-between w-full p-1.5 text-sm rounded ${activeFilters.sleeveLength === sleeve.value ? 'bg-fashion-amber/10 text-fashion-navy' : 'hover:bg-gray-100'}`}
-                                      >
-                                        <span>{sleeve.value}</span>
-                                        <div className="flex items-center gap-2">
-                                          <span className="text-xs text-gray-500">{sleeve.count}</span>
-                                          {activeFilters.sleeveLength === sleeve.value && (
-                                            <CheckCircle2 className="h-4 w-4 text-fashion-amber" />
-                                          )}
-                                        </div>
-                                      </button>
-                                    ))}
-                                  </div>
-                                </CollapsibleContent>
-                              </Collapsible>
-                            )}
-                            
-                            {selectedCategory === 'tops' && filterOptions.necklines && filterOptions.necklines.length > 0 && (
-                              <Collapsible className="w-full">
-                                <div className="flex items-center justify-between">
-                                  <CollapsibleTrigger className="flex items-center justify-between w-full text-sm font-medium">
-                                    <span>Neckline</span>
-                                    <ChevronRight className="h-4 w-4" />
-                                  </CollapsibleTrigger>
-                                </div>
-                                <CollapsibleContent className="mt-2 space-y-1">
-                                  <div className="space-y-1">
-                                    {filterOptions.necklines.map((neck) => (
-                                      <button
-                                        key={neck.value}
-                                        onClick={() => setFilter('neckline', neck.value)}
-                                        className={`flex items-center justify-between w-full p-1.5 text-sm rounded ${activeFilters.neckline === neck.value ? 'bg-fashion-amber/10 text-fashion-navy' : 'hover:bg-gray-100'}`}
-                                      >
-                                        <span>{neck.value}</span>
-                                        <div className="flex items-center gap-2">
-                                          <span className="text-xs text-gray-500">{neck.count}</span>
-                                          {activeFilters.neckline === neck.value && (
-                                            <CheckCircle2 className="h-4 w-4 text-fashion-amber" />
-                                          )}
-                                        </div>
-                                      </button>
-                                    ))}
-                                  </div>
-                                </CollapsibleContent>
-                              </Collapsible>
-                            )}
-                            
-                            {selectedCategory === 'bottoms' && filterOptions.fits && filterOptions.fits.length > 0 && (
-                              <Collapsible className="w-full">
-                                <div className="flex items-center justify-between">
-                                  <CollapsibleTrigger className="flex items-center justify-between w-full text-sm font-medium">
-                                    <span>Fit</span>
-                                    <ChevronRight className="h-4 w-4" />
-                                  </CollapsibleTrigger>
-                                </div>
-                                <CollapsibleContent className="mt-2 space-y-1">
-                                  <div className="space-y-1">
-                                    {filterOptions.fits.map((fit) => (
-                                      <button
-                                        key={fit.value}
-                                        onClick={() => setFilter('fit', fit.value)}
-                                        className={`flex items-center justify-between w-full p-1.5 text-sm rounded ${activeFilters.fit === fit.value ? 'bg-fashion-amber/10 text-fashion-navy' : 'hover:bg-gray-100'}`}
-                                      >
-                                        <span>{fit.value}</span>
-                                        <div className="flex items-center gap-2">
-                                          <span className="text-xs text-gray-500">{fit.count}</span>
-                                          {activeFilters.fit === fit.value && (
-                                            <CheckCircle2 className="h-4 w-4 text-fashion-amber" />
-                                          )}
-                                        </div>
-                                      </button>
-                                    ))}
-                                  </div>
-                                </CollapsibleContent>
-                              </Collapsible>
-                            )}
-                            
-                            {selectedCategory === 'shoes' && filterOptions.styles && filterOptions.styles.length > 0 && (
-                              <Collapsible className="w-full">
-                                <div className="flex items-center justify-between">
-                                  <CollapsibleTrigger className="flex items-center justify-between w-full text-sm font-medium">
-                                    <span>Style</span>
-                                    <ChevronRight className="h-4 w-4" />
-                                  </CollapsibleTrigger>
-                                </div>
-                                <CollapsibleContent className="mt-2 space-y-1">
-                                  <div className="space-y-1">
-                                    {filterOptions.styles.map((style) => (
-                                      <button
-                                        key={style.value}
-                                        onClick={() => setFilter('style', style.value)}
-                                        className={`flex items-center justify-between w-full p-1.5 text-sm rounded ${activeFilters.style === style.value ? 'bg-fashion-amber/10 text-fashion-navy' : 'hover:bg-gray-100'}`}
-                                      >
-                                        <span>{style.value}</span>
-                                        <div className="flex items-center gap-2">
-                                          <span className="text-xs text-gray-500">{style.count}</span>
-                                          {activeFilters.style === style.value && (
-                                            <CheckCircle2 className="h-4 w-4 text-fashion-amber" />
-                                          )}
-                                        </div>
-                                      </button>
-                                    ))}
-                                  </div>
-                                </CollapsibleContent>
-                              </Collapsible>
-                            )}
-                          </div>
-                        </PopoverContent>
-                      </Popover>
-                    )}
-                    
-                    {!selectedCategory && (
-                      <Button 
-                        onClick={() => handleAddClothes()}
-                        className="bg-fashion-amber hover:bg-fashion-amber/90 text-white"
-                        size="sm"
-                      >
-                        <Camera className="mr-2 h-3 w-3" />
-                        Add Clothes
-                      </Button>
-                    )}
-                    {selectedCategory && (
-                      <Button 
-                        onClick={() => handleAddClothes(selectedCategory)}
-                        className="bg-fashion-amber hover:bg-fashion-amber/90 text-white"
-                        size="sm"
-                      >
-                        <Camera className="mr-2 h-3 w-3" />
-                        Add {getCategorySingularName(selectedCategory)}
-                      </Button>
-                    )}
-                  </div>
+                  {!selectedCategory && (
+                    <Button 
+                      onClick={() => handleAddClothes()}
+                      className="bg-fashion-amber hover:bg-fashion-amber/90 text-white"
+                      size="sm"
+                    >
+                      <Camera className="mr-2 h-3.5 w-3.5" />
+                      Add Clothes
+                    </Button>
+                  )}
+                  {selectedCategory && (
+                    <Button 
+                      onClick={() => handleAddClothes(selectedCategory)}
+                      className="bg-fashion-amber hover:bg-fashion-amber/90 text-white"
+                      size="sm"
+                    >
+                      <Camera className="mr-2 h-3.5 w-3.5" />
+                      Add {getCategorySingularName(selectedCategory)}
+                    </Button>
+                  )}
                 </div>
                 
+                {/* Category Selection View */}
                 {!selectedCategory && (
                   <div className="grid grid-cols-2 gap-4">
                     {clothingCategories.map(category => (
@@ -551,114 +265,41 @@ const Closet = () => {
                   </div>
                 )}
                 
+                {/* Items View when category is selected */}
                 {selectedCategory && (
-                  <>
-                    {Object.values(activeFilters).some(filter => filter !== null) && (
-                      <div className="mb-4 flex flex-wrap gap-2">
-                        {activeFilters.color && (
-                          <Badge className="flex items-center gap-1 px-3 py-1 bg-fashion-amber/10 hover:bg-fashion-amber/20 text-fashion-navy border border-fashion-amber/30">
-                            Color: {activeFilters.color}
-                            <X className="h-3 w-3 ml-1 cursor-pointer" onClick={() => setFilter('color', null)} />
-                          </Badge>
-                        )}
-                        {activeFilters.pattern && (
-                          <Badge className="flex items-center gap-1 px-3 py-1 bg-fashion-amber/10 hover:bg-fashion-amber/20 text-fashion-navy border border-fashion-amber/30">
-                            Pattern: {activeFilters.pattern}
-                            <X className="h-3 w-3 ml-1 cursor-pointer" onClick={() => setFilter('pattern', null)} />
-                          </Badge>
-                        )}
-                        {activeFilters.type && (
-                          <Badge className="flex items-center gap-1 px-3 py-1 bg-fashion-amber/10 hover:bg-fashion-amber/20 text-fashion-navy border border-fashion-amber/30">
-                            Type: {activeFilters.type}
-                            <X className="h-3 w-3 ml-1 cursor-pointer" onClick={() => setFilter('type', null)} />
-                          </Badge>
-                        )}
-                        {activeFilters.sleeveLength && (
-                          <Badge className="flex items-center gap-1 px-3 py-1 bg-fashion-amber/10 hover:bg-fashion-amber/20 text-fashion-navy border border-fashion-amber/30">
-                            Sleeve: {activeFilters.sleeveLength}
-                            <X className="h-3 w-3 ml-1 cursor-pointer" onClick={() => setFilter('sleeveLength', null)} />
-                          </Badge>
-                        )}
-                        {activeFilters.neckline && (
-                          <Badge className="flex items-center gap-1 px-3 py-1 bg-fashion-amber/10 hover:bg-fashion-amber/20 text-fashion-navy border border-fashion-amber/30">
-                            Neckline: {activeFilters.neckline}
-                            <X className="h-3 w-3 ml-1 cursor-pointer" onClick={() => setFilter('neckline', null)} />
-                          </Badge>
-                        )}
-                        {activeFilters.fit && (
-                          <Badge className="flex items-center gap-1 px-3 py-1 bg-fashion-amber/10 hover:bg-fashion-amber/20 text-fashion-navy border border-fashion-amber/30">
-                            Fit: {activeFilters.fit}
-                            <X className="h-3 w-3 ml-1 cursor-pointer" onClick={() => setFilter('fit', null)} />
-                          </Badge>
-                        )}
-                        {activeFilters.style && (
-                          <Badge className="flex items-center gap-1 px-3 py-1 bg-fashion-amber/10 hover:bg-fashion-amber/20 text-fashion-navy border border-fashion-amber/30">
-                            Style: {activeFilters.style}
-                            <X className="h-3 w-3 ml-1 cursor-pointer" onClick={() => setFilter('style', null)} />
-                          </Badge>
-                        )}
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          className="h-7 px-2 text-xs text-muted-foreground hover:text-fashion-navy"
-                          onClick={clearFilters}
-                        >
-                          Clear All
-                        </Button>
-                      </div>
-                    )}
-                    
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                      {getCategoryItems().length > 0 ? (
-                        getCategoryItems().map((item) => (
-                          <div 
-                            key={item.id} 
-                            className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-fashion-amber/10 cursor-pointer"
-                            onClick={() => handleItemClick(item)}
-                          >
-                            <AspectRatio ratio={1/1} className="bg-fashion-light/50">
-                              <img 
-                                src={item.images.front} 
-                                alt={item.name} 
-                                className="w-full h-full object-cover" 
-                              />
-                            </AspectRatio>
-                            <div className="p-3">
-                              <h3 className="font-medium">{item.name}</h3>
-                              <p className="text-sm text-gray-500">{item.color} • {item.type}</p>
-                            </div>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="col-span-full p-8 text-center bg-fashion-light/20 rounded-xl border border-dashed border-fashion-amber/30">
-                          <p className="text-fashion-navy mb-2">No items found with the current filters</p>
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            onClick={clearFilters}
-                            className="border-fashion-amber/20 hover:bg-fashion-amber/10 mt-2"
-                          >
-                            Clear Filters
-                          </Button>
-                        </div>
-                      )}
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    {getCategoryItems().map((item) => (
                       <div 
-                        className="border-2 border-dashed border-fashion-amber/30 rounded-xl flex items-center justify-center cursor-pointer hover:border-fashion-amber transition-colors bg-fashion-light/20"
-                        onClick={() => handleAddClothes(selectedCategory)}
+                        key={item.id} 
+                        className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-fashion-amber/10 cursor-pointer"
+                        onClick={() => handleItemClick(item)}
                       >
-                        <AspectRatio ratio={1/1} className="w-full">
-                          <div className="flex items-center justify-center h-full">
-                            <div className="text-center">
-                              <div className="w-6 h-6 rounded-full bg-fashion-amber/20 flex items-center justify-center mx-auto">
-                                <Plus className="h-3 w-3 text-fashion-amber" />
-                              </div>
-                              <p className="text-fashion-navy mt-2 text-xs">Add {getCategorySingularName(selectedCategory)}</p>
-                            </div>
-                          </div>
+                        <AspectRatio ratio={1/1} className="bg-fashion-light/50">
+                          <img 
+                            src={item.images.front} 
+                            alt={item.name} 
+                            className="w-full h-full object-cover" 
+                          />
                         </AspectRatio>
+                        <div className="p-3">
+                          <h3 className="font-medium">{item.name}</h3>
+                          <p className="text-sm text-gray-500">{item.color} • {item.type}</p>
+                        </div>
+                      </div>
+                    ))}
+                    <div 
+                      className="border-2 border-dashed border-fashion-amber/30 rounded-xl flex items-center justify-center cursor-pointer hover:border-fashion-amber transition-colors bg-fashion-light/20"
+                      onClick={() => handleAddClothes(selectedCategory)}
+                      style={{ aspectRatio: "1/1" }}
+                    >
+                      <div className="text-center p-4">
+                        <div className="w-10 h-10 rounded-full bg-fashion-amber/20 flex items-center justify-center mx-auto mb-2">
+                          <Plus className="h-5 w-5 text-fashion-amber" />
+                        </div>
+                        <p className="text-fashion-navy mt-2">Add {getCategorySingularName(selectedCategory)}</p>
                       </div>
                     </div>
-                  </>
+                  </div>
                 )}
               </CardContent>
             </Card>
