@@ -1,39 +1,23 @@
-
-// Define measurement types in a separate file for reuse
-export type MeasurementKey = 
-  | "neck" 
-  | "shoulder"
-  | "chest"
-  | "waist"
-  | "stomach"
-  | "hips"
-  | "thigh"
-  | "inseam"
-  | "height"
-  | "weight";
-
-export type Measurements = Record<MeasurementKey, number>;
-
-export interface MeasurementData {
-  value: number;
-  min: number;
-  max: number;
-  unit: string;
-  label: string;
-  category: "upper" | "lower" | "general";
+export interface Measurements {
+  height: number;
+  shoulder: number;
+  weight: number;
+  chest: number;
+  waist: number;
+  hips: number;
+  neck: number;
+  stomach: number;
+  thigh: number;
+  inseam: number;
 }
 
-export interface AvatarProps {
-  measurements: Measurements;
-  highlightedPart: MeasurementKey | null;
-  rotation: number;
-}
+export type MeasurementKey = keyof Measurements;
 
 export interface ClothingItem {
   id: string;
   name: string;
   type: string;
-  category: string;
+  category: 'tops' | 'bottoms' | 'outerwear' | 'accessories';
   color: string;
   pattern: string;
   size: string;
@@ -42,5 +26,5 @@ export interface ClothingItem {
     back: string;
     side: string;
   };
-  modelUrl?: string; // 3D model URL if available
+  customTexture?: string; // Added for custom image uploads
 }

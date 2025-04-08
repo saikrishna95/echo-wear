@@ -15,6 +15,8 @@ import VirtualTryOnHeader from "@/components/VirtualTryOn/VirtualTryOnHeader";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import BodyPartSettings from "@/components/VirtualTryOn/BodyPartSettings";
 import { Button } from "@/components/ui/button";
+import ClothingImageUpload from "@/components/VirtualTryOn/ClothingImageUpload";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const VirtualTryOn = () => {
   const navigate = useNavigate();
@@ -27,6 +29,11 @@ const VirtualTryOn = () => {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [activeCategoryTab, setActiveCategoryTab] = useState<"upper" | "lower" | "general">("upper");
   const [activeBodyType, setActiveBodyType] = useState<"slim" | "athletic" | "curvy" | null>(null);
+  const [clothingTab, setClothingTab] = useState<"select" | "upload">("select");
+  const [customClothingImages, setCustomClothingImages] = useState<{
+    top?: string;
+    bottom?: string;
+  }>({});
   
   const { clothingItems, isLoading } = useClothingItems();
 
@@ -44,6 +51,7 @@ const VirtualTryOn = () => {
     setMeasurements(initialMeasurements);
     setSelectedClothing([]);
     setActiveBodyType(null);
+    setCustomClothingImages({});
     toast({
       title: "Reset Complete",
       description: "Your measurements and clothing selection have been reset.",
@@ -75,6 +83,13 @@ const VirtualTryOn = () => {
     const isTopItem = ['shirt', 'blouse', 'sweater', 'jacket', 't-shirt'].includes(item.type.toLowerCase());
     const isBottomItem = ['pants', 'jeans', 'skirt', 'shorts'].includes(item.type.toLowerCase());
     
+    // Clear any custom uploaded images for this clothing type
+    if (isTopItem && customClothingImages.top) {
+      setCustomClothingImages(prev => ({ ...prev, top: undefined }));
+    } else if (isBottomItem && customClothingImages.bottom) {
+      setCustomClothingImages(prev => ({ ...prev, bottom: undefined }));
+    }
+    
     setSelectedClothing(prev => {
       // Create a new array without any items of the same type category
       const filteredItems = prev.filter(prevItem => {
@@ -97,6 +112,71 @@ const VirtualTryOn = () => {
   const handleRemoveClothing = (itemId: string) => {
     setSelectedClothing(prev => prev.filter(item => item.id !== itemId));
   };
+  
+  const handleImageUploaded = (imageUrl: string, clothingType: string) => {
+    // Determine if this is a top or bottom
+    const isTop = ['shirt', 'blouse', 'sweater', 'jacket', 't-shirt'].includes(clothingType.toLowerCase());
+    const isBottom = ['pants', 'jeans', 'skirt', 'shorts'].includes(clothingType.toLowerCase());
+    
+    // Update custom clothing images
+    if (isTop) {
+      setCustomClothingImages(prev => ({ ...prev, top: imageUrl }));
+      
+      // Remove any selected top clothing items
+      setSelectedClothing(prev => prev.filter(item => 
+        !['shirt', 'blouse', 'sweater', 'jacket', 't-shirt'].includes(item.type.toLowerCase())
+      ));
+      
+      // Create a custom clothing item for the uploaded image
+      const customTop: ClothingItem = {
+        id: 'custom-top-' + Date.now(),
+        name: 'Custom ' + clothingType,
+        type: clothingType.toLowerCase() as any,
+        category: 'tops',
+        color: '#FFFFFF', // We'll use the image texture instead of a solid color
+        pattern: 'custom',
+        size: 'M',
+        images: {
+          front: imageUrl,
+          back: imageUrl,
+          side: imageUrl
+        },
+        customTexture: imageUrl
+      };
+      
+      // Add the custom item to selected clothing
+      setSelectedClothing(prev => [...prev, customTop]);
+    }
+    
+    if (isBottom) {
+      setCustomClothingImages(prev => ({ ...prev, bottom: imageUrl }));
+      
+      // Remove any selected bottom clothing items
+      setSelectedClothing(prev => prev.filter(item => 
+        !['pants', 'jeans', 'skirt', 'shorts'].includes(item.type.toLowerCase())
+      ));
+      
+      // Create a custom clothing item for the uploaded image
+      const customBottom: ClothingItem = {
+        id: 'custom-bottom-' + Date.now(),
+        name: 'Custom ' + clothingType,
+        type: clothingType.toLowerCase() as any,
+        category: 'bottoms',
+        color: '#FFFFFF', // We'll use the image texture instead of a solid color
+        pattern: 'custom',
+        size: 'M',
+        images: {
+          front: imageUrl,
+          back: imageUrl,
+          side: imageUrl
+        },
+        customTexture: imageUrl
+      };
+      
+      // Add the custom item to selected clothing
+      setSelectedClothing(prev => [...prev, customBottom]);
+    }
+  };
 
   const saveOutfit = () => {
     // In a real app, you would save this to a database
@@ -106,7 +186,8 @@ const VirtualTryOn = () => {
         acc[key as MeasurementKey] = m.value;
         return acc;
       }, {} as Record<MeasurementKey, number>),
-      clothing: selectedClothing.map(item => item.id)
+      clothing: selectedClothing.map(item => item.id),
+      customClothingImages
     });
     
     toast({
@@ -130,6 +211,7 @@ const VirtualTryOn = () => {
           highlightedPart={highlightedPart}
           rotation={rotation}
           setRotation={setRotation}
+          selectedClothing={selectedClothing}
         />
         
         {/* Settings Button */}
@@ -172,12 +254,63 @@ const VirtualTryOn = () => {
       {/* Clothing Selection */}
       {viewMode === "clothing" && (
         <div className="flex-1 px-6 pb-6 overflow-hidden flex flex-col">
-          <ClothingSelector
-            availableClothing={clothingItems}
-            selectedItems={selectedClothing}
-            onSelectItem={handleSelectClothing}
-            onRemoveItem={handleRemoveClothing}
-          />
+          <Tabs value={clothingTab} onValueChange={(value) => setClothingTab(value as "select" | "upload")}>
+            <TabsList className="mb-4 w-full">
+              <TabsTrigger value="select" className="flex-1">Select Clothing</TabsTrigger>
+              <TabsTrigger value="upload" className="flex-1">Upload Image</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="select">
+              <ClothingSelector
+                availableClothing={clothingItems}
+                selectedItems={selectedClothing}
+                onSelectItem={handleSelectClothing}
+                onRemoveItem={handleRemoveClothing}
+              />
+            </TabsContent>
+            
+            <TabsContent value="upload">
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-sm font-medium mb-2">Upload Top</h3>
+                  <ClothingImageUpload 
+                    onImageUploaded={handleImageUploaded}
+                    clothingType="t-shirt"
+                  />
+                  {customClothingImages.top && (
+                    <div className="mt-2 flex items-center justify-center">
+                      <div className="relative w-16 h-16 overflow-hidden rounded-md border">
+                        <img 
+                          src={customClothingImages.top} 
+                          alt="Custom top" 
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
+                <div>
+                  <h3 className="text-sm font-medium mb-2">Upload Bottom</h3>
+                  <ClothingImageUpload 
+                    onImageUploaded={handleImageUploaded}
+                    clothingType="pants"
+                  />
+                  {customClothingImages.bottom && (
+                    <div className="mt-2 flex items-center justify-center">
+                      <div className="relative w-16 h-16 overflow-hidden rounded-md border">
+                        <img 
+                          src={customClothingImages.bottom} 
+                          alt="Custom bottom" 
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
       )}
 

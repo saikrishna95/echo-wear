@@ -23,14 +23,32 @@ export const createAvatarClothingLayer = (
 ) => {
   const materials = createAvatarMaterials();
   
-  // Create clothing material based on the item's color
-  const clothingColor = new THREE.Color(clothingItem.color.toLowerCase());
+  // Create clothing material based either on a texture (if custom) or the item's color
+  let clothingMaterial: THREE.MeshStandardMaterial;
   
-  const clothingMaterial = new THREE.MeshStandardMaterial({
-    color: clothingColor,
-    roughness: 0.5,
-    metalness: 0.1
-  });
+  if (clothingItem.customTexture) {
+    // Create a texture loader
+    const textureLoader = new THREE.TextureLoader();
+    
+    // Load the texture
+    const texture = textureLoader.load(clothingItem.customTexture);
+    
+    // Create material with the texture
+    clothingMaterial = new THREE.MeshStandardMaterial({
+      map: texture,
+      roughness: 0.5,
+      metalness: 0.1
+    });
+  } else {
+    // Use solid color as before
+    const clothingColor = new THREE.Color(clothingItem.color.toLowerCase());
+    
+    clothingMaterial = new THREE.MeshStandardMaterial({
+      color: clothingColor,
+      roughness: 0.5,
+      metalness: 0.1
+    });
+  }
   
   // Create different clothing based on type
   switch(clothingItem.type.toLowerCase()) {
