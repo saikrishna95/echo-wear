@@ -26,27 +26,27 @@ interface HumanAvatar3DProps {
   selectedClothing?: ClothingItem[];
 }
 
-// Camera configuration based on device size - adjusted to point lower
+// Camera configuration based on device size - adjusted to point higher
 const getCameraSettings = (deviceSize: "mobile" | "tablet" | "desktop") => {
   switch (deviceSize) {
     case "mobile":
       return { 
-        position: [0, 1.2, 3.2] as [number, number, number], // Lowered from 1.6
+        position: [0, 1.4, 3.5] as [number, number, number], // Raised Y and increased Z
         fov: 35 
       };
     case "tablet":
       return { 
-        position: [0, 1.2, 3.5] as [number, number, number], // Lowered from 1.6
+        position: [0, 1.5, 3.8] as [number, number, number], // Raised Y and increased Z
         fov: 40 
       };
     case "desktop":
       return { 
-        position: [0, 1.4, 4] as [number, number, number], // Lowered from 1.8
+        position: [0, 1.6, 4.2] as [number, number, number], // Raised Y and increased Z
         fov: 45 
       };
     default:
       return { 
-        position: [0, 1.2, 3.2] as [number, number, number], // Lowered from 1.6
+        position: [0, 1.4, 3.5] as [number, number, number], // Raised Y and increased Z
         fov: 35 
       };
   }
@@ -156,7 +156,7 @@ const HumanAvatar3D: React.FC<HumanAvatar3DProps> = ({
           maxDistance={5}
           minPolarAngle={0} 
           maxPolarAngle={Math.PI / 1.8}
-          target={[0, 0.5, 0] as [number, number, number]}
+          target={[0, 1, 0] as [number, number, number]} // Raised target from 0.5 to 1 to focus on head
         />
       </Canvas>
       

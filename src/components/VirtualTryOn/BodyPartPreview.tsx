@@ -38,26 +38,26 @@ const BodyPartPreview: React.FC<BodyPartPreviewProps> = ({
     {} as Record<MeasurementKey, number>
   );
 
-  // Determine camera position and focus based on body part category - adjusted to point lower
+  // Determine camera position and focus based on body part category - adjusted to point higher
   const getCameraSettings = () => {
     switch (bodyPartCategory) {
       case "upper":
         return {
-          position: [0, 0.9, 1.8] as [number, number, number], // Lowered from 1.2
-          target: [0, 0.5, 0] as [number, number, number], // Lowered from 0.8
+          position: [0, 1.1, 1.8] as [number, number, number], // Raised from 0.9
+          target: [0, 1.0, 0] as [number, number, number], // Raised from 0.5
           fov: 30,
         };
       case "lower":
         return {
-          position: [0, -0.6, 1.8] as [number, number, number], // Lowered from -0.3
-          target: [0, -0.6, 0] as [number, number, number], // Lowered from -0.3
+          position: [0, -0.4, 1.8] as [number, number, number], // Raised from -0.6
+          target: [0, -0.4, 0] as [number, number, number], // Raised from -0.6
           fov: 30,
         };
       case "general":
       default:
         return {
-          position: [0, 0.2, 2.2] as [number, number, number], // Lowered from 0.5
-          target: [0, 0, 0] as [number, number, number], // Lowered from 0.2
+          position: [0, 0.8, 2.2] as [number, number, number], // Raised from 0.2
+          target: [0, 0.6, 0] as [number, number, number], // Raised from 0
           fov: 40,
         };
     }

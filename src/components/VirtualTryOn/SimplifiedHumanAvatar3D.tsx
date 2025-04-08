@@ -40,17 +40,17 @@ const FallbackAvatar = () => {
   );
 };
 
-// Camera configuration based on device size - adjusted to point lower
+// Camera configuration based on device size - adjusted to point higher
 const getCameraSettings = (deviceSize: "mobile" | "tablet" | "desktop") => {
   switch (deviceSize) {
     case "mobile":
-      return { position: [0, 1.2, 3.2] as [number, number, number], fov: 35 };
+      return { position: [0, 1.4, 3.5] as [number, number, number], fov: 35 };
     case "tablet":
-      return { position: [0, 1.2, 3.5] as [number, number, number], fov: 40 };
+      return { position: [0, 1.5, 3.8] as [number, number, number], fov: 40 };
     case "desktop":
-      return { position: [0, 1.4, 4] as [number, number, number], fov: 45 };
+      return { position: [0, 1.6, 4.2] as [number, number, number], fov: 45 };
     default:
-      return { position: [0, 1.2, 3.2] as [number, number, number], fov: 35 };
+      return { position: [0, 1.4, 3.5] as [number, number, number], fov: 35 };
   }
 };
 
@@ -132,7 +132,7 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
             {/* Environment lighting - studio setting for more realistic look */}
             <Environment preset="studio" />
             
-            {/* Camera controls - adjusted for better centering */}
+            {/* Camera controls - adjusted for better head centering */}
             <OrbitControls 
               enableZoom={true} 
               enablePan={false} 
@@ -141,7 +141,7 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
               maxDistance={5}
               minPolarAngle={0}
               maxPolarAngle={Math.PI / 1.8} // Limit vertical rotation
-              target={[0, 0.5, 0] as [number, number, number]}
+              target={[0, 1, 0] as [number, number, number]} // Raised target from 0.5 to 1 to focus on head
             />
           </React.Suspense>
         </Canvas>

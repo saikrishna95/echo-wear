@@ -32,34 +32,34 @@ export const ReadyPlayerMeAvatar: React.FC<ReadyPlayerMeAvatarProps> = ({
     console.log("ReadyPlayerMeAvatar measurements:", measurements);
   }, [measurements]);
   
-  // Get position adjustment based on device size - moved downward
+  // Get position adjustment based on device size - moved upward
   const getPositionY = () => {
     switch (deviceSize) {
       case "mobile":
-        return -1.5; // Moved down from -1.15
+        return -1.4; // Raised from -1.5
       case "tablet":
-        return -1.6; // Moved down from -1.2
+        return -1.4; // Raised from -1.6
       case "desktop":
-        return -1.65; // Moved down from -1.25
+        return -1.4; // Raised from -1.65
       default:
-        return -1.5; // Moved down from -1.15
+        return -1.4; // Raised from -1.5
     }
   };
 
-  // Get model position based on device size and height - moved downward
+  // Get model position based on device size and height - moved upward
   const getModelPositionY = () => {
     // Adjust position based on height factor
     const heightFactor = measurements.height / 175;
     
     switch (deviceSize) {
       case "mobile":
-        return -1.35 * heightFactor; // Moved down from -1
+        return -1.2 * heightFactor; // Raised from -1.35
       case "tablet":
-        return -1.40 * heightFactor; // Moved down from -1.05
+        return -1.2 * heightFactor; // Raised from -1.40
       case "desktop":
-        return -1.45 * heightFactor; // Moved down from -1.1
+        return -1.2 * heightFactor; // Raised from -1.45
       default:
-        return -1.35 * heightFactor; // Moved down from -1
+        return -1.2 * heightFactor; // Raised from -1.35
     }
   };
   
