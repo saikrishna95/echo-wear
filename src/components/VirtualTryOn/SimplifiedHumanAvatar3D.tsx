@@ -55,7 +55,7 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
     <div className="w-full h-full rounded-xl shadow-sm overflow-hidden bg-gray-50 dark:bg-gray-900">
       <ErrorBoundary FallbackComponent={FallbackAvatar}>
         <Canvas
-          camera={{ position: [0, 0, 4], fov: 45 }} // Adjusted camera position to better see the head
+          camera={{ position: [0, 0, 2.5], fov: 50 }} // Adjusted camera position for better view
           style={{ background: 'transparent' }}
         >
           <Suspense fallback={null}>
@@ -75,7 +75,7 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
               far={10}
               resolution={256}
               color="#000000"
-              position={[0, -0.5, 0]}
+              position={[0, -0.8, 0]}
             />
             
             {/* Mannequin model */}
@@ -88,16 +88,16 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
             {/* Environment lighting */}
             <Environment preset="city" />
             
-            {/* Camera controls - adjusted to show full avatar with head */}
+            {/* Camera controls */}
             <OrbitControls 
               enableZoom={true} 
               enablePan={false} 
               enableRotate={true}
-              minDistance={1.5}
+              minDistance={1.2}
               maxDistance={4}
-              minPolarAngle={0} // Removed minimum angle restriction to see the head
-              maxPolarAngle={Math.PI} // Allow full vertical rotation
-              target={[0, -0.5, 0]} // Set camera target to the center of the model
+              minPolarAngle={0} // Allow full vertical rotation
+              maxPolarAngle={Math.PI}
+              target={[0, 0, 0]} // Center camera target on the model
             />
           </Suspense>
         </Canvas>
