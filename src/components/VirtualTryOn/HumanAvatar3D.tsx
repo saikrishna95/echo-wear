@@ -1,13 +1,15 @@
 
 import React, { useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Environment, ContactShadows, softShadows } from '@react-three/drei';
+import { OrbitControls, Environment, ContactShadows, SoftShadows } from '@react-three/drei';
 import { MeasurementKey, Measurements, ClothingItem } from './types';
 import { useDeviceSize } from '../../hooks/use-mobile';
 import ReadyPlayerMeAvatar from './ReadyPlayerMeAvatar';
 
-// Enable soft shadows for more realistic lighting
-softShadows();
+// Enable soft shadows using the component approach
+const EnableSoftShadows = () => {
+  return <SoftShadows size={25} samples={16} />;
+};
 
 interface HumanAvatar3DProps {
   measurements: {
@@ -102,6 +104,9 @@ const HumanAvatar3D: React.FC<HumanAvatar3DProps> = ({
           fov: cameraSettings.fov 
         }}
       >
+        {/* Enable soft shadows using component */}
+        <EnableSoftShadows />
+        
         {/* Enhanced realistic lighting */}
         <ambientLight intensity={0.5} /> {/* Softer ambient light */}
         <spotLight 
@@ -110,16 +115,14 @@ const HumanAvatar3D: React.FC<HumanAvatar3DProps> = ({
           penumbra={0.8} 
           intensity={0.8} 
           castShadow 
-          shadow-mapSize-width={1024} 
-          shadow-mapSize-height={1024}
+          shadow-mapSize={[1024, 1024]}
         />
         <pointLight position={[-5, 5, -5]} intensity={0.5} />
         <directionalLight
           position={[0, 5, 5]}
           intensity={0.4}
           castShadow
-          shadow-mapSize-width={1024}
-          shadow-mapSize-height={1024}
+          shadow-mapSize={[1024, 1024]}
         />
         
         {/* ReadyPlayerMe Avatar */}

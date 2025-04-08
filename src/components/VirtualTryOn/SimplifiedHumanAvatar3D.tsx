@@ -1,14 +1,16 @@
 
 import React from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Environment, ContactShadows, softShadows } from '@react-three/drei';
+import { OrbitControls, Environment, ContactShadows, SoftShadows } from '@react-three/drei';
 import { MeasurementKey } from './types';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useDeviceSize } from '../../hooks/use-mobile';
 import ReadyPlayerMeAvatar from './ReadyPlayerMeAvatar';
 
-// Enable soft shadows
-softShadows();
+// Enable soft shadows using the component approach
+const EnableSoftShadows = () => {
+  return <SoftShadows size={25} samples={16} />;
+};
 
 interface SimplifiedHumanAvatar3DProps {
   measurements: {
@@ -95,6 +97,9 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
           }}
         >
           <React.Suspense fallback={null}>
+            {/* Enable soft shadows using component */}
+            <EnableSoftShadows />
+            
             {/* Enhanced realistic lighting */}
             <ambientLight intensity={0.5} />
             <spotLight 
@@ -103,6 +108,7 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
               penumbra={0.8} 
               intensity={0.8} 
               castShadow 
+              shadow-mapSize={1024}
             />
             <pointLight position={[-5, 5, -5]} intensity={0.5} />
             
