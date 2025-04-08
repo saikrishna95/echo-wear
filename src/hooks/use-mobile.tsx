@@ -1,19 +1,39 @@
 import * as React from "react"
 
+// Define breakpoints for different device sizes
 const MOBILE_BREAKPOINT = 768
+const TABLET_BREAKPOINT = 1024
 
-export function useIsMobile() {
-  const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined)
-
+export function useDeviceSize() {
+  const [deviceSize, setDeviceSize] = React.useState<"mobile" | "tablet" | "desktop">("desktop")
+  
   React.useEffect(() => {
-    const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
-    const onChange = () => {
-      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
+    const updateSize = () => {
+      const width = window.innerWidth
+      if (width < MOBILE_BREAKPOINT) {
+        setDeviceSize("mobile")
+      } else if (width < TABLET_BREAKPOINT) {
+        setDeviceSize("tablet")
+      } else {
+        setDeviceSize("desktop")
+      }
     }
-    mql.addEventListener("change", onChange)
-    setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
-    return () => mql.removeEventListener("change", onChange)
+    
+    // Set initial size
+    updateSize()
+    
+    // Add event listener for window resize
+    window.addEventListener("resize", updateSize)
+    
+    // Cleanup
+    return () => window.removeEventListener("resize", updateSize)
   }, [])
+  
+  return deviceSize
+}
 
-  return !!isMobile
+// Keep the original hook for backward compatibility
+export function useIsMobile() {
+  const deviceSize = useDeviceSize()
+  return deviceSize === "mobile"
 }

@@ -1,11 +1,11 @@
 
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment } from '@react-three/drei';
 import CustomMannequin from './CustomMannequin';
 import { MeasurementKey } from './types';
 import { ErrorBoundary } from 'react-error-boundary';
-
+import { useDeviceSize } from '../../hooks/use-mobile';
 
 interface SimplifiedHumanAvatar3DProps {
   measurements: {
@@ -36,11 +36,28 @@ const FallbackAvatar = () => {
   );
 };
 
+// Camera configuration based on device size
+const getCameraSettings = (deviceSize: "mobile" | "tablet" | "desktop") => {
+  switch (deviceSize) {
+    case "mobile":
+      return { position: [0, 1.6, 3.2], fov: 35 };
+    case "tablet":
+      return { position: [0, 1.6, 3.5], fov: 40 };
+    case "desktop":
+      return { position: [0, 1.8, 4], fov: 45 };
+    default:
+      return { position: [0, 1.6, 3.2], fov: 35 };
+  }
+};
+
 const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({ 
   measurements, 
   highlightedPart,
   rotation
 }) => {
+  const deviceSize = useDeviceSize();
+  const cameraSettings = getCameraSettings(deviceSize);
+  
   // Convert measurements format to simplified record
   const simpleMeasurements: Record<MeasurementKey, number> = Object.entries(measurements).reduce(
     (acc, [key, data]) => {
@@ -50,11 +67,28 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
     {} as Record<MeasurementKey, number>
   );
 
+  // Get responsive container class based on device size
+  const getContainerHeightClass = () => {
+    switch (deviceSize) {
+      case "mobile":
+        return "max-h-[500px] min-h-[400px]";
+      case "tablet":
+        return "max-h-[600px] min-h-[450px]";
+      case "desktop":
+        return "max-h-[700px] min-h-[500px]";
+      default:
+        return "max-h-[500px]";
+    }
+  };
+
   return (
-    <div className="w-full h-full max-h-[500px] rounded-xl overflow-hidden bg-gray-50 dark:bg-gray-900">
+    <div className={`w-full h-full ${getContainerHeightClass()} rounded-xl overflow-hidden bg-gray-50 dark:bg-gray-900`}>
       <ErrorBoundary FallbackComponent={FallbackAvatar}>
         <Canvas
-          camera={{ position: [0, 1.6, 3.2], fov: 35 }} 
+          camera={{ 
+            position: cameraSettings.position, 
+            fov: cameraSettings.fov 
+          }}
           style={{ background: 'transparent' }}
         >
           <Suspense fallback={null}>
@@ -68,6 +102,7 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
               measurements={simpleMeasurements} 
               rotation={rotation}
               highlightedPart={highlightedPart}
+              deviceSize={deviceSize}
             />
             
             {/* Environment lighting */}

@@ -9,25 +9,29 @@ interface HybridAvatarModelProps {
   measurements: Measurements;
   rotation: number;
   selectedClothing?: ClothingItem[];
+  deviceSize?: "mobile" | "tablet" | "desktop";
 }
 
 // Fallback component that uses the original primitive-based avatar
 const FallbackAvatar: React.FC<HybridAvatarModelProps> = ({ 
   measurements, 
   rotation,
-  selectedClothing 
+  selectedClothing,
+  deviceSize 
 }) => {
   return <AvatarModel 
     measurements={measurements} 
     rotation={rotation}
-    selectedClothing={selectedClothing} 
+    selectedClothing={selectedClothing}
+    deviceSize={deviceSize}
   />;
 };
 
 export const HybridAvatarModel: React.FC<HybridAvatarModelProps> = ({ 
   measurements, 
   rotation,
-  selectedClothing = []
+  selectedClothing = [],
+  deviceSize = "mobile"
 }) => {
   const [useRealistic, setUseRealistic] = useState(true);
 
@@ -68,7 +72,8 @@ export const HybridAvatarModel: React.FC<HybridAvatarModelProps> = ({
       <FallbackAvatar 
         measurements={measurements} 
         rotation={rotation}
-        selectedClothing={selectedClothing} 
+        selectedClothing={selectedClothing}
+        deviceSize={deviceSize}
       />
     )}>
       {useRealistic ? (
@@ -76,12 +81,14 @@ export const HybridAvatarModel: React.FC<HybridAvatarModelProps> = ({
           measurements={measurements} 
           rotation={rotation}
           selectedClothing={selectedClothing}
+          deviceSize={deviceSize}
         />
       ) : (
         <FallbackAvatar 
           measurements={measurements} 
           rotation={rotation}
           selectedClothing={selectedClothing}
+          deviceSize={deviceSize}
         />
       )}
     </ErrorBoundary>

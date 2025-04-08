@@ -4,6 +4,7 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment } from '@react-three/drei';
 import HybridAvatarModel from './HybridAvatarModel';
 import { MeasurementKey, Measurements, ClothingItem } from './types';
+import { useDeviceSize } from '../../hooks/use-mobile';
 
 interface HumanAvatar3DProps {
   measurements: {
@@ -21,12 +22,29 @@ interface HumanAvatar3DProps {
   selectedClothing?: ClothingItem[];
 }
 
+// Camera configuration based on device size
+const getCameraSettings = (deviceSize: "mobile" | "tablet" | "desktop") => {
+  switch (deviceSize) {
+    case "mobile":
+      return { position: [0, 1.6, 3.2], fov: 35 };
+    case "tablet":
+      return { position: [0, 1.6, 3.5], fov: 40 };
+    case "desktop":
+      return { position: [0, 1.8, 4], fov: 45 };
+    default:
+      return { position: [0, 1.6, 3.2], fov: 35 };
+  }
+};
+
 const HumanAvatar3D: React.FC<HumanAvatar3DProps> = ({ 
   measurements, 
   highlightedPart,
   rotation,
   selectedClothing = []
 }) => {
+  const deviceSize = useDeviceSize();
+  const cameraSettings = getCameraSettings(deviceSize);
+  
   // Convert measurements format to simplified record
   const simpleMeasurements: Measurements = Object.entries(measurements).reduce(
     (acc, [key, data]) => {
@@ -36,11 +54,28 @@ const HumanAvatar3D: React.FC<HumanAvatar3DProps> = ({
     {} as Measurements
   );
 
+  // Get responsive container class based on device size
+  const getContainerHeightClass = () => {
+    switch (deviceSize) {
+      case "mobile":
+        return "max-h-[500px] min-h-[400px]";
+      case "tablet":
+        return "max-h-[600px] min-h-[450px]";
+      case "desktop":
+        return "max-h-[700px] min-h-[500px]";
+      default:
+        return "max-h-[500px]";
+    }
+  };
+
   return (
-    <div className="w-full h-full max-h-[500px] rounded-xl overflow-hidden bg-gray-50">
+    <div className={`w-full h-full ${getContainerHeightClass()} rounded-xl overflow-hidden bg-gray-50`}>
       <Canvas
         style={{ background: 'transparent' }}
-        camera={{ position: [0, 1.6, 3.2], fov: 35 }}
+        camera={{ 
+          position: cameraSettings.position, 
+          fov: cameraSettings.fov 
+        }}
       >
         {/* Simple lighting for clear visibility */}
         <ambientLight intensity={0.8} />
@@ -52,6 +87,7 @@ const HumanAvatar3D: React.FC<HumanAvatar3DProps> = ({
           measurements={simpleMeasurements} 
           rotation={rotation}
           selectedClothing={selectedClothing}
+          deviceSize={deviceSize}
         />
         
         {/* Environment lighting for better material rendering */}

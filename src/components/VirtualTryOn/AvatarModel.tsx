@@ -15,15 +15,31 @@ interface AvatarModelProps {
   measurements: Measurements;
   rotation: number;
   selectedClothing?: ClothingItem[];
+  deviceSize?: "mobile" | "tablet" | "desktop";
 }
 
 export const AvatarModel: React.FC<AvatarModelProps> = ({ 
   measurements, 
   rotation,
-  selectedClothing = [] 
+  selectedClothing = [],
+  deviceSize = "mobile"
 }) => {
   const group = useRef<THREE.Group>(null);
   const { camera } = useThree();
+  
+  // Get position adjustment based on device size
+  const getPositionY = () => {
+    switch (deviceSize) {
+      case "mobile":
+        return -1.15;
+      case "tablet":
+        return -1.2;
+      case "desktop":
+        return -1.25;
+      default:
+        return -1.15;
+    }
+  };
   
   useEffect(() => {
     if (group.current) {
@@ -86,15 +102,18 @@ export const AvatarModel: React.FC<AvatarModelProps> = ({
       }
       
       // Position the whole model to align with bottom of view
-      group.current.position.y = -0.7;
+      // Use a device-specific offset for responsiveness
+      const yPosition = deviceSize === "mobile" ? -0.7 : 
+                         deviceSize === "tablet" ? -0.75 : -0.8;
+      group.current.position.y = yPosition;
       
       // Apply rotation
       group.current.rotation.y = (rotation * Math.PI) / 180;
     }
-  }, [measurements, rotation, camera, selectedClothing]);
+  }, [measurements, rotation, camera, selectedClothing, deviceSize]);
 
   return (
-    <group ref={group} position={[0, -1.15, 0]} />
+    <group ref={group} position={[0, getPositionY(), 0]} />
   );
 };
 

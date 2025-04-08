@@ -8,12 +8,14 @@ interface RealisticAvatarModelProps {
   measurements: Measurements;
   rotation: number;
   selectedClothing?: ClothingItem[];
+  deviceSize?: "mobile" | "tablet" | "desktop";
 }
 
 export const RealisticAvatarModel: React.FC<RealisticAvatarModelProps> = ({ 
   measurements, 
   rotation,
-  selectedClothing = []
+  selectedClothing = [],
+  deviceSize = "mobile"
 }) => {
   const group = useRef<THREE.Group>(null);
   const { camera } = useThree();
@@ -24,9 +26,37 @@ export const RealisticAvatarModel: React.FC<RealisticAvatarModelProps> = ({
   // Create a copy of the scene to modify
   const model = scene?.clone();
   
+  // Get position adjustment based on device size
+  const getPositionY = () => {
+    switch (deviceSize) {
+      case "mobile":
+        return -1.15;
+      case "tablet":
+        return -1.2;
+      case "desktop":
+        return -1.25;
+      default:
+        return -1.15;
+    }
+  };
+
+  // Get model position based on device size
+  const getModelPositionY = () => {
+    switch (deviceSize) {
+      case "mobile":
+        return -1;
+      case "tablet":
+        return -1.05;
+      case "desktop":
+        return -1.1;
+      default:
+        return -1;
+    }
+  };
+  
   useEffect(() => {
     if (group.current && model) {
-      // Clear any existing children
+      // Remove previous mannequin
       while (group.current.children.length) {
         group.current.remove(group.current.children[0]);
       }
@@ -39,12 +69,12 @@ export const RealisticAvatarModel: React.FC<RealisticAvatarModelProps> = ({
       model.scale.set(heightFactor * 0.18, heightFactor * 0.18, heightFactor * 0.18); // Adjusted scale
       
       // Position model for better visibility - aligned with bottom of view
-      model.position.set(0, -1, 0);
+      model.position.set(0, getModelPositionY(), 0);
       
       // Apply rotation
       group.current.rotation.y = (rotation * Math.PI) / 180;
     }
-  }, [measurements, rotation, camera, model, selectedClothing]);
+  }, [measurements, rotation, camera, model, selectedClothing, deviceSize]);
 
   // No animation - keep avatar static
   useFrame(() => {
@@ -52,7 +82,7 @@ export const RealisticAvatarModel: React.FC<RealisticAvatarModelProps> = ({
   });
 
   return (
-    <group ref={group} position={[0, -1.15, 0]} />
+    <group ref={group} position={[0, getPositionY(), 0]} />
   );
 };
 
