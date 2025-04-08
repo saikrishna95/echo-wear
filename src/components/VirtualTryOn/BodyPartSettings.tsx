@@ -5,6 +5,7 @@ import { MeasurementKey } from "./types";
 import SliderControl from "./SliderControl";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+import BodyPartPreview from "./BodyPartPreview";
 
 interface MeasurementData {
   value: number;
@@ -84,6 +85,15 @@ const BodyPartSettings: React.FC<BodyPartSettingsProps> = ({
           <TabsTrigger value="lower">Lower Body</TabsTrigger>
           <TabsTrigger value="general">General</TabsTrigger>
         </TabsList>
+        
+        {/* Avatar preview for the selected body part */}
+        <div className="mb-4">
+          <BodyPartPreview 
+            bodyPartCategory={activeCategoryTab}
+            measurements={measurements}
+            highlightedPart={activeCategoryTab === "upper" ? "chest" : activeCategoryTab === "lower" ? "hips" : "height"}
+          />
+        </div>
         
         <div className="flex-1 overflow-y-auto">
           <TabsContent value="upper" className="mt-0 space-y-4">
