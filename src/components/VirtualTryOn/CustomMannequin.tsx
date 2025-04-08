@@ -38,8 +38,10 @@ const CustomMannequin: React.FC<CustomMannequinProps> = ({
     const model = scene.clone();
 
     // Apply scale from measurement values for better visibility
-    model.scale.set(0.3, 0.3, 0.3); // Reduced scale to fit entire body in view
-    model.position.set(0, -1.1, 0); // Lower position to show full body in frame
+    model.scale.set(0.3, 0.3, 0.3); // Scale to match reference image
+    
+    // Position the model lower to ensure head is visible in the frame
+    model.position.set(0, -1.6, 0); // Lower position to make head visible
 
     // Apply rotation
     model.rotation.y = (rotation * Math.PI) / 180;
