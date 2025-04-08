@@ -24,10 +24,10 @@ export const ReadyPlayerMeAvatar: React.FC<ReadyPlayerMeAvatarProps> = ({
   const modelRef = useRef<THREE.Object3D>();
   const { camera } = useThree();
   
-  // Use the ReadyPlayerMe model
-  const { scene } = useGLTF('https://models.readyplayer.me/67f534d65ec6a722636d42b4.glb');
+  // Use the ReadyPlayerMe model with improved loading
+  const { scene } = useGLTF('https://models.readyplayer.me/67f534d65ec6a722636d42b4.glb', true);
   
-  // Log measurements for debugging
+  // Debug logs for measurements
   useEffect(() => {
     console.log("ReadyPlayerMeAvatar measurements:", measurements);
   }, [measurements]);
@@ -92,6 +92,70 @@ export const ReadyPlayerMeAvatar: React.FC<ReadyPlayerMeAvatarProps> = ({
       // Apply rotation
       model.rotation.y = (rotation * Math.PI) / 180;
       
+      // Enhance materials for more realistic look
+      model.traverse((child) => {
+        if (child instanceof THREE.Mesh && child.material) {
+          if (Array.isArray(child.material)) {
+            child.material.forEach(mat => {
+              if (mat instanceof THREE.MeshStandardMaterial) {
+                // Improve skin material
+                if (mat.name.toLowerCase().includes('skin') || 
+                    child.name.toLowerCase().includes('face') || 
+                    child.name.toLowerCase().includes('head')) {
+                  mat.roughness = 0.7; // Less shiny skin
+                  mat.metalness = 0.1; // Slight subsurface look
+                  mat.envMapIntensity = 0.8; // Better light reflection
+                }
+                // Improve hair material
+                else if (mat.name.toLowerCase().includes('hair') || 
+                         child.name.toLowerCase().includes('hair')) {
+                  mat.roughness = 0.6;
+                  mat.metalness = 0.1;
+                }
+                // Improve clothing material
+                else if (mat.name.toLowerCase().includes('cloth') || 
+                         child.name.toLowerCase().includes('shirt') || 
+                         child.name.toLowerCase().includes('pant')) {
+                  mat.roughness = 0.8; // Fabric-like roughness
+                  mat.metalness = 0.05;
+                }
+                
+                // Enable shadows for all meshes
+                if (child.castShadow !== undefined) {
+                  child.castShadow = true;
+                  child.receiveShadow = true;
+                }
+              }
+            });
+          } else if (child.material instanceof THREE.MeshStandardMaterial) {
+            // Same material enhancements for non-array materials
+            const mat = child.material;
+            if (mat.name.toLowerCase().includes('skin') || 
+                child.name.toLowerCase().includes('face') || 
+                child.name.toLowerCase().includes('head')) {
+              mat.roughness = 0.7;
+              mat.metalness = 0.1;
+              mat.envMapIntensity = 0.8;
+            } else if (mat.name.toLowerCase().includes('hair') || 
+                       child.name.toLowerCase().includes('hair')) {
+              mat.roughness = 0.6;
+              mat.metalness = 0.1;
+            } else if (mat.name.toLowerCase().includes('cloth') || 
+                       child.name.toLowerCase().includes('shirt') || 
+                       child.name.toLowerCase().includes('pant')) {
+              mat.roughness = 0.8;
+              mat.metalness = 0.05;
+            }
+            
+            // Enable shadows
+            if (child.castShadow !== undefined) {
+              child.castShadow = true;
+              child.receiveShadow = true;
+            }
+          }
+        }
+      });
+      
       // Add model to group
       group.current.add(model);
     }
@@ -103,9 +167,26 @@ export const ReadyPlayerMeAvatar: React.FC<ReadyPlayerMeAvatarProps> = ({
       // Update rotation when it changes
       modelRef.current.rotation.y = (rotation * Math.PI) / 180;
       
-      // Add subtle breathing animation
+      // Add natural breathing animation
       const t = state.clock.getElapsedTime();
-      modelRef.current.position.y = getModelPositionY() + Math.sin(t * 0.5) * 0.01;
+      const breathingAmplitude = 0.01; // Subtle breathing
+      const breathingFrequency = 0.5; // Slow, natural breathing
+      
+      // Apply breathing animation
+      modelRef.current.position.y = getModelPositionY() + Math.sin(t * breathingFrequency) * breathingAmplitude;
+      
+      // Very subtle shoulder movement for breathing
+      modelRef.current.traverse((child) => {
+        if (child instanceof THREE.Object3D) {
+          if (child.name.toLowerCase().includes('shoulder') || 
+              child.name.toLowerCase().includes('chest') || 
+              child.name.toLowerCase().includes('spine')) {
+            // Apply extremely subtle rotation to simulate breathing
+            const breathScale = 0.0008; // Very small scale
+            child.rotation.x = (Math.sin(t * breathingFrequency) * breathScale) + (child.rotation.x || 0);
+          }
+        }
+      });
       
       // Highlight specific body parts if needed
       if (highlightedPart) {
@@ -121,7 +202,6 @@ export const ReadyPlayerMeAvatar: React.FC<ReadyPlayerMeAvatarProps> = ({
             }
             
             // Apply highlighting based on part names in the model
-            // Note: You'll need to adjust these based on actual model part names
             const name = child.name.toLowerCase();
             
             if ((highlightedPart === "chest" && 
@@ -129,7 +209,7 @@ export const ReadyPlayerMeAvatar: React.FC<ReadyPlayerMeAvatarProps> = ({
                 (highlightedPart === "waist" && name.includes('waist')) ||
                 (highlightedPart === "hips" && (name.includes('hip') || name.includes('pelvis'))) ||
                 (highlightedPart === "shoulder" && name.includes('shoulder')) ||
-                (highlightedPart === "stomach" && (name.includes('stomach') || name.includes('belly'))) ||
+                (highlightedPart === "stomach" && (name.includes('stomach') || name.includes('belly') || name.includes('abdomen'))) ||
                 (highlightedPart === "thigh" && (name.includes('thigh') || name.includes('leg'))) ||
                 (highlightedPart === "neck" && name.includes('neck'))) {
               

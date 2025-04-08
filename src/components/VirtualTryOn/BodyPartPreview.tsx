@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, Environment } from "@react-three/drei";
+import { OrbitControls, Environment, ContactShadows } from "@react-three/drei";
 import { MeasurementKey } from "./types";
 import ReadyPlayerMeAvatar from "./ReadyPlayerMeAvatar";
 
@@ -66,16 +66,24 @@ const BodyPartPreview: React.FC<BodyPartPreviewProps> = ({
   const cameraSettings = getCameraSettings();
 
   return (
-    <div className="w-full h-48 rounded-md overflow-hidden bg-gray-50">
+    <div className="w-full h-48 rounded-md overflow-hidden bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
       <Canvas
+        shadows
         camera={{
           position: cameraSettings.position,
           fov: cameraSettings.fov,
         }}
       >
-        <ambientLight intensity={0.8} />
-        <pointLight position={[10, 10, 10]} intensity={0.6} />
-        <pointLight position={[-10, -10, -10]} intensity={0.3} />
+        {/* Enhanced realistic lighting */}
+        <ambientLight intensity={0.5} />
+        <spotLight 
+          position={[3, 3, 3]} 
+          angle={0.3} 
+          penumbra={0.8} 
+          intensity={0.7} 
+          castShadow 
+        />
+        <pointLight position={[-3, 3, -3]} intensity={0.4} />
         
         <ReadyPlayerMeAvatar
           measurements={simpleMeasurements}
@@ -84,7 +92,19 @@ const BodyPartPreview: React.FC<BodyPartPreviewProps> = ({
           deviceSize="mobile"
         />
         
-        <Environment preset="city" />
+        {/* Contact shadows for realism */}
+        <ContactShadows 
+          opacity={0.4} 
+          scale={5} 
+          blur={2} 
+          far={3} 
+          resolution={128} 
+          color="#000000" 
+          position={[0, -1.5, 0]}
+        />
+        
+        {/* Environment lighting */}
+        <Environment preset="studio" />
         
         <OrbitControls
           enableZoom={false}

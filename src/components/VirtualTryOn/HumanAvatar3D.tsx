@@ -1,10 +1,13 @@
 
 import React, { useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Environment } from '@react-three/drei';
+import { OrbitControls, Environment, ContactShadows, softShadows } from '@react-three/drei';
 import { MeasurementKey, Measurements, ClothingItem } from './types';
 import { useDeviceSize } from '../../hooks/use-mobile';
 import ReadyPlayerMeAvatar from './ReadyPlayerMeAvatar';
+
+// Enable soft shadows for more realistic lighting
+softShadows();
 
 interface HumanAvatar3DProps {
   measurements: {
@@ -26,13 +29,25 @@ interface HumanAvatar3DProps {
 const getCameraSettings = (deviceSize: "mobile" | "tablet" | "desktop") => {
   switch (deviceSize) {
     case "mobile":
-      return { position: [0, 1.6, 3.2] as [number, number, number], fov: 35 };
+      return { 
+        position: [0, 1.6, 3.2] as [number, number, number], 
+        fov: 35 
+      };
     case "tablet":
-      return { position: [0, 1.6, 3.5] as [number, number, number], fov: 40 };
+      return { 
+        position: [0, 1.6, 3.5] as [number, number, number], 
+        fov: 40 
+      };
     case "desktop":
-      return { position: [0, 1.8, 4] as [number, number, number], fov: 45 };
+      return { 
+        position: [0, 1.8, 4] as [number, number, number], 
+        fov: 45 
+      };
     default:
-      return { position: [0, 1.6, 3.2] as [number, number, number], fov: 35 };
+      return { 
+        position: [0, 1.6, 3.2] as [number, number, number], 
+        fov: 35 
+      };
   }
 };
 
@@ -79,19 +94,33 @@ const HumanAvatar3D: React.FC<HumanAvatar3DProps> = ({
   };
 
   return (
-    <div className={`w-full h-full ${getContainerHeightClass()} rounded-xl overflow-hidden bg-gray-50 relative`}>
+    <div className={`w-full h-full ${getContainerHeightClass()} rounded-xl overflow-hidden bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 relative`}>
       <Canvas
-        style={{ background: 'transparent' }}
+        shadows
         camera={{ 
           position: cameraSettings.position, 
           fov: cameraSettings.fov 
         }}
       >
-        {/* Enhanced lighting for better visualization */}
-        <ambientLight intensity={0.8} />
-        <pointLight position={[10, 10, 10]} intensity={0.6} />
-        <pointLight position={[-10, -10, -10]} intensity={0.3} />
-        <pointLight position={[0, 5, 5]} intensity={0.5} color="#ffffff" />
+        {/* Enhanced realistic lighting */}
+        <ambientLight intensity={0.5} /> {/* Softer ambient light */}
+        <spotLight 
+          position={[5, 5, 5]} 
+          angle={0.3} 
+          penumbra={0.8} 
+          intensity={0.8} 
+          castShadow 
+          shadow-mapSize-width={1024} 
+          shadow-mapSize-height={1024}
+        />
+        <pointLight position={[-5, 5, -5]} intensity={0.5} />
+        <directionalLight
+          position={[0, 5, 5]}
+          intensity={0.4}
+          castShadow
+          shadow-mapSize-width={1024}
+          shadow-mapSize-height={1024}
+        />
         
         {/* ReadyPlayerMe Avatar */}
         <ReadyPlayerMeAvatar 
@@ -102,8 +131,19 @@ const HumanAvatar3D: React.FC<HumanAvatar3DProps> = ({
           highlightedPart={highlightedPart}
         />
         
+        {/* Contact shadows for realism */}
+        <ContactShadows 
+          opacity={0.4} 
+          scale={10} 
+          blur={2.5} 
+          far={5} 
+          resolution={128} 
+          color="#000000" 
+          position={[0, -1.5, 0]}
+        />
+        
         {/* Environment lighting for better material rendering */}
-        <Environment preset="city" />
+        <Environment preset="studio" />
         
         {/* Camera controls - adjusted for better view of the avatar */}
         <OrbitControls 
@@ -121,7 +161,7 @@ const HumanAvatar3D: React.FC<HumanAvatar3DProps> = ({
       {/* Enhanced measurement indicator overlay */}
       {highlightedPart && (
         <div className="absolute bottom-4 left-0 right-0 text-center">
-          <span className="bg-gray-800/80 text-white px-4 py-2 rounded-full text-sm font-medium">
+          <span className="bg-gray-800/80 text-white px-4 py-2 rounded-full text-sm font-medium backdrop-blur-sm shadow-lg">
             Editing: {measurements[highlightedPart].label} - {measurements[highlightedPart].value}{measurements[highlightedPart].unit}
           </span>
         </div>

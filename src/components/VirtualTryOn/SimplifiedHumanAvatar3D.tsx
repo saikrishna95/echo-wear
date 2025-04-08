@@ -1,11 +1,14 @@
 
 import React from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Environment } from '@react-three/drei';
+import { OrbitControls, Environment, ContactShadows, softShadows } from '@react-three/drei';
 import { MeasurementKey } from './types';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useDeviceSize } from '../../hooks/use-mobile';
 import ReadyPlayerMeAvatar from './ReadyPlayerMeAvatar';
+
+// Enable soft shadows
+softShadows();
 
 interface SimplifiedHumanAvatar3DProps {
   measurements: {
@@ -82,20 +85,26 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
   };
 
   return (
-    <div className={`w-full h-full ${getContainerHeightClass()} rounded-xl overflow-hidden bg-gray-50 dark:bg-gray-900`}>
+    <div className={`w-full h-full ${getContainerHeightClass()} rounded-xl overflow-hidden bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800`}>
       <ErrorBoundary FallbackComponent={FallbackAvatar}>
         <Canvas
+          shadows
           camera={{ 
             position: cameraSettings.position, 
             fov: cameraSettings.fov 
           }}
-          style={{ background: 'transparent' }}
         >
           <React.Suspense fallback={null}>
-            {/* Simple lighting for clear visibility */}
-            <ambientLight intensity={0.8} />
-            <pointLight position={[10, 10, 10]} intensity={0.5} />
-            <pointLight position={[-10, -10, -10]} intensity={0.2} />
+            {/* Enhanced realistic lighting */}
+            <ambientLight intensity={0.5} />
+            <spotLight 
+              position={[5, 5, 5]} 
+              angle={0.3} 
+              penumbra={0.8} 
+              intensity={0.8} 
+              castShadow 
+            />
+            <pointLight position={[-5, 5, -5]} intensity={0.5} />
             
             <ReadyPlayerMeAvatar 
               measurements={simpleMeasurements} 
@@ -104,8 +113,19 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
               highlightedPart={highlightedPart}
             />
             
-            {/* Environment lighting */}
-            <Environment preset="city" />
+            {/* Contact shadows for better grounding */}
+            <ContactShadows 
+              opacity={0.4} 
+              scale={10} 
+              blur={2.5} 
+              far={5} 
+              resolution={128} 
+              color="#000000" 
+              position={[0, -1.5, 0]}
+            />
+            
+            {/* Environment lighting - studio setting for more realistic look */}
+            <Environment preset="studio" />
             
             {/* Camera controls - adjusted for better centering */}
             <OrbitControls 
@@ -125,7 +145,7 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
       {/* Measurement indicator overlay */}
       {highlightedPart && (
         <div className="absolute bottom-4 left-0 right-0 text-center">
-          <span className="bg-gray-800/70 text-white px-3 py-1 rounded-full text-xs">
+          <span className="bg-gray-800/70 text-white px-3 py-1 rounded-full text-xs backdrop-blur-sm shadow-md">
             Editing: {measurements[highlightedPart].label}
           </span>
         </div>
