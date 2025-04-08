@@ -1,7 +1,8 @@
 
 import React from "react";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Tshirt } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 const VirtualTryOnHeader: React.FC = () => {
   const navigate = useNavigate();
@@ -11,12 +12,16 @@ const VirtualTryOnHeader: React.FC = () => {
       <div className="flex items-center justify-between mb-3">
         <button
           onClick={() => navigate(-1)}
-          className="text-gray-600 dark:text-gray-300 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+          className="text-gray-600 dark:text-gray-300 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+          aria-label="Go back"
         >
-          <ChevronLeft size={24} />
+          <ChevronLeft size={22} />
         </button>
-        <h1 className="text-xl font-medium text-gray-800 dark:text-white">Virtual Try-On</h1>
-        <div className="w-8"></div> {/* Spacer for centering */}
+        <h1 className="text-xl font-medium text-gray-800 dark:text-white flex items-center gap-2">
+          <Tshirt className="h-5 w-5 text-primary" />
+          <span>Virtual Try-On</span>
+        </h1>
+        <div className="w-10"></div> {/* Spacer for centering */}
       </div>
       <p className="text-center text-sm text-gray-500 dark:text-gray-400 mb-2">
         Customize your avatar and try on different clothes

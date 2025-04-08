@@ -1,5 +1,6 @@
 
 import React from "react";
+import { Ruler, Shirt } from "lucide-react";
 
 interface ViewModeToggleProps {
   viewMode: "measurements" | "clothing";
@@ -12,23 +13,27 @@ const ViewModeToggle: React.FC<ViewModeToggleProps> = ({ viewMode, setViewMode }
       <div className="flex border-b border-gray-200 dark:border-gray-700">
         <button
           onClick={() => setViewMode("measurements")}
-          className={`flex-1 py-3 text-center text-sm font-medium ${
+          className={`flex-1 py-3 text-center text-sm font-medium flex items-center justify-center gap-2 ${
             viewMode === "measurements" 
-              ? "border-b-2 border-orange-500 text-orange-500" 
+              ? "border-b-2 border-primary text-primary" 
               : "border-transparent text-gray-500"
           }`}
+          aria-label="Measurements mode"
         >
-          Measurements
+          <Ruler size={18} />
+          <span>Measurements</span>
         </button>
         <button
           onClick={() => setViewMode("clothing")}
-          className={`flex-1 py-3 text-center text-sm font-medium ${
+          className={`flex-1 py-3 text-center text-sm font-medium flex items-center justify-center gap-2 ${
             viewMode === "clothing" 
-              ? "border-b-2 border-orange-500 text-orange-500" 
+              ? "border-b-2 border-primary text-primary" 
               : "border-transparent text-gray-500"
           }`}
+          aria-label="Clothing mode"
         >
-          Clothing
+          <Shirt size={18} />
+          <span>Clothing</span>
         </button>
       </div>
     </div>

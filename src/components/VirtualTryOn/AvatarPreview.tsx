@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { RotateCcw } from "lucide-react";
+import { RotateCcw, RotateCw, AspectRatio, Frame } from "lucide-react";
 import SimplifiedHumanAvatar3D from "./SimplifiedHumanAvatar3D";
 import { MeasurementKey, ClothingItem } from "./types";
 
@@ -43,16 +43,33 @@ const AvatarPreview: React.FC<AvatarPreviewProps> = ({
           selectedClothing={selectedClothing} // Pass the prop to SimplifiedHumanAvatar3D
         />
         
-        {/* Rotation controls */}
+        {/* Improved rotation controls */}
         <div className="absolute bottom-2 right-2 flex gap-2">
           <Button 
             variant="secondary" 
-            size="sm" 
-            className="rounded-full p-2 h-8 w-8"
+            size="icon"
+            className="rounded-full h-9 w-9 bg-white/80 hover:bg-white shadow-md"
             onClick={() => setRotation((rotation - 45) % 360)}
+            aria-label="Rotate left"
           >
-            <RotateCcw size={16} />
+            <RotateCcw size={18} />
           </Button>
+          <Button 
+            variant="secondary" 
+            size="icon"
+            className="rounded-full h-9 w-9 bg-white/80 hover:bg-white shadow-md"
+            onClick={() => setRotation((rotation + 45) % 360)}
+            aria-label="Rotate right"
+          >
+            <RotateCw size={18} />
+          </Button>
+        </div>
+        
+        {/* Frame indicator */}
+        <div className="absolute top-2 left-2">
+          <div className="bg-white/80 rounded-md p-1.5 shadow-sm">
+            <AspectRatio size={16} className="text-gray-600" />
+          </div>
         </div>
       </div>
     </div>

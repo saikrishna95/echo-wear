@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { RotateCcw, Save } from "lucide-react";
+import { RotateCcw, Save, RefreshCw } from "lucide-react";
 
 interface BottomActionsProps {
   resetMeasurements: () => void;
@@ -18,15 +18,17 @@ const BottomActions: React.FC<BottomActionsProps> = ({
         <Button
           variant="outline"
           onClick={resetMeasurements}
-          className="flex-1"
+          className="flex-1 h-11 gap-2"
         >
-          <RotateCcw className="mr-2 h-4 w-4" /> Reset
+          <RefreshCw className="h-5 w-5" /> 
+          <span>Reset</span>
         </Button>
         <Button 
           onClick={saveOutfit}
-          className="flex-1"
+          className="flex-1 h-11 gap-2"
         >
-          <Save className="mr-2 h-4 w-4" /> Save Outfit
+          <Save className="h-5 w-5" /> 
+          <span>Save Outfit</span>
         </Button>
       </div>
     </div>
