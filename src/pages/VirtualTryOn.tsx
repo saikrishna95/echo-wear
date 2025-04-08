@@ -114,26 +114,21 @@ const VirtualTryOn = () => {
         <>
           {/* Body Type Selector */}
           <div className="px-6 mb-4">
-            <h2 className="text-sm font-medium text-gray-700 mb-2">Body Type Presets</h2>
             <BodyTypeSelector onSelectBodyType={applyBodyType} />
           </div>
         </>
       )}
 
       {/* 3D Avatar Preview */}
-      <div className="px-6">
-        <div className="relative w-full overflow-hidden rounded-xl">
-          <AvatarPreview 
-            measurements={measurements}
-            highlightedPart={highlightedPart}
-            rotation={rotation}
-            setRotation={setRotation}
-          />
-        </div>
-      </div>
+      <AvatarPreview 
+        measurements={measurements}
+        highlightedPart={highlightedPart}
+        rotation={rotation}
+        setRotation={setRotation}
+      />
 
       {/* Measurement Tabs and Sliders OR Clothing Selection */}
-      <div className="flex-1 px-6 pb-6 overflow-hidden flex flex-col mt-4">
+      <div className="flex-1 px-6 pb-6 overflow-hidden flex flex-col">
         {viewMode === "measurements" ? (
           <MeasurementPanel
             measurements={measurements}

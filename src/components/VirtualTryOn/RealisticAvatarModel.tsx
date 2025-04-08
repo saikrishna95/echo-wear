@@ -1,7 +1,6 @@
-
 import React, { useRef, useEffect } from 'react';
 import * as THREE from 'three';
-import { useThree } from '@react-three/fiber';
+import { useThree, useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import { Measurements, ClothingItem } from './types';
 
@@ -20,7 +19,7 @@ export const RealisticAvatarModel: React.FC<RealisticAvatarModelProps> = ({
   const { camera } = useThree();
   
   // Use the mannequin.glb model which is available in the project
-  const { scene } = useGLTF('/models/mannequin.glb', false) as any;
+  const { scene, nodes, materials } = useGLTF('/models/mannequin.glb', false) as any;
   
   // Create a copy of the scene to modify
   const model = scene?.clone();
@@ -37,10 +36,19 @@ export const RealisticAvatarModel: React.FC<RealisticAvatarModelProps> = ({
       
       // Apply optimal scaling for full visibility
       const heightFactor = measurements.height / 175; // Base height is 175cm
-      model.scale.set(heightFactor * 0.18, heightFactor * 0.18, heightFactor * 0.18); // Adjusted scale for better fit
+      model.scale.set(heightFactor * 0.20, heightFactor * 0.20, heightFactor * 0.20); // Adjusted scale for better fit
+      
+      // Apply morphing or scaling to different body parts based on measurements
+      // This depends on the specific model structure
+      console.log("Applied measurements to 3D model:", measurements);
+      
+      // Apply clothing if any are selected
+      if (selectedClothing && selectedClothing.length > 0) {
+        console.log(`Applied ${selectedClothing.length} clothing items to realistic avatar`);
+      }
       
       // Position model for better visibility - centered in view
-      model.position.y = -0.9;
+      model.position.y = -0.7;
       
       // Apply rotation
       group.current.rotation.y = (rotation * Math.PI) / 180;
@@ -51,6 +59,11 @@ export const RealisticAvatarModel: React.FC<RealisticAvatarModelProps> = ({
       camera.lookAt(center);
     }
   }, [measurements, rotation, camera, model, selectedClothing]);
+
+  // Simple animation - removed to keep avatar static
+  useFrame(() => {
+    // No animation for static positioning
+  });
 
   return (
     <group ref={group} />

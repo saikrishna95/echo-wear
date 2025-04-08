@@ -1,8 +1,8 @@
-
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
-import { useGLTF } from '@react-three/drei';
+import { useFrame } from '@react-three/fiber';
 import { MeasurementKey } from './types';
+import { useGLTF } from '@react-three/drei';
 
 interface CustomMannequinProps {
   measurements: Record<MeasurementKey, number>;
@@ -37,10 +37,10 @@ const CustomMannequin: React.FC<CustomMannequinProps> = ({
     const model = scene.clone();
 
     // Apply consistent scale - adjusted for better fit in frame
-    model.scale.set(0.18, 0.18, 0.18);
+    model.scale.set(0.20, 0.20, 0.20);
     
-    // Position the model to center it vertically in the view
-    model.position.set(0, -0.9, 0); 
+    // Position the model to center it in the view
+    model.position.set(0, -0.7, 0); 
     
     // Apply rotation
     model.rotation.y = (rotation * Math.PI) / 180;
@@ -48,6 +48,14 @@ const CustomMannequin: React.FC<CustomMannequinProps> = ({
     // Add model to group
     group.current.add(model);
   }, [scene, measurements, rotation]);
+
+  // Simple animation for subtle movement - removed to keep avatar static
+  useFrame(() => {
+    if (group.current && highlightedPart) {
+      // You could highlight specific parts here if needed
+      console.log('Highlighting:', highlightedPart);
+    }
+  });
 
   return <group ref={group} position={[0, 0, 0]} />;
 };
