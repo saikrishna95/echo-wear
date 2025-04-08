@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment, ContactShadows, SoftShadows } from '@react-three/drei';
@@ -27,27 +26,27 @@ interface HumanAvatar3DProps {
   selectedClothing?: ClothingItem[];
 }
 
-// Camera configuration based on device size
+// Camera configuration based on device size - adjusted to point lower
 const getCameraSettings = (deviceSize: "mobile" | "tablet" | "desktop") => {
   switch (deviceSize) {
     case "mobile":
       return { 
-        position: [0, 1.6, 3.2] as [number, number, number], 
+        position: [0, 1.2, 3.2] as [number, number, number], // Lowered from 1.6
         fov: 35 
       };
     case "tablet":
       return { 
-        position: [0, 1.6, 3.5] as [number, number, number], 
+        position: [0, 1.2, 3.5] as [number, number, number], // Lowered from 1.6
         fov: 40 
       };
     case "desktop":
       return { 
-        position: [0, 1.8, 4] as [number, number, number], 
+        position: [0, 1.4, 4] as [number, number, number], // Lowered from 1.8
         fov: 45 
       };
     default:
       return { 
-        position: [0, 1.6, 3.2] as [number, number, number], 
+        position: [0, 1.2, 3.2] as [number, number, number], // Lowered from 1.6
         fov: 35 
       };
   }
