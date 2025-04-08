@@ -5,7 +5,6 @@ import { OrbitControls, Environment, ContactShadows } from '@react-three/drei';
 import CustomMannequin from './CustomMannequin';
 import { MeasurementKey } from './types';
 import { ErrorBoundary } from 'react-error-boundary';
-import * as THREE from 'three';
 
 
 interface SimplifiedHumanAvatar3DProps {
@@ -55,7 +54,7 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
     <div className="w-full h-full rounded-xl shadow-sm overflow-hidden bg-gray-50 dark:bg-gray-900">
       <ErrorBoundary FallbackComponent={FallbackAvatar}>
         <Canvas
-          camera={{ position: [0, -0.5, 4], fov: 40 }} // Adjusted camera position for better head visibility
+          camera={{ position: [0, 0, 5], fov: 40 }} // Adjusted camera position for better full body visibility
           style={{ background: 'transparent' }}
         >
           <Suspense fallback={null}>
@@ -63,9 +62,6 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
             <ambientLight intensity={0.8} />
             <pointLight position={[10, 10, 10]} intensity={0.5} />
             <pointLight position={[-10, -10, -10]} intensity={0.2} />
-
-            {/* Add the grid here */}
-            <primitive object={new THREE.GridHelper(10, 10)} position={[0, -2.2, 0]} />
             
             {/* Add subtle shadows */}
             <ContactShadows 
@@ -93,11 +89,11 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
               enableZoom={true} 
               enablePan={false} 
               enableRotate={true}
-              minDistance={2}
-              maxDistance={5}
+              minDistance={3}
+              maxDistance={7}
               minPolarAngle={0}
               maxPolarAngle={Math.PI / 1.5} // Limit vertical rotation to prevent awkward angles
-              target={[0, -1.0, 0]} // Adjusted target to better frame the head
+              target={[0, -0.5, 0]} // Adjusted target to better frame the full body
             />
           </Suspense>
         </Canvas>
