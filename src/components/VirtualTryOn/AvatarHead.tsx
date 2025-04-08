@@ -3,18 +3,14 @@ import React from 'react';
 import * as THREE from 'three';
 import { createAvatarMaterials } from './AvatarMaterials';
 
-interface AvatarHeadProps {
-  heightFactor: number;
-  group: React.RefObject<THREE.Group>;
-}
-
 export const createAvatarHead = (
   heightFactor: number,
+  neckFactor: number,
   group: THREE.Group
 ) => {
   const materials = createAvatarMaterials();
   
-  // Head
+  // Head - adjusted by height
   const head = new THREE.Mesh(
     new THREE.SphereGeometry(0.125 * heightFactor, 32, 32),
     materials.skinMaterial
@@ -55,11 +51,11 @@ export const createAvatarHead = (
   );
   rightPupil.position.set(0.05 * heightFactor, 0.77 * heightFactor, 0.122 * heightFactor);
   
-  // Neck with more realistic shape
+  // Neck with more realistic shape - adjusted by neck measurement
   const neck = new THREE.Mesh(
     new THREE.CylinderGeometry(
-      0.07 * heightFactor, 
-      0.08 * heightFactor, 
+      0.07 * neckFactor, 
+      0.08 * neckFactor, 
       0.1 * heightFactor, 
       32
     ),

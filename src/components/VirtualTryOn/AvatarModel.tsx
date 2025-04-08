@@ -55,6 +55,9 @@ export const AvatarModel: React.FC<AvatarModelProps> = ({
       const chestFactor = measurements.chest / 95; // Base chest is 95cm
       const waistFactor = measurements.waist / 85; // Base waist is 85cm
       const hipsFactor = measurements.hips / 95; // Base hips is 95cm
+      const neckFactor = measurements.neck / 38; // Base neck is 38cm
+      const stomachFactor = measurements.stomach / 88; // Base stomach is 88cm
+      const thighFactor = measurements.thigh / 55; // Base thigh is 55cm
       
       // Create body parts - hide parts that will be covered by clothing
       const hasUpperClothing = selectedClothing.some(item => 
@@ -66,11 +69,18 @@ export const AvatarModel: React.FC<AvatarModelProps> = ({
       );
       
       // Always create the head
-      createAvatarHead(heightFactor, group.current);
+      createAvatarHead(heightFactor, neckFactor, group.current);
       
       // Create body parts that aren't covered by clothing
       if (!hasUpperClothing) {
-        createAvatarTorso(heightFactor, shoulderFactor, waistFactor, chestFactor, group.current);
+        createAvatarTorso(
+          heightFactor, 
+          shoulderFactor, 
+          waistFactor, 
+          chestFactor,
+          stomachFactor, 
+          group.current
+        );
       }
       
       if (!hasLowerClothing) {
@@ -82,7 +92,7 @@ export const AvatarModel: React.FC<AvatarModelProps> = ({
       createAvatarLegs(
         heightFactor, 
         hipsFactor, 
-        measurements.thigh, 
+        thighFactor,
         measurements.inseam, 
         group.current
       );
@@ -102,10 +112,7 @@ export const AvatarModel: React.FC<AvatarModelProps> = ({
       }
       
       // Position the whole model to align with bottom of view
-      // Use a device-specific offset for responsiveness
-      const yPosition = deviceSize === "mobile" ? -0.7 : 
-                         deviceSize === "tablet" ? -0.75 : -0.8;
-      group.current.position.y = yPosition;
+      group.current.position.y = getPositionY();
       
       // Apply rotation
       group.current.rotation.y = (rotation * Math.PI) / 180;

@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect } from 'react';
 import * as THREE from 'three';
 import { useThree, useFrame } from '@react-three/fiber';
@@ -42,15 +43,18 @@ export const RealisticAvatarModel: React.FC<RealisticAvatarModelProps> = ({
 
   // Get model position based on device size
   const getModelPositionY = () => {
+    // Adjust position based on height factor
+    const heightFactor = measurements.height / 175;
+    
     switch (deviceSize) {
       case "mobile":
-        return -1;
+        return -1 * heightFactor;
       case "tablet":
-        return -1.05;
+        return -1.05 * heightFactor;
       case "desktop":
-        return -1.1;
+        return -1.1 * heightFactor;
       default:
-        return -1;
+        return -1 * heightFactor;
     }
   };
   
@@ -64,9 +68,40 @@ export const RealisticAvatarModel: React.FC<RealisticAvatarModelProps> = ({
       // Add the model to the group
       group.current.add(model);
       
-      // Apply optimal scaling to match reference image
+      // Calculate scaling factors based on measurements
       const heightFactor = measurements.height / 175; // Base height is 175cm
-      model.scale.set(heightFactor * 0.18, heightFactor * 0.18, heightFactor * 0.18); // Adjusted scale
+      const weightFactor = measurements.weight / 70;  // Base weight is 70kg
+      const chestFactor = measurements.chest / 95;    // Base chest is 95cm
+      const waistFactor = measurements.waist / 85;    // Base waist is 85cm
+      const hipsFactor = measurements.hips / 95;      // Base hips is 95cm
+      
+      // Apply optimal scaling to match reference image
+      model.scale.set(
+        heightFactor * 0.18 * (0.8 + weightFactor * 0.2), // Width scaled by height and weight
+        heightFactor * 0.18,                              // Height scaled by height
+        heightFactor * 0.18 * (0.8 + weightFactor * 0.2)  // Depth scaled by height and weight
+      );
+      
+      // Apply body-specific scaling if model has named parts
+      model.traverse((child: THREE.Object3D) => {
+        if (child instanceof THREE.Mesh) {
+          // Apply specific scaling to body parts based on their names
+          const name = child.name.toLowerCase();
+          
+          if (name.includes('torso') || name.includes('chest')) {
+            child.scale.x *= chestFactor;
+            child.scale.z *= chestFactor;
+          }
+          else if (name.includes('waist')) {
+            child.scale.x *= waistFactor;
+            child.scale.z *= waistFactor;
+          }
+          else if (name.includes('hip')) {
+            child.scale.x *= hipsFactor;
+            child.scale.z *= hipsFactor;
+          }
+        }
+      });
       
       // Position model for better visibility - aligned with bottom of view
       model.position.set(0, getModelPositionY(), 0);
@@ -76,9 +111,11 @@ export const RealisticAvatarModel: React.FC<RealisticAvatarModelProps> = ({
     }
   }, [measurements, rotation, camera, model, selectedClothing, deviceSize]);
 
-  // No animation - keep avatar static
-  useFrame(() => {
-    // Static positioning, no animation needed
+  // If this is a GLB model, highlight relevant body parts when a measurement is selected
+  useFrame((state) => {
+    if (group.current && model) {
+      // Custom animation logic if needed
+    }
   });
 
   return (

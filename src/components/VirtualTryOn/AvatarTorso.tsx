@@ -8,31 +8,45 @@ export const createAvatarTorso = (
   shoulderFactor: number,
   waistFactor: number,
   chestFactor: number,
+  stomachFactor: number,
   group: THREE.Group
 ) => {
   const materials = createAvatarMaterials();
   
-  // Upper body clothing (top/shirt) rather than bare skin
-  const torso = new THREE.Mesh(
+  // Upper torso - chest area
+  const upperTorso = new THREE.Mesh(
     new THREE.CylinderGeometry(
-      0.20 * shoulderFactor, // Upper width (shoulders)
-      0.18 * waistFactor, // Lower width (waist)
-      0.4 * heightFactor, // Height
+      0.21 * chestFactor, // Upper width based on chest measurement
+      0.19 * stomachFactor, // Lower width transitions to stomach measurement
+      0.2 * heightFactor, // Height
       32
     ),
-    materials.clothMaterial
+    materials.skinMaterial
   );
-  torso.position.y = 0.45 * heightFactor;
+  upperTorso.position.y = 0.55 * heightFactor;
   
-  // Additional chest details for more human-like shape
-  const chest = new THREE.Mesh(
-    new THREE.SphereGeometry(0.21 * chestFactor / 95, 32, 32, 0, Math.PI * 2, 0, Math.PI / 2),
-    materials.clothMaterial
+  // Lower torso - stomach to waist
+  const lowerTorso = new THREE.Mesh(
+    new THREE.CylinderGeometry(
+      0.19 * stomachFactor, // Upper width based on stomach measurement
+      0.18 * waistFactor, // Lower width transitions to waist measurement
+      0.15 * heightFactor, // Height
+      32
+    ),
+    materials.skinMaterial
   );
-  chest.position.y = 0.55 * heightFactor;
-  chest.position.z = 0.06 * heightFactor;
-  chest.rotation.x = -Math.PI / 2;
-  chest.scale.z = 0.7;
+  lowerTorso.position.y = 0.375 * heightFactor;
   
-  group.add(torso, chest);
+  // Shoulders - connects to arms
+  const shoulders = new THREE.Mesh(
+    new THREE.BoxGeometry(
+      0.5 * shoulderFactor, // Width - based on shoulder measurement
+      0.05 * heightFactor, // Height
+      0.1 * heightFactor // Depth
+    ),
+    materials.skinMaterial
+  );
+  shoulders.position.y = 0.63 * heightFactor;
+  
+  group.add(upperTorso, lowerTorso, shoulders);
 };

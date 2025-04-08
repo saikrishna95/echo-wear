@@ -12,12 +12,18 @@ export const createAvatarLegs = (
 ) => {
   const materials = createAvatarMaterials();
   
+  // Calculate thigh factor based on thigh measurement
+  const thighFactor = thighMeasurement / 55; // Base thigh is 55cm
+  
+  // Calculate inseam factor for leg length
+  const inseamFactor = inseamMeasurement / 80; // Base inseam is 80cm
+  
   // Left leg - upper (thigh)
   const leftThigh = new THREE.Mesh(
     new THREE.CylinderGeometry(
-      0.09 * thighMeasurement / 55,
-      0.08 * thighMeasurement / 55,
-      0.25 * inseamMeasurement / 80,
+      0.09 * thighFactor,
+      0.08 * thighFactor,
+      0.25 * inseamFactor,
       32
     ),
     materials.darkClothMaterial
@@ -31,16 +37,16 @@ export const createAvatarLegs = (
   // Left leg - lower (calf)
   const leftCalf = new THREE.Mesh(
     new THREE.CylinderGeometry(
-      0.07 * thighMeasurement / 55,
-      0.05 * thighMeasurement / 55,
-      0.25 * inseamMeasurement / 80,
+      0.07 * thighFactor,
+      0.05 * thighFactor,
+      0.25 * inseamFactor,
       32
     ),
     materials.darkClothMaterial
   );
   leftCalf.position.set(
     -0.1 * hipsFactor,
-    -0.2 * heightFactor,
+    -0.2 * heightFactor * inseamFactor,
     0
   );
   
@@ -55,16 +61,16 @@ export const createAvatarLegs = (
   );
   leftFoot.position.set(
     -0.1 * hipsFactor,
-    -0.37 * heightFactor,
+    -0.37 * heightFactor * inseamFactor,
     0.04 * heightFactor
   );
   
   // Right leg - upper (thigh)
   const rightThigh = new THREE.Mesh(
     new THREE.CylinderGeometry(
-      0.09 * thighMeasurement / 55,
-      0.08 * thighMeasurement / 55,
-      0.25 * inseamMeasurement / 80,
+      0.09 * thighFactor,
+      0.08 * thighFactor,
+      0.25 * inseamFactor,
       32
     ),
     materials.darkClothMaterial
@@ -78,16 +84,16 @@ export const createAvatarLegs = (
   // Right leg - lower (calf)
   const rightCalf = new THREE.Mesh(
     new THREE.CylinderGeometry(
-      0.07 * thighMeasurement / 55,
-      0.05 * thighMeasurement / 55,
-      0.25 * inseamMeasurement / 80,
+      0.07 * thighFactor,
+      0.05 * thighFactor,
+      0.25 * inseamFactor,
       32
     ),
     materials.darkClothMaterial
   );
   rightCalf.position.set(
     0.1 * hipsFactor,
-    -0.2 * heightFactor,
+    -0.2 * heightFactor * inseamFactor,
     0
   );
   
@@ -102,7 +108,7 @@ export const createAvatarLegs = (
   );
   rightFoot.position.set(
     0.1 * hipsFactor,
-    -0.37 * heightFactor,
+    -0.37 * heightFactor * inseamFactor,
     0.04 * heightFactor
   );
   
