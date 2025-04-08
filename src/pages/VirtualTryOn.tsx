@@ -26,6 +26,7 @@ const VirtualTryOn = () => {
   const [viewMode, setViewMode] = useState<"measurements" | "clothing">("measurements");
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [activeCategoryTab, setActiveCategoryTab] = useState<"upper" | "lower" | "general">("upper");
+  const [activeBodyType, setActiveBodyType] = useState<"slim" | "athletic" | "curvy" | null>(null);
   
   const { clothingItems, isLoading } = useClothingItems();
 
@@ -34,11 +35,15 @@ const VirtualTryOn = () => {
       ...prev,
       [key]: { ...prev[key], value: value[0] },
     }));
+    
+    // Reset active body type when manual adjustments are made
+    setActiveBodyType(null);
   };
 
   const resetMeasurements = () => {
     setMeasurements(initialMeasurements);
     setSelectedClothing([]);
+    setActiveBodyType(null);
     toast({
       title: "Reset Complete",
       description: "Your measurements and clothing selection have been reset.",
@@ -57,6 +62,12 @@ const VirtualTryOn = () => {
     });
     
     setMeasurements(newMeasurements);
+    setActiveBodyType(type);
+    
+    toast({
+      title: `${type.charAt(0).toUpperCase() + type.slice(1)} Body Type Applied`,
+      description: "Your measurements have been updated to match the selected body type.",
+    });
   };
   
   const handleSelectClothing = (item: ClothingItem) => {
@@ -90,6 +101,7 @@ const VirtualTryOn = () => {
   const saveOutfit = () => {
     // In a real app, you would save this to a database
     console.log('Saved outfit:', {
+      bodyType: activeBodyType,
       measurements: Object.entries(measurements).reduce((acc, [key, m]) => {
         acc[key as MeasurementKey] = m.value;
         return acc;
@@ -149,7 +161,10 @@ const VirtualTryOn = () => {
         <>
           {/* Body Type Selector */}
           <div className="px-6 mb-4">
-            <BodyTypeSelector onSelectBodyType={applyBodyType} />
+            <BodyTypeSelector 
+              onSelectBodyType={applyBodyType} 
+              activeBodyType={activeBodyType}
+            />
           </div>
         </>
       )}

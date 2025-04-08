@@ -4,9 +4,13 @@ import { Card } from "@/components/ui/card";
 
 interface BodyTypeSelectorProps {
   onSelectBodyType: (type: "slim" | "athletic" | "curvy") => void;
+  activeBodyType: "slim" | "athletic" | "curvy" | null;
 }
 
-export const BodyTypeSelector: React.FC<BodyTypeSelectorProps> = ({ onSelectBodyType }) => {
+export const BodyTypeSelector: React.FC<BodyTypeSelectorProps> = ({ 
+  onSelectBodyType, 
+  activeBodyType 
+}) => {
   return (
     <div className="w-full">
       <label className="block text-sm font-medium mb-2">Body Type Presets</label>
@@ -14,17 +18,20 @@ export const BodyTypeSelector: React.FC<BodyTypeSelectorProps> = ({ onSelectBody
         <BodyTypeCard 
           type="slim" 
           label="Slim"
-          onClick={() => onSelectBodyType("slim")} 
+          onClick={() => onSelectBodyType("slim")}
+          isActive={activeBodyType === "slim"}
         />
         <BodyTypeCard 
           type="athletic" 
           label="Athletic"
-          onClick={() => onSelectBodyType("athletic")} 
+          onClick={() => onSelectBodyType("athletic")}
+          isActive={activeBodyType === "athletic"}
         />
         <BodyTypeCard 
           type="curvy" 
           label="Curvy"
-          onClick={() => onSelectBodyType("curvy")} 
+          onClick={() => onSelectBodyType("curvy")}
+          isActive={activeBodyType === "curvy"}
         />
       </div>
     </div>
@@ -35,12 +42,17 @@ interface BodyTypeCardProps {
   type: "slim" | "athletic" | "curvy";
   label: string;
   onClick: () => void;
+  isActive?: boolean;
 }
 
-const BodyTypeCard: React.FC<BodyTypeCardProps> = ({ type, label, onClick }) => {
+const BodyTypeCard: React.FC<BodyTypeCardProps> = ({ type, label, onClick, isActive }) => {
   return (
     <Card 
-      className="flex flex-col items-center justify-center p-2 cursor-pointer hover:bg-gray-50 transition-colors border-fashion-teal/30"
+      className={`flex flex-col items-center justify-center p-2 cursor-pointer transition-colors border-fashion-teal/30 ${
+        isActive 
+          ? "bg-primary/10 border-primary" 
+          : "hover:bg-gray-50 dark:hover:bg-gray-800"
+      }`}
       onClick={onClick}
     >
       <div className="h-16 w-8 relative mb-1">
