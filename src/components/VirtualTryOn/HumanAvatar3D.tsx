@@ -2,9 +2,9 @@
 import React, { useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment } from '@react-three/drei';
-import HybridAvatarModel from './HybridAvatarModel';
 import { MeasurementKey, Measurements, ClothingItem } from './types';
 import { useDeviceSize } from '../../hooks/use-mobile';
+import ReadyPlayerMeAvatar from './ReadyPlayerMeAvatar';
 
 interface HumanAvatar3DProps {
   measurements: {
@@ -93,8 +93,8 @@ const HumanAvatar3D: React.FC<HumanAvatar3DProps> = ({
         <pointLight position={[-10, -10, -10]} intensity={0.3} />
         <pointLight position={[0, 5, 5]} intensity={0.5} color="#ffffff" />
         
-        {/* Hybrid Avatar model with highlighted part */}
-        <HybridAvatarModel 
+        {/* ReadyPlayerMe Avatar */}
+        <ReadyPlayerMeAvatar 
           measurements={simpleMeasurements} 
           rotation={rotation}
           selectedClothing={selectedClothing}
