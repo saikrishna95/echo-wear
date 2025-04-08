@@ -1,6 +1,11 @@
 
 import React from "react";
 import { Card } from "@/components/ui/card";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from "@/components/ui/tooltip";
 
 interface BodyTypeSelectorProps {
   onSelectBodyType: (type: "slim" | "athletic" | "curvy") => void;
