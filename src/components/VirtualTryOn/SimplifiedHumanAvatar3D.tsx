@@ -41,17 +41,17 @@ const FallbackAvatar = () => {
   );
 };
 
-// Camera configuration based on device size - adjusted to match the image
+// Camera configuration based on device size
 const getCameraSettings = (deviceSize: "mobile" | "tablet" | "desktop") => {
   switch (deviceSize) {
     case "mobile":
-      return { position: [0, 1.6, 3.0] as [number, number, number], fov: 30 }; // Adjusted to match the image
-    case "tablet":
       return { position: [0, 1.6, 3.2] as [number, number, number], fov: 35 };
+    case "tablet":
+      return { position: [0, 1.6, 3.5] as [number, number, number], fov: 40 };
     case "desktop":
-      return { position: [0, 1.8, 3.8] as [number, number, number], fov: 40 };
+      return { position: [0, 1.8, 4] as [number, number, number], fov: 45 };
     default:
-      return { position: [0, 1.6, 3.0] as [number, number, number], fov: 30 };
+      return { position: [0, 1.6, 3.2] as [number, number, number], fov: 35 };
   }
 };
 
@@ -76,18 +76,18 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
   const getContainerHeightClass = () => {
     switch (deviceSize) {
       case "mobile":
-        return "max-h-[550px] min-h-[450px]"; // Taller to match the image
+        return "max-h-[500px] min-h-[400px]";
       case "tablet":
         return "max-h-[600px] min-h-[450px]";
       case "desktop":
         return "max-h-[700px] min-h-[500px]";
       default:
-        return "max-h-[550px] min-h-[450px]";
+        return "max-h-[500px]";
     }
   };
 
   return (
-    <div className={`w-full h-full ${getContainerHeightClass()} rounded-xl overflow-hidden bg-gray-50 dark:bg-gray-900`}>
+    <div className={`w-full h-full ${getContainerHeightClass()} rounded-xl overflow-hidden bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800`}>
       <ErrorBoundary FallbackComponent={FallbackAvatar}>
         <Canvas
           shadows
@@ -100,17 +100,17 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
             {/* Enable soft shadows using component */}
             <EnableSoftShadows />
             
-            {/* Enhanced realistic lighting - adjusted to match the image */}
-            <ambientLight intensity={0.6} /> {/* Brighter ambient light */}
+            {/* Enhanced realistic lighting */}
+            <ambientLight intensity={0.5} />
             <spotLight 
-              position={[4, 6, 4]} 
-              angle={0.25} 
+              position={[5, 5, 5]} 
+              angle={0.3} 
               penumbra={0.8} 
-              intensity={0.9} 
+              intensity={0.8} 
               castShadow 
               shadow-mapSize={1024}
             />
-            <pointLight position={[-4, 6, -4]} intensity={0.4} />
+            <pointLight position={[-5, 5, -5]} intensity={0.5} />
             
             <ReadyPlayerMeAvatar 
               measurements={simpleMeasurements} 
@@ -119,11 +119,11 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
               highlightedPart={highlightedPart}
             />
             
-            {/* Contact shadows for better grounding - lightened */}
+            {/* Contact shadows for better grounding */}
             <ContactShadows 
-              opacity={0.3} 
+              opacity={0.4} 
               scale={10} 
-              blur={3} 
+              blur={2.5} 
               far={5} 
               resolution={128} 
               color="#000000" 

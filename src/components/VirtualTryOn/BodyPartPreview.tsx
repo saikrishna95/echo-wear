@@ -38,27 +38,27 @@ const BodyPartPreview: React.FC<BodyPartPreviewProps> = ({
     {} as Record<MeasurementKey, number>
   );
 
-  // Determine camera position and focus based on body part category - adjusted to match main view
+  // Determine camera position and focus based on body part category
   const getCameraSettings = () => {
     switch (bodyPartCategory) {
       case "upper":
         return {
-          position: [0, 1.2, 1.6] as [number, number, number], // Closer view
+          position: [0, 1.2, 1.8] as [number, number, number],
           target: [0, 0.8, 0] as [number, number, number],
           fov: 30,
         };
       case "lower":
         return {
-          position: [0, -0.3, 1.6] as [number, number, number], // Closer view
+          position: [0, -0.3, 1.8] as [number, number, number],
           target: [0, -0.3, 0] as [number, number, number],
           fov: 30,
         };
       case "general":
       default:
         return {
-          position: [0, 0.5, 2.0] as [number, number, number], // Closer view
+          position: [0, 0.5, 2.2] as [number, number, number],
           target: [0, 0.2, 0] as [number, number, number],
-          fov: 35,
+          fov: 40,
         };
     }
   };
@@ -66,7 +66,7 @@ const BodyPartPreview: React.FC<BodyPartPreviewProps> = ({
   const cameraSettings = getCameraSettings();
 
   return (
-    <div className="w-full h-48 rounded-md overflow-hidden bg-gray-50 dark:bg-gray-900">
+    <div className="w-full h-48 rounded-md overflow-hidden bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
       <Canvas
         shadows
         camera={{
@@ -74,16 +74,16 @@ const BodyPartPreview: React.FC<BodyPartPreviewProps> = ({
           fov: cameraSettings.fov,
         }}
       >
-        {/* Enhanced realistic lighting - matching the main view */}
-        <ambientLight intensity={0.6} />
+        {/* Enhanced realistic lighting */}
+        <ambientLight intensity={0.5} />
         <spotLight 
-          position={[4, 6, 4]} 
-          angle={0.25} 
+          position={[3, 3, 3]} 
+          angle={0.3} 
           penumbra={0.8} 
-          intensity={0.9} 
+          intensity={0.7} 
           castShadow 
         />
-        <pointLight position={[-4, 6, -4]} intensity={0.4} />
+        <pointLight position={[-3, 3, -3]} intensity={0.4} />
         
         <ReadyPlayerMeAvatar
           measurements={simpleMeasurements}
@@ -92,11 +92,11 @@ const BodyPartPreview: React.FC<BodyPartPreviewProps> = ({
           deviceSize="mobile"
         />
         
-        {/* Contact shadows for realism - lightened */}
+        {/* Contact shadows for realism */}
         <ContactShadows 
-          opacity={0.3} 
+          opacity={0.4} 
           scale={5} 
-          blur={3} 
+          blur={2} 
           far={3} 
           resolution={128} 
           color="#000000" 
