@@ -40,8 +40,8 @@ const CustomMannequin: React.FC<CustomMannequinProps> = ({
     // Apply consistent scale
     model.scale.set(0.25, 0.25, 0.25); // Slightly reduced scale for better fit
     
-    // Position the model lower to ensure better visibility
-    model.position.set(0, -1.2, 0); // Moved down for better positioning
+    // Position the model to ensure full visibility
+    model.position.set(0, -1.0, 0); 
     
     // Apply rotation
     model.rotation.y = (rotation * Math.PI) / 180;
@@ -50,7 +50,7 @@ const CustomMannequin: React.FC<CustomMannequinProps> = ({
     group.current.add(model);
   }, [scene, measurements, rotation]);
 
-  // Animation loop
+  // Simple animation for subtle movement
   useFrame((state) => {
     if (group.current) {
       const t = state.clock.getElapsedTime();

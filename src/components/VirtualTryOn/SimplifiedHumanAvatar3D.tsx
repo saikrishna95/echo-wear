@@ -1,7 +1,7 @@
 
 import React, { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Environment, ContactShadows } from '@react-three/drei';
+import { OrbitControls, Environment } from '@react-three/drei';
 import CustomMannequin from './CustomMannequin';
 import { MeasurementKey } from './types';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -51,28 +51,17 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
   );
 
   return (
-    <div className="w-full h-full rounded-xl shadow-sm overflow-hidden bg-gray-50 dark:bg-gray-900">
+    <div className="w-full h-full rounded-xl overflow-hidden bg-gray-50 dark:bg-gray-900">
       <ErrorBoundary FallbackComponent={FallbackAvatar}>
         <Canvas
-          camera={{ position: [0, 0, 3.5], fov: 50 }} // Optimized camera position for centered full body view
+          camera={{ position: [0, 0, 4], fov: 45 }} // Adjusted camera position for full body view
           style={{ background: 'transparent' }}
         >
           <Suspense fallback={null}>
-            {/* Lighting for realistic appearance */}
+            {/* Simple lighting for clear visibility */}
             <ambientLight intensity={0.8} />
             <pointLight position={[10, 10, 10]} intensity={0.5} />
             <pointLight position={[-10, -10, -10]} intensity={0.2} />
-            
-            {/* Add subtle shadows */}
-            <ContactShadows 
-              opacity={0.5}
-              scale={10}
-              blur={1}
-              far={10}
-              resolution={256}
-              color="#000000"
-              position={[0, -2.0, 0]} // Adjusted shadow position to match model
-            />
             
             {/* Mannequin model */}
             <CustomMannequin 
@@ -93,7 +82,7 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
               maxDistance={8}
               minPolarAngle={0}
               maxPolarAngle={Math.PI / 1.5} // Limit vertical rotation to prevent awkward angles
-              target={[0, -0.6, 0]} // Adjusted target to focus on the center of the avatar
+              target={[0, -0.5, 0]} // Adjusted target to focus on the center of the avatar
             />
           </Suspense>
         </Canvas>

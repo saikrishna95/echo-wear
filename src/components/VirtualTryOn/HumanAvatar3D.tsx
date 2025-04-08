@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Environment, ContactShadows } from '@react-three/drei';
+import { OrbitControls, Environment } from '@react-three/drei';
 import HybridAvatarModel from './HybridAvatarModel';
 import { MeasurementKey, Measurements, ClothingItem } from './types';
 
@@ -37,27 +37,16 @@ const HumanAvatar3D: React.FC<HumanAvatar3DProps> = ({
   );
 
   return (
-    <div className="w-full h-full rounded-xl shadow-sm overflow-hidden bg-gray-50">
+    <div className="w-full h-full rounded-xl overflow-hidden bg-gray-50">
       <Canvas
         style={{ background: '#f8f8f8' }}
-        camera={{ position: [0, 0, 3.5], fov: 50 }} // Optimized camera position for centered view
+        camera={{ position: [0, 0, 4], fov: 45 }} // Optimized camera position for full body view
       >
-        {/* Improved lighting for more realistic appearance */}
+        {/* Simple lighting for clear visibility */}
         <ambientLight intensity={0.8} />
         <pointLight position={[10, 10, 10]} intensity={0.5} />
         <pointLight position={[-10, -10, -10]} intensity={0.2} />
         <pointLight position={[0, 10, 0]} intensity={0.5} />
-        
-        {/* Add subtle shadows for more realism */}
-        <ContactShadows 
-          opacity={0.5}
-          scale={10}
-          blur={1}
-          far={10}
-          resolution={256}
-          color="#000000"
-          position={[0, -2.0, 0]} // Adjusted shadow position to match model
-        />
         
         {/* Hybrid Avatar model - uses realistic GLB if available, falls back to primitive */}
         <HybridAvatarModel 
@@ -78,7 +67,7 @@ const HumanAvatar3D: React.FC<HumanAvatar3DProps> = ({
           maxDistance={8}
           minPolarAngle={0} 
           maxPolarAngle={Math.PI / 1.5}
-          target={[0, -0.6, 0]} // Adjusted target to focus on the center of the avatar
+          target={[0, -0.5, 0]} // Adjusted target to focus on the center of the avatar
         />
       </Canvas>
       

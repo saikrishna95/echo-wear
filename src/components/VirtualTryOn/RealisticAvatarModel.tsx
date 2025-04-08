@@ -48,8 +48,8 @@ export const RealisticAvatarModel: React.FC<RealisticAvatarModelProps> = ({
         console.log(`Applied ${selectedClothing.length} clothing items to realistic avatar`);
       }
       
-      // Position model lower for better visibility
-      model.position.y = -1.2;
+      // Position model for better visibility
+      model.position.y = -1.0;
       
       // Apply rotation
       group.current.rotation.y = (rotation * Math.PI) / 180;
@@ -61,7 +61,7 @@ export const RealisticAvatarModel: React.FC<RealisticAvatarModelProps> = ({
     }
   }, [measurements, rotation, camera, model, selectedClothing]);
 
-  // Add subtle animation
+  // Simple animation for subtle movement
   useFrame((state) => {
     if (group.current) {
       // Small breathing animation
