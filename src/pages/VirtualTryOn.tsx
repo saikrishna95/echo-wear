@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { Settings } from "lucide-react";
 import { BodyTypeSelector } from "@/components/VirtualTryOn/BodyTypeSelector";
 import ClothingSelector from "@/components/VirtualTryOn/ClothingSelector";
 import { useClothingItems } from "@/hooks/useClothingItems";
@@ -9,19 +10,22 @@ import { ClothingItem, MeasurementKey } from "@/components/VirtualTryOn/types";
 import { initialMeasurements, bodyTypePresets } from "@/components/VirtualTryOn/initialMeasurements";
 import ViewModeToggle from "@/components/VirtualTryOn/ViewModeToggle";
 import AvatarPreview from "@/components/VirtualTryOn/AvatarPreview";
-import MeasurementPanel from "@/components/VirtualTryOn/MeasurementPanel";
 import BottomActions from "@/components/VirtualTryOn/BottomActions";
 import VirtualTryOnHeader from "@/components/VirtualTryOn/VirtualTryOnHeader";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import BodyPartSettings from "@/components/VirtualTryOn/BodyPartSettings";
+import { Button } from "@/components/ui/button";
 
 const VirtualTryOn = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [measurements, setMeasurements] = useState(initialMeasurements);
-  const [activeTab, setActiveTab] = useState("upper");
   const [highlightedPart, setHighlightedPart] = useState<MeasurementKey | null>(null);
   const [rotation, setRotation] = useState(0);
   const [selectedClothing, setSelectedClothing] = useState<ClothingItem[]>([]);
   const [viewMode, setViewMode] = useState<"measurements" | "clothing">("measurements");
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [activeCategoryTab, setActiveCategoryTab] = useState<"upper" | "lower" | "general">("upper");
   
   const { clothingItems, isLoading } = useClothingItems();
 
@@ -107,6 +111,37 @@ const VirtualTryOn = () => {
       {/* Header */}
       <VirtualTryOnHeader />
 
+      <div className="relative">
+        {/* 3D Avatar Preview */}
+        <AvatarPreview 
+          measurements={measurements}
+          highlightedPart={highlightedPart}
+          rotation={rotation}
+          setRotation={setRotation}
+        />
+        
+        {/* Settings Button */}
+        <div className="absolute right-4 top-4 z-10">
+          <Sheet open={settingsOpen} onOpenChange={setSettingsOpen}>
+            <SheetTrigger asChild>
+              <Button variant="outline" className="bg-white/80 hover:bg-white" size="icon">
+                <Settings className="h-5 w-5" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent className="w-full sm:max-w-md">
+              <BodyPartSettings 
+                measurements={measurements}
+                activeCategoryTab={activeCategoryTab}
+                setActiveCategoryTab={setActiveCategoryTab}
+                handleSliderChange={handleSliderChange}
+                setHighlightedPart={setHighlightedPart}
+                onClose={() => setSettingsOpen(false)}
+              />
+            </SheetContent>
+          </Sheet>
+        </div>
+      </div>
+
       {/* View Mode Tabs */}
       <ViewModeToggle viewMode={viewMode} setViewMode={setViewMode} />
 
@@ -119,33 +154,17 @@ const VirtualTryOn = () => {
         </>
       )}
 
-      {/* 3D Avatar Preview */}
-      <AvatarPreview 
-        measurements={measurements}
-        highlightedPart={highlightedPart}
-        rotation={rotation}
-        setRotation={setRotation}
-      />
-
-      {/* Measurement Tabs and Sliders OR Clothing Selection */}
-      <div className="flex-1 px-6 pb-6 overflow-hidden flex flex-col">
-        {viewMode === "measurements" ? (
-          <MeasurementPanel
-            measurements={measurements}
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            handleSliderChange={handleSliderChange}
-            setHighlightedPart={setHighlightedPart}
-          />
-        ) : (
+      {/* Clothing Selection */}
+      {viewMode === "clothing" && (
+        <div className="flex-1 px-6 pb-6 overflow-hidden flex flex-col">
           <ClothingSelector
             availableClothing={clothingItems}
             selectedItems={selectedClothing}
             onSelectItem={handleSelectClothing}
             onRemoveItem={handleRemoveClothing}
           />
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Bottom Buttons */}
       <BottomActions
