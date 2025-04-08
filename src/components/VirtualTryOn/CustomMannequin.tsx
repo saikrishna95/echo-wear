@@ -31,6 +31,21 @@ const CustomMannequin: React.FC<CustomMannequinProps> = ({
   const thighFactor = measurements.thigh / 55;
   const inseamFactor = measurements.inseam / 80;
   const weightFactor = measurements.weight / 70;
+  const neckFactor = measurements.neck / 38;
+  
+  // Log measurements for debugging
+  useEffect(() => {
+    console.log("CustomMannequin measurements:", {
+      height: measurements.height,
+      chest: measurements.chest,
+      waist: measurements.waist,
+      hips: measurements.hips,
+      heightFactor,
+      chestFactor,
+      waistFactor,
+      hipsFactor
+    });
+  }, [measurements]);
 
   // Get position adjustment based on device size
   const getPositionY = () => {
@@ -68,40 +83,49 @@ const CustomMannequin: React.FC<CustomMannequinProps> = ({
     // Find and scale specific body parts if they exist in the model
     model.traverse((child) => {
       if (child instanceof THREE.Mesh) {
-        // Use the name of the mesh to identify body parts
-        // Note: This is a simplification - in a real app you'd have more detailed mapping
-        if (child.name.toLowerCase().includes('torso') || child.name.toLowerCase().includes('chest')) {
-          child.scale.x *= chestFactor;
-          child.scale.z *= chestFactor;
+        const name = child.name.toLowerCase();
+        
+        // Apply more pronounced scaling for better visual feedback
+        if (name.includes('torso') || name.includes('chest')) {
+          child.scale.x = chestFactor * 1.2; // Amplify the effect
+          child.scale.z = chestFactor * 1.2;
         }
-        else if (child.name.toLowerCase().includes('waist')) {
-          child.scale.x *= waistFactor;
-          child.scale.z *= waistFactor;
+        else if (name.includes('waist')) {
+          child.scale.x = waistFactor * 1.2;
+          child.scale.z = waistFactor * 1.2;
         }
-        else if (child.name.toLowerCase().includes('hip')) {
-          child.scale.x *= hipsFactor;
-          child.scale.z *= hipsFactor;
+        else if (name.includes('hip') || name.includes('pelvis')) {
+          child.scale.x = hipsFactor * 1.2;
+          child.scale.z = hipsFactor * 1.2;
         }
-        else if (child.name.toLowerCase().includes('leg') || child.name.toLowerCase().includes('thigh')) {
-          child.scale.x *= thighFactor;
-          child.scale.z *= thighFactor;
-          child.scale.y *= inseamFactor;
+        else if (name.includes('stomach') || name.includes('belly')) {
+          child.scale.x = stomachFactor * 1.2;
+          child.scale.z = stomachFactor * 1.2;
         }
-        else if (child.name.toLowerCase().includes('shoulder')) {
-          child.scale.x *= shoulderFactor;
+        else if (name.includes('leg') || name.includes('thigh')) {
+          child.scale.x = thighFactor * 1.2;
+          child.scale.z = thighFactor * 1.2;
+          child.scale.y = inseamFactor * 1.1;
         }
-        else if (child.name.toLowerCase().includes('arm')) {
-          child.scale.x *= weightFactor * 0.8;
-          child.scale.z *= weightFactor * 0.8;
+        else if (name.includes('shoulder')) {
+          child.scale.x = shoulderFactor * 1.3; // Make shoulders more pronounced
+        }
+        else if (name.includes('arm')) {
+          child.scale.x = weightFactor * 1.1;
+          child.scale.z = weightFactor * 1.1;
+        }
+        else if (name.includes('neck')) {
+          child.scale.x = neckFactor * 1.1;
+          child.scale.z = neckFactor * 1.1;
         }
       }
     });
     
     // If no specific parts are named, apply general scaling
     if (heightFactor !== 1 || weightFactor !== 1) {
-      // Adjust width based on weight
-      model.scale.x = heightFactor * (0.8 + weightFactor * 0.2);
-      model.scale.z = heightFactor * (0.8 + weightFactor * 0.2);
+      // Adjust width based on weight and height
+      model.scale.x = heightFactor * (0.7 + weightFactor * 0.3); // More weight influence
+      model.scale.z = heightFactor * (0.7 + weightFactor * 0.3);
     }
   };
 
@@ -121,9 +145,9 @@ const CustomMannequin: React.FC<CustomMannequinProps> = ({
     
     // Adjust scale for better fit based on reference image
     model.scale.set(
-      0.18 * heightFactor * (0.8 + weightFactor * 0.2),
+      0.18 * heightFactor * (0.7 + weightFactor * 0.3), // More weight influence
       0.18 * heightFactor,
-      0.18 * heightFactor * (0.8 + weightFactor * 0.2)
+      0.18 * heightFactor * (0.7 + weightFactor * 0.3)
     );
     
     // Position the model to align with bottom of view
@@ -138,7 +162,7 @@ const CustomMannequin: React.FC<CustomMannequinProps> = ({
 
   // Handle highlighting for the currently selected measurement
   useFrame(() => {
-    if (group.current && highlightedPart && highlightedPart !== "height" && highlightedPart !== "weight") {
+    if (group.current && highlightedPart) {
       group.current.traverse((child) => {
         if (child instanceof THREE.Mesh) {
           // Reset all materials
@@ -147,18 +171,20 @@ const CustomMannequin: React.FC<CustomMannequinProps> = ({
           }
           
           // Highlight specific body part based on measurement
-          if (highlightedPart === "chest" && 
-              (child.name.toLowerCase().includes('chest') || child.name.toLowerCase().includes('torso'))) {
+          const name = child.name.toLowerCase();
+          if ((highlightedPart === "chest" && 
+               (name.includes('chest') || name.includes('torso'))) ||
+              (highlightedPart === "waist" && name.includes('waist')) ||
+              (highlightedPart === "hips" && (name.includes('hip') || name.includes('pelvis'))) ||
+              (highlightedPart === "shoulder" && name.includes('shoulder')) ||
+              (highlightedPart === "stomach" && (name.includes('stomach') || name.includes('belly'))) ||
+              (highlightedPart === "thigh" && (name.includes('thigh') || name.includes('leg'))) ||
+              (highlightedPart === "neck" && name.includes('neck'))) {
             if (child.material instanceof THREE.MeshStandardMaterial) {
-              child.material.emissive.set(0x333333);
+              child.material.emissive.set(0x555555); // Brighter highlight
+              child.material.emissiveIntensity = 0.5; // More intense
             }
           }
-          else if (highlightedPart === "waist" && child.name.toLowerCase().includes('waist')) {
-            if (child.material instanceof THREE.MeshStandardMaterial) {
-              child.material.emissive.set(0x333333);
-            }
-          }
-          // Add more conditions for other body parts
         }
       });
     }

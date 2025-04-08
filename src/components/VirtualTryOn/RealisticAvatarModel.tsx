@@ -27,6 +27,11 @@ export const RealisticAvatarModel: React.FC<RealisticAvatarModelProps> = ({
   // Create a copy of the scene to modify
   const model = scene?.clone();
   
+  // Log measurements for debugging
+  useEffect(() => {
+    console.log("RealisticAvatarModel measurements:", measurements);
+  }, [measurements]);
+  
   // Get position adjustment based on device size
   const getPositionY = () => {
     switch (deviceSize) {
@@ -74,12 +79,24 @@ export const RealisticAvatarModel: React.FC<RealisticAvatarModelProps> = ({
       const chestFactor = measurements.chest / 95;    // Base chest is 95cm
       const waistFactor = measurements.waist / 85;    // Base waist is 85cm
       const hipsFactor = measurements.hips / 95;      // Base hips is 95cm
+      const shoulderFactor = measurements.shoulder / 45; // Base shoulder is 45cm
+      const stomachFactor = measurements.stomach / 88;   // Base stomach is 88cm
       
-      // Apply optimal scaling to match reference image
+      console.log("Applying realistic avatar measurements:", {
+        heightFactor, 
+        weightFactor, 
+        chestFactor, 
+        waistFactor, 
+        hipsFactor,
+        shoulderFactor,
+        stomachFactor
+      });
+      
+      // Apply more pronounced scaling for better visual feedback
       model.scale.set(
-        heightFactor * 0.18 * (0.8 + weightFactor * 0.2), // Width scaled by height and weight
-        heightFactor * 0.18,                              // Height scaled by height
-        heightFactor * 0.18 * (0.8 + weightFactor * 0.2)  // Depth scaled by height and weight
+        heightFactor * 0.18 * (0.7 + weightFactor * 0.3), // More weight influence
+        heightFactor * 0.18,
+        heightFactor * 0.18 * (0.7 + weightFactor * 0.3)
       );
       
       // Apply body-specific scaling if model has named parts
@@ -89,16 +106,23 @@ export const RealisticAvatarModel: React.FC<RealisticAvatarModelProps> = ({
           const name = child.name.toLowerCase();
           
           if (name.includes('torso') || name.includes('chest')) {
-            child.scale.x *= chestFactor;
-            child.scale.z *= chestFactor;
+            child.scale.x = chestFactor * 1.2; // Amplify the effect
+            child.scale.z = chestFactor * 1.2;
           }
           else if (name.includes('waist')) {
-            child.scale.x *= waistFactor;
-            child.scale.z *= waistFactor;
+            child.scale.x = waistFactor * 1.2;
+            child.scale.z = waistFactor * 1.2;
           }
-          else if (name.includes('hip')) {
-            child.scale.x *= hipsFactor;
-            child.scale.z *= hipsFactor;
+          else if (name.includes('hip') || name.includes('pelvis')) {
+            child.scale.x = hipsFactor * 1.2;
+            child.scale.z = hipsFactor * 1.2;
+          }
+          else if (name.includes('shoulder')) {
+            child.scale.x = shoulderFactor * 1.3; // More pronounced
+          }
+          else if (name.includes('stomach') || name.includes('belly')) {
+            child.scale.x = stomachFactor * 1.2;
+            child.scale.z = stomachFactor * 1.2;
           }
         }
       });
@@ -111,10 +135,15 @@ export const RealisticAvatarModel: React.FC<RealisticAvatarModelProps> = ({
     }
   }, [measurements, rotation, camera, model, selectedClothing, deviceSize]);
 
-  // If this is a GLB model, highlight relevant body parts when a measurement is selected
+  // Animation to slightly rotate for better viewing
   useFrame((state) => {
     if (group.current && model) {
-      // Custom animation logic if needed
+      // Optional: Add subtle breathing animation or gentle swaying
+      const t = state.clock.getElapsedTime();
+      if (group.current.rotation.y === (rotation * Math.PI) / 180) {
+        // Only apply subtle movement if user hasn't manually rotated
+        group.current.position.y = getPositionY() + Math.sin(t * 0.5) * 0.01; // Subtle up/down breathing
+      }
     }
   });
 

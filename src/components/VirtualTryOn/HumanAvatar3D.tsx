@@ -45,7 +45,7 @@ const HumanAvatar3D: React.FC<HumanAvatar3DProps> = ({
   const deviceSize = useDeviceSize();
   const cameraSettings = getCameraSettings(deviceSize);
   
-  // Convert measurements format to simplified record
+  // Convert measurements format to simplified record and log for debugging
   const simpleMeasurements: Measurements = Object.entries(measurements).reduce(
     (acc, [key, data]) => {
       acc[key as MeasurementKey] = data.value;
@@ -53,6 +53,12 @@ const HumanAvatar3D: React.FC<HumanAvatar3DProps> = ({
     }, 
     {} as Measurements
   );
+  
+  // Log current measurements for debugging
+  React.useEffect(() => {
+    console.log("HumanAvatar3D measurements:", simpleMeasurements);
+    console.log("Highlighted part:", highlightedPart);
+  }, [simpleMeasurements, highlightedPart]);
 
   // Get responsive container class based on device size
   const getContainerHeightClass = () => {
@@ -69,7 +75,7 @@ const HumanAvatar3D: React.FC<HumanAvatar3DProps> = ({
   };
 
   return (
-    <div className={`w-full h-full ${getContainerHeightClass()} rounded-xl overflow-hidden bg-gray-50`}>
+    <div className={`w-full h-full ${getContainerHeightClass()} rounded-xl overflow-hidden bg-gray-50 relative`}>
       <Canvas
         style={{ background: 'transparent' }}
         camera={{ 
@@ -77,10 +83,11 @@ const HumanAvatar3D: React.FC<HumanAvatar3DProps> = ({
           fov: cameraSettings.fov 
         }}
       >
-        {/* Simple lighting for clear visibility */}
+        {/* Enhanced lighting for better visualization */}
         <ambientLight intensity={0.8} />
-        <pointLight position={[10, 10, 10]} intensity={0.5} />
-        <pointLight position={[-10, -10, -10]} intensity={0.2} />
+        <pointLight position={[10, 10, 10]} intensity={0.6} />
+        <pointLight position={[-10, -10, -10]} intensity={0.3} />
+        <pointLight position={[0, 5, 5]} intensity={0.5} color="#ffffff" />
         
         {/* Hybrid Avatar model - uses realistic GLB if available, falls back to primitive */}
         <HybridAvatarModel 
@@ -102,15 +109,15 @@ const HumanAvatar3D: React.FC<HumanAvatar3DProps> = ({
           maxDistance={5}
           minPolarAngle={0} 
           maxPolarAngle={Math.PI / 1.8}
-          target={[0, 0.5, 0] as [number, number, number]} // Fixed: explicitly typed as tuple
+          target={[0, 0.5, 0] as [number, number, number]}
         />
       </Canvas>
       
-      {/* Measurement indicator overlay */}
+      {/* Enhanced measurement indicator overlay */}
       {highlightedPart && (
         <div className="absolute bottom-4 left-0 right-0 text-center">
-          <span className="bg-gray-800/70 text-white px-3 py-1 rounded-full text-xs">
-            Editing: {measurements[highlightedPart].label}
+          <span className="bg-gray-800/70 text-white px-4 py-2 rounded-full text-sm font-medium">
+            Editing: {measurements[highlightedPart].label} - {measurements[highlightedPart].value}{measurements[highlightedPart].unit}
           </span>
         </div>
       )}

@@ -59,6 +59,11 @@ export const AvatarModel: React.FC<AvatarModelProps> = ({
       const stomachFactor = measurements.stomach / 88; // Base stomach is 88cm
       const thighFactor = measurements.thigh / 55; // Base thigh is 55cm
       
+      console.log("Avatar measurements applied:", { 
+        heightFactor, shoulderFactor, weightFactor, chestFactor, 
+        waistFactor, hipsFactor, neckFactor, stomachFactor, thighFactor 
+      });
+      
       // Create body parts - hide parts that will be covered by clothing
       const hasUpperClothing = selectedClothing.some(item => 
         ['shirt', 'blouse', 'sweater', 'jacket', 't-shirt'].includes(item.type.toLowerCase())
@@ -92,7 +97,7 @@ export const AvatarModel: React.FC<AvatarModelProps> = ({
       createAvatarLegs(
         heightFactor, 
         hipsFactor, 
-        thighFactor,
+        measurements.thigh, // Pass actual measurement value instead of factor 
         measurements.inseam, 
         group.current
       );
