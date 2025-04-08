@@ -85,9 +85,9 @@ const CustomMannequin: React.FC<CustomMannequinProps> = ({
     
     // Apply global scaling based on measurements
     model.scale.set(
-      shoulderFactor * 0.7 + chestFactor * 0.3,  // X-axis: Width of upper body
-      heightFactor,                               // Y-axis: Total height
-      waistFactor * 0.5 + stomachFactor * 0.3 + hipsFactor * 0.2  // Z-axis: Depth of torso
+      0.18 * (shoulderFactor * 0.7 + chestFactor * 0.3),  // X-axis: Width of upper body
+      0.18 * heightFactor,                               // Y-axis: Total height
+      0.18 * (waistFactor * 0.5 + stomachFactor * 0.3 + hipsFactor * 0.2)  // Z-axis: Depth of torso
     );
     
     // Find and scale specific body parts if they exist in the model
