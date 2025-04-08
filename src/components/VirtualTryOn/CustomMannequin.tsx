@@ -36,11 +36,11 @@ const CustomMannequin: React.FC<CustomMannequinProps> = ({
 
     const model = scene.clone();
 
-    // Apply consistent scale - adjusted for better fit in frame
-    model.scale.set(0.20, 0.20, 0.20);
+    // Adjust scale for better fit based on reference image
+    model.scale.set(0.18, 0.18, 0.18);
     
-    // Position the model to center it in the view
-    model.position.set(0, -0.7, 0); 
+    // Position the model to center it in the view - adjusted for T-pose visibility
+    model.position.set(0, -0.45, 0); 
     
     // Apply rotation
     model.rotation.y = (rotation * Math.PI) / 180;
@@ -49,11 +49,10 @@ const CustomMannequin: React.FC<CustomMannequinProps> = ({
     group.current.add(model);
   }, [scene, measurements, rotation]);
 
-  // Simple animation for subtle movement - removed to keep avatar static
+  // No animation - keep avatar static
   useFrame(() => {
     if (group.current && highlightedPart) {
-      // You could highlight specific parts here if needed
-      console.log('Highlighting:', highlightedPart);
+      // Highlighting functionality could be added here if needed
     }
   });
 

@@ -34,35 +34,23 @@ export const RealisticAvatarModel: React.FC<RealisticAvatarModelProps> = ({
       // Add the model to the group
       group.current.add(model);
       
-      // Apply optimal scaling for full visibility
+      // Apply optimal scaling to match reference image
       const heightFactor = measurements.height / 175; // Base height is 175cm
-      model.scale.set(heightFactor * 0.20, heightFactor * 0.20, heightFactor * 0.20); // Adjusted scale for better fit
+      model.scale.set(heightFactor * 0.18, heightFactor * 0.18, heightFactor * 0.18); // Adjusted scale
       
-      // Apply morphing or scaling to different body parts based on measurements
-      // This depends on the specific model structure
-      console.log("Applied measurements to 3D model:", measurements);
-      
-      // Apply clothing if any are selected
-      if (selectedClothing && selectedClothing.length > 0) {
-        console.log(`Applied ${selectedClothing.length} clothing items to realistic avatar`);
-      }
-      
-      // Position model for better visibility - centered in view
-      model.position.y = -0.7;
+      // Position model for better visibility - T-pose centered in view
+      model.position.y = -0.45;
       
       // Apply rotation
       group.current.rotation.y = (rotation * Math.PI) / 180;
       
-      // Adjust camera to focus on model
-      const box = new THREE.Box3().setFromObject(group.current);
-      const center = box.getCenter(new THREE.Vector3());
-      camera.lookAt(center);
+      // No need to adjust camera to focus on model as we've set it in the Canvas
     }
   }, [measurements, rotation, camera, model, selectedClothing]);
 
-  // Simple animation - removed to keep avatar static
+  // No animation - keep avatar static
   useFrame(() => {
-    // No animation for static positioning
+    // Static positioning, no animation needed
   });
 
   return (

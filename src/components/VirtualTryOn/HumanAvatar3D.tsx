@@ -40,7 +40,7 @@ const HumanAvatar3D: React.FC<HumanAvatar3DProps> = ({
     <div className="w-full h-full rounded-xl overflow-hidden bg-gray-50">
       <Canvas
         style={{ background: '#f8f8f8' }}
-        camera={{ position: [0, 0, 3.2], fov: 45 }} // Optimized camera position for centered view
+        camera={{ position: [0, 0, 2.8], fov: 40 }} // Adjusted for better framing
       >
         {/* Simple lighting for clear visibility */}
         <ambientLight intensity={0.8} />
@@ -63,10 +63,10 @@ const HumanAvatar3D: React.FC<HumanAvatar3DProps> = ({
           enablePan={false} 
           enableRotate={true}
           minDistance={2}
-          maxDistance={6}
+          maxDistance={5}
           minPolarAngle={0} 
-          maxPolarAngle={Math.PI / 1.5}
-          target={[0, -0.2, 0]} // Adjusted target to focus on the center of the avatar
+          maxPolarAngle={Math.PI / 1.8}
+          target={[0, 0, 0]} // Centered target
         />
       </Canvas>
       

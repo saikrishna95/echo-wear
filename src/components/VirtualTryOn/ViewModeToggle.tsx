@@ -14,7 +14,7 @@ const ViewModeToggle: React.FC<ViewModeToggleProps> = ({ viewMode, setViewMode }
           onClick={() => setViewMode("measurements")}
           className={`flex-1 py-3 text-center text-sm font-medium border-b-2 ${
             viewMode === "measurements" 
-              ? "border-primary text-primary dark:border-primary dark:text-primary" 
+              ? "border-orange-500 text-orange-500 dark:border-orange-400 dark:text-orange-400" 
               : "border-transparent text-gray-500 dark:text-gray-400"
           }`}
         >
@@ -24,7 +24,7 @@ const ViewModeToggle: React.FC<ViewModeToggleProps> = ({ viewMode, setViewMode }
           onClick={() => setViewMode("clothing")}
           className={`flex-1 py-3 text-center text-sm font-medium border-b-2 ${
             viewMode === "clothing" 
-              ? "border-primary text-primary dark:border-primary dark:text-primary" 
+              ? "border-orange-500 text-orange-500 dark:border-orange-400 dark:text-orange-400" 
               : "border-transparent text-gray-500 dark:text-gray-400"
           }`}
         >

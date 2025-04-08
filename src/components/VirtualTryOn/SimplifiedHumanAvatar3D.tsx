@@ -54,7 +54,7 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
     <div className="w-full h-full rounded-xl overflow-hidden bg-gray-50 dark:bg-gray-900">
       <ErrorBoundary FallbackComponent={FallbackAvatar}>
         <Canvas
-          camera={{ position: [0, 0, 3.2], fov: 45 }} // Adjusted camera position for better view
+          camera={{ position: [0, 0, 2.8], fov: 40 }} // Adjusted camera position and field of view
           style={{ background: 'transparent' }}
         >
           <Suspense fallback={null}>
@@ -79,10 +79,10 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
               enablePan={false} 
               enableRotate={true}
               minDistance={2}
-              maxDistance={6}
+              maxDistance={5}
               minPolarAngle={0}
-              maxPolarAngle={Math.PI / 1.5} // Limit vertical rotation to prevent awkward angles
-              target={[0, -0.2, 0]} // Adjusted target to center on the avatar's body
+              maxPolarAngle={Math.PI / 1.8} // Limit vertical rotation
+              target={[0, 0, 0]} // Center target point
             />
           </Suspense>
         </Canvas>
