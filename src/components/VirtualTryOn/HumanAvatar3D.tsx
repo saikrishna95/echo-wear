@@ -40,7 +40,7 @@ const HumanAvatar3D: React.FC<HumanAvatar3DProps> = ({
     <div className="w-full h-full rounded-xl shadow-sm overflow-hidden bg-gray-50">
       <Canvas
         style={{ background: '#f8f8f8' }}
-        camera={{ position: [0, 0, 2.2], fov: 50 }} // Adjusted camera position for better view
+        camera={{ position: [0, 0, 3.2], fov: 45 }} // Adjusted camera for better full-body view
       >
         {/* Improved lighting for more realistic appearance */}
         <ambientLight intensity={0.8} />
@@ -56,7 +56,7 @@ const HumanAvatar3D: React.FC<HumanAvatar3DProps> = ({
           far={10}
           resolution={256}
           color="#000000"
-          position={[0, -0.8, 0]}
+          position={[0, -1.1, 0]}
         />
         
         {/* Hybrid Avatar model - uses realistic GLB if available, falls back to primitive */}
@@ -74,11 +74,11 @@ const HumanAvatar3D: React.FC<HumanAvatar3DProps> = ({
           enableZoom={true} 
           enablePan={false} 
           enableRotate={true}
-          minDistance={1.2}
-          maxDistance={4}
+          minDistance={2}
+          maxDistance={5}
           minPolarAngle={0} 
-          maxPolarAngle={Math.PI}
-          target={[0, 0, 0]} // Center the target on the model
+          maxPolarAngle={Math.PI / 1.5}
+          target={[0, -0.5, 0]} // Center the target on the middle of the model
         />
       </Canvas>
       

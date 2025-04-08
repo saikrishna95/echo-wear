@@ -37,7 +37,7 @@ export const RealisticAvatarModel: React.FC<RealisticAvatarModelProps> = ({
       
       // Apply basic scaling based on height
       const heightFactor = measurements.height / 175; // Base height is 175cm
-      model.scale.set(heightFactor * 0.5, heightFactor * 0.5, heightFactor * 0.5); // Reduced scale to fit better
+      model.scale.set(heightFactor * 0.3, heightFactor * 0.3, heightFactor * 0.3); // Reduced scale to fit the full body
       
       // Apply morphing or scaling to different body parts based on measurements
       // This depends on the specific model structure
@@ -49,8 +49,8 @@ export const RealisticAvatarModel: React.FC<RealisticAvatarModelProps> = ({
         console.log(`Applied ${selectedClothing.length} clothing items to realistic avatar`);
       }
       
-      // Position the model - adjusted to ensure head is visible
-      model.position.y = -0.8;
+      // Position the model - adjusted to ensure full body is visible
+      model.position.y = -1.1;
       
       // Apply rotation
       group.current.rotation.y = (rotation * Math.PI) / 180;

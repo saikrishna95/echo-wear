@@ -55,7 +55,7 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
     <div className="w-full h-full rounded-xl shadow-sm overflow-hidden bg-gray-50 dark:bg-gray-900">
       <ErrorBoundary FallbackComponent={FallbackAvatar}>
         <Canvas
-          camera={{ position: [0, 0, 2.5], fov: 50 }} // Adjusted camera position for better view
+          camera={{ position: [0, 0, 3.2], fov: 45 }} // Adjusted camera position and field of view
           style={{ background: 'transparent' }}
         >
           <Suspense fallback={null}>
@@ -65,7 +65,7 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
             <pointLight position={[-10, -10, -10]} intensity={0.2} />
 
             {/* Add the grid here */}
-            <primitive object={new THREE.GridHelper(10, 10)} position={[0, -1, 0]} />
+            <primitive object={new THREE.GridHelper(10, 10)} position={[0, -1.1, 0]} />
             
             {/* Add subtle shadows */}
             <ContactShadows 
@@ -75,7 +75,7 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
               far={10}
               resolution={256}
               color="#000000"
-              position={[0, -0.8, 0]}
+              position={[0, -1.1, 0]}
             />
             
             {/* Mannequin model */}
@@ -93,11 +93,11 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
               enableZoom={true} 
               enablePan={false} 
               enableRotate={true}
-              minDistance={1.2}
-              maxDistance={4}
-              minPolarAngle={0} // Allow full vertical rotation
-              maxPolarAngle={Math.PI}
-              target={[0, 0, 0]} // Center camera target on the model
+              minDistance={2}
+              maxDistance={5}
+              minPolarAngle={0}
+              maxPolarAngle={Math.PI / 1.5} // Limit vertical rotation to prevent awkward angles
+              target={[0, -0.5, 0]} // Center camera target on the middle of the model
             />
           </Suspense>
         </Canvas>
