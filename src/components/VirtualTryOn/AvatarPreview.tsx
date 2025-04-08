@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { RotateCcw, RotateCw, AspectRatio, Frame } from "lucide-react";
+import { RotateCcw, RotateCw, Ratio, Frame } from "lucide-react";
 import SimplifiedHumanAvatar3D from "./SimplifiedHumanAvatar3D";
 import { MeasurementKey, ClothingItem } from "./types";
 
@@ -68,7 +68,7 @@ const AvatarPreview: React.FC<AvatarPreviewProps> = ({
         {/* Frame indicator */}
         <div className="absolute top-2 left-2">
           <div className="bg-white/80 rounded-md p-1.5 shadow-sm">
-            <AspectRatio size={16} className="text-gray-600" />
+            <Ratio size={16} className="text-gray-600" />
           </div>
         </div>
       </div>
