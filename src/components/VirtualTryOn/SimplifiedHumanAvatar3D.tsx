@@ -54,7 +54,7 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
     <div className="w-full h-full rounded-xl shadow-sm overflow-hidden bg-gray-50 dark:bg-gray-900">
       <ErrorBoundary FallbackComponent={FallbackAvatar}>
         <Canvas
-          camera={{ position: [0, 0, 5], fov: 40 }} // Adjusted camera position for better full body visibility
+          camera={{ position: [0, 0, 3.5], fov: 50 }} // Optimized camera position for centered full body view
           style={{ background: 'transparent' }}
         >
           <Suspense fallback={null}>
@@ -71,7 +71,7 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
               far={10}
               resolution={256}
               color="#000000"
-              position={[0, -2.2, 0]} // Match the model's base position
+              position={[0, -1.6, 0]} // Adjusted shadow position
             />
             
             {/* Mannequin model */}
@@ -89,11 +89,11 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
               enableZoom={true} 
               enablePan={false} 
               enableRotate={true}
-              minDistance={3}
-              maxDistance={7}
+              minDistance={2}
+              maxDistance={8}
               minPolarAngle={0}
               maxPolarAngle={Math.PI / 1.5} // Limit vertical rotation to prevent awkward angles
-              target={[0, -0.5, 0]} // Adjusted target to better frame the full body
+              target={[0, 0, 0]} // Center target for better orbiting around the model
             />
           </Suspense>
         </Canvas>
