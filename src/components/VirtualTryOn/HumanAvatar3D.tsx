@@ -40,7 +40,7 @@ const HumanAvatar3D: React.FC<HumanAvatar3DProps> = ({
     <div className="w-full h-full rounded-xl shadow-sm overflow-hidden bg-gray-50">
       <Canvas
         style={{ background: '#f8f8f8' }}
-        camera={{ position: [0, 0.9, 2], fov: 45 }}
+        camera={{ position: [0, 0, 3], fov: 45 }} // Adjusted camera position to see the head
       >
         {/* Improved lighting for more realistic appearance */}
         <ambientLight intensity={0.8} />
@@ -69,15 +69,16 @@ const HumanAvatar3D: React.FC<HumanAvatar3DProps> = ({
         {/* Environment lighting for better material rendering */}
         <Environment preset="city" />
         
-        {/* Camera controls */}
+        {/* Camera controls - adjusted for better view of the avatar */}
         <OrbitControls 
           enableZoom={true} 
           enablePan={false} 
           enableRotate={true}
           minDistance={1.5}
           maxDistance={4}
-          minPolarAngle={0}
-          maxPolarAngle={Math.PI}
+          minPolarAngle={0} // Removed minimum angle restriction to see the head
+          maxPolarAngle={Math.PI} // Allow full vertical rotation
+          target={[0, -0.5, 0]} // Set camera target to the center of the model
         />
       </Canvas>
       

@@ -37,9 +37,9 @@ const CustomMannequin: React.FC<CustomMannequinProps> = ({
 
     const model = scene.clone();
 
-    // Apply scale from measurement values - fixed the syntax error here
-    model.scale.set(1, 1, 1); // Reset scale for visibility
-    model.position.set(0, -1, 0); // Raise the model up from ground
+    // Apply scale from measurement values - fixed the scaling to make the model more visible
+    model.scale.set(0.9, 0.9, 0.9); // Adjusted scale for better visibility
+    model.position.set(0, -1.5, 0); // Lowered the model to show head in camera view
 
     // Apply rotation
     model.rotation.y = (rotation * Math.PI) / 180;
