@@ -1,11 +1,12 @@
 
-import React, { Suspense, useEffect, useState } from 'react';
+import React, { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment } from '@react-three/drei';
 import CustomMannequin from './CustomMannequin';
 import { MeasurementKey } from './types';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useDeviceSize } from '../../hooks/use-mobile';
+import ReadyPlayerMeAvatar from './ReadyPlayerMeAvatar';
 
 interface SimplifiedHumanAvatar3DProps {
   measurements: {
@@ -80,6 +81,31 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
         return "max-h-[500px]";
     }
   };
+  
+  // Use ReadyPlayerMe model with fallback to CustomMannequin
+  const [useReadyPlayerMe, setUseReadyPlayerMe] = React.useState(true);
+  
+  React.useEffect(() => {
+    // Check if ReadyPlayerMe model is available
+    const checkModelAvailability = async () => {
+      try {
+        const response = await fetch('https://models.readyplayer.me/67f534d65ec6a722636d42b4.glb', { method: 'HEAD' });
+        setUseReadyPlayerMe(response.ok);
+      } catch (error) {
+        console.error('Error checking ReadyPlayerMe model:', error);
+        setUseReadyPlayerMe(false);
+      }
+    };
+    
+    checkModelAvailability();
+    
+    // Fallback timer
+    const timer = setTimeout(() => {
+      setUseReadyPlayerMe(false);
+    }, 3000);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className={`w-full h-full ${getContainerHeightClass()} rounded-xl overflow-hidden bg-gray-50 dark:bg-gray-900`}>
@@ -97,13 +123,22 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
             <pointLight position={[10, 10, 10]} intensity={0.5} />
             <pointLight position={[-10, -10, -10]} intensity={0.2} />
             
-            {/* Mannequin model */}
-            <CustomMannequin 
-              measurements={simpleMeasurements} 
-              rotation={rotation}
-              highlightedPart={highlightedPart}
-              deviceSize={deviceSize}
-            />
+            {/* Choose between ReadyPlayerMe or fallback mannequin */}
+            {useReadyPlayerMe ? (
+              <ReadyPlayerMeAvatar 
+                measurements={simpleMeasurements} 
+                rotation={rotation}
+                deviceSize={deviceSize}
+                highlightedPart={highlightedPart}
+              />
+            ) : (
+              <CustomMannequin 
+                measurements={simpleMeasurements} 
+                rotation={rotation}
+                highlightedPart={highlightedPart}
+                deviceSize={deviceSize}
+              />
+            )}
             
             {/* Environment lighting */}
             <Environment preset="city" />

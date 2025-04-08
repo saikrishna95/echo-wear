@@ -93,12 +93,13 @@ const HumanAvatar3D: React.FC<HumanAvatar3DProps> = ({
         <pointLight position={[-10, -10, -10]} intensity={0.3} />
         <pointLight position={[0, 5, 5]} intensity={0.5} color="#ffffff" />
         
-        {/* Hybrid Avatar model - uses realistic GLB if available, falls back to primitive */}
+        {/* Hybrid Avatar model with highlighted part */}
         <HybridAvatarModel 
           measurements={simpleMeasurements} 
           rotation={rotation}
           selectedClothing={selectedClothing}
           deviceSize={deviceSize}
+          highlightedPart={highlightedPart}
         />
         
         {/* Environment lighting for better material rendering */}

@@ -1,9 +1,10 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Environment } from "@react-three/drei";
 import { MeasurementKey } from "./types";
 import FocusedAvatarModel from "./FocusedAvatarModel";
+import ReadyPlayerMeAvatar from "./ReadyPlayerMeAvatar";
 
 interface MeasurementData {
   value: number;
@@ -64,6 +65,29 @@ const BodyPartPreview: React.FC<BodyPartPreviewProps> = ({
   };
 
   const cameraSettings = getCameraSettings();
+  const [useReadyPlayerMe, setUseReadyPlayerMe] = useState(true);
+  
+  // Check if ReadyPlayerMe model is available
+  useEffect(() => {
+    const checkModelAvailability = async () => {
+      try {
+        const response = await fetch('https://models.readyplayer.me/67f534d65ec6a722636d42b4.glb', { method: 'HEAD' });
+        setUseReadyPlayerMe(response.ok);
+      } catch (error) {
+        console.error('Error checking ReadyPlayerMe model:', error);
+        setUseReadyPlayerMe(false);
+      }
+    };
+    
+    checkModelAvailability();
+    
+    // Fallback timer
+    const timer = setTimeout(() => {
+      setUseReadyPlayerMe(false);
+    }, 3000);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className="w-full h-48 rounded-md overflow-hidden bg-gray-50">
@@ -77,11 +101,20 @@ const BodyPartPreview: React.FC<BodyPartPreviewProps> = ({
         <pointLight position={[10, 10, 10]} intensity={0.6} />
         <pointLight position={[-10, -10, -10]} intensity={0.3} />
         
-        <FocusedAvatarModel
-          measurements={simpleMeasurements}
-          focusArea={bodyPartCategory}
-          highlightedPart={highlightedPart}
-        />
+        {useReadyPlayerMe ? (
+          <ReadyPlayerMeAvatar
+            measurements={simpleMeasurements}
+            rotation={0}
+            highlightedPart={highlightedPart}
+            deviceSize="mobile"
+          />
+        ) : (
+          <FocusedAvatarModel
+            measurements={simpleMeasurements}
+            focusArea={bodyPartCategory}
+            highlightedPart={highlightedPart}
+          />
+        )}
         
         <Environment preset="city" />
         
