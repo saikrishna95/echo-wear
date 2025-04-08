@@ -19,9 +19,10 @@ const CustomMannequin: React.FC<CustomMannequinProps> = ({
   deviceSize = "mobile"
 }) => {
   const group = useRef<THREE.Group>(null);
+  const modelRef = useRef<THREE.Object3D>();
   const { scene } = useGLTF('/models/mannequin.glb', true);
 
-  // Extract measurement factors
+  // Extract measurement factors - divide by standard measurements to get ratios
   const heightFactor = measurements.height / 175;
   const waistFactor = measurements.waist / 85;
   const hipsFactor = measurements.hips / 95;
@@ -35,7 +36,7 @@ const CustomMannequin: React.FC<CustomMannequinProps> = ({
   
   // Log measurements for debugging
   useEffect(() => {
-    console.log("CustomMannequin measurements:", {
+    console.log("CustomMannequin measurements applied:", {
       height: measurements.height,
       chest: measurements.chest,
       waist: measurements.waist,
@@ -43,7 +44,9 @@ const CustomMannequin: React.FC<CustomMannequinProps> = ({
       heightFactor,
       chestFactor,
       waistFactor,
-      hipsFactor
+      hipsFactor,
+      shoulderFactor,
+      stomachFactor
     });
   }, [measurements]);
 
@@ -75,10 +78,17 @@ const CustomMannequin: React.FC<CustomMannequinProps> = ({
     }
   };
 
-  // Apply measurements to mannequin model
+  // Apply measurements to mannequin model parts
   const applyMeasurementsToModel = (model: THREE.Object3D) => {
-    // Apply global scaling based on height
-    model.scale.y = heightFactor;
+    // Store reference for animation frame updates
+    modelRef.current = model;
+    
+    // Apply global scaling based on measurements
+    model.scale.set(
+      shoulderFactor * 0.7 + chestFactor * 0.3,  // X-axis: Width of upper body
+      heightFactor,                               // Y-axis: Total height
+      waistFactor * 0.5 + stomachFactor * 0.3 + hipsFactor * 0.2  // Z-axis: Depth of torso
+    );
     
     // Find and scale specific body parts if they exist in the model
     model.traverse((child) => {
@@ -87,46 +97,39 @@ const CustomMannequin: React.FC<CustomMannequinProps> = ({
         
         // Apply more pronounced scaling for better visual feedback
         if (name.includes('torso') || name.includes('chest')) {
-          child.scale.x = chestFactor * 1.2; // Amplify the effect
+          child.scale.x = chestFactor * 1.2; 
           child.scale.z = chestFactor * 1.2;
         }
         else if (name.includes('waist')) {
-          child.scale.x = waistFactor * 1.2;
-          child.scale.z = waistFactor * 1.2;
+          child.scale.x = waistFactor * 1.3;
+          child.scale.z = waistFactor * 1.3;
         }
         else if (name.includes('hip') || name.includes('pelvis')) {
-          child.scale.x = hipsFactor * 1.2;
-          child.scale.z = hipsFactor * 1.2;
+          child.scale.x = hipsFactor * 1.3;
+          child.scale.z = hipsFactor * 1.3;
         }
         else if (name.includes('stomach') || name.includes('belly')) {
-          child.scale.x = stomachFactor * 1.2;
-          child.scale.z = stomachFactor * 1.2;
+          child.scale.x = stomachFactor * 1.3;
+          child.scale.z = stomachFactor * 1.3;
         }
         else if (name.includes('leg') || name.includes('thigh')) {
-          child.scale.x = thighFactor * 1.2;
-          child.scale.z = thighFactor * 1.2;
-          child.scale.y = inseamFactor * 1.1;
+          child.scale.x = thighFactor * 1.3;
+          child.scale.z = thighFactor * 1.3;
+          child.scale.y = inseamFactor * 1.2;
         }
         else if (name.includes('shoulder')) {
-          child.scale.x = shoulderFactor * 1.3; // Make shoulders more pronounced
+          child.scale.x = shoulderFactor * 1.4;
         }
         else if (name.includes('arm')) {
-          child.scale.x = weightFactor * 1.1;
-          child.scale.z = weightFactor * 1.1;
+          child.scale.x = weightFactor * 1.2;
+          child.scale.z = weightFactor * 1.2;
         }
         else if (name.includes('neck')) {
-          child.scale.x = neckFactor * 1.1;
-          child.scale.z = neckFactor * 1.1;
+          child.scale.x = neckFactor * 1.2;
+          child.scale.z = neckFactor * 1.2;
         }
       }
     });
-    
-    // If no specific parts are named, apply general scaling
-    if (heightFactor !== 1 || weightFactor !== 1) {
-      // Adjust width based on weight and height
-      model.scale.x = heightFactor * (0.7 + weightFactor * 0.3); // More weight influence
-      model.scale.z = heightFactor * (0.7 + weightFactor * 0.3);
-    }
   };
 
   // Load the mannequin into the scene
@@ -143,13 +146,6 @@ const CustomMannequin: React.FC<CustomMannequinProps> = ({
     // Apply measurements to the model
     applyMeasurementsToModel(model);
     
-    // Adjust scale for better fit based on reference image
-    model.scale.set(
-      0.18 * heightFactor * (0.7 + weightFactor * 0.3), // More weight influence
-      0.18 * heightFactor,
-      0.18 * heightFactor * (0.7 + weightFactor * 0.3)
-    );
-    
     // Position the model to align with bottom of view
     model.position.set(0, getModelPositionY(), 0);
     
@@ -160,8 +156,11 @@ const CustomMannequin: React.FC<CustomMannequinProps> = ({
     group.current.add(model);
   }, [scene, measurements, rotation, deviceSize]);
 
-  // Handle highlighting for the currently selected measurement
+  // Handle highlighting for the currently selected measurement and smooth transitions
   useFrame(() => {
+    if (!modelRef.current) return;
+    
+    // Apply highlighting for the selected measurement
     if (group.current && highlightedPart) {
       group.current.traverse((child) => {
         if (child instanceof THREE.Mesh) {
@@ -181,12 +180,18 @@ const CustomMannequin: React.FC<CustomMannequinProps> = ({
               (highlightedPart === "thigh" && (name.includes('thigh') || name.includes('leg'))) ||
               (highlightedPart === "neck" && name.includes('neck'))) {
             if (child.material instanceof THREE.MeshStandardMaterial) {
-              child.material.emissive.set(0x555555); // Brighter highlight
-              child.material.emissiveIntensity = 0.5; // More intense
+              child.material.emissive.set(0x666666); // Brighter highlight
+              child.material.emissiveIntensity = 0.7; // More intense
             }
           }
         }
       });
+    }
+    
+    // Add subtle breathing animation
+    const t = Date.now() * 0.001;
+    if (modelRef.current) {
+      modelRef.current.position.y = getModelPositionY() + Math.sin(t * 0.5) * 0.01;
     }
   });
 

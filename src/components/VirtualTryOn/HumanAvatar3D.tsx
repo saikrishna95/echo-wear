@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment } from '@react-three/drei';
 import HybridAvatarModel from './HybridAvatarModel';
@@ -54,11 +54,15 @@ const HumanAvatar3D: React.FC<HumanAvatar3DProps> = ({
     {} as Measurements
   );
   
-  // Log current measurements for debugging
-  React.useEffect(() => {
-    console.log("HumanAvatar3D measurements:", simpleMeasurements);
-    console.log("Highlighted part:", highlightedPart);
-  }, [simpleMeasurements, highlightedPart]);
+  // Enhanced logging to debug measurement changes
+  useEffect(() => {
+    console.log("HumanAvatar3D measurements updated:", simpleMeasurements);
+    if (highlightedPart) {
+      console.log("Currently highlighted part:", highlightedPart, 
+        "Value:", measurements[highlightedPart].value, 
+        measurements[highlightedPart].unit);
+    }
+  }, [simpleMeasurements, highlightedPart, measurements]);
 
   // Get responsive container class based on device size
   const getContainerHeightClass = () => {
@@ -116,7 +120,7 @@ const HumanAvatar3D: React.FC<HumanAvatar3DProps> = ({
       {/* Enhanced measurement indicator overlay */}
       {highlightedPart && (
         <div className="absolute bottom-4 left-0 right-0 text-center">
-          <span className="bg-gray-800/70 text-white px-4 py-2 rounded-full text-sm font-medium">
+          <span className="bg-gray-800/80 text-white px-4 py-2 rounded-full text-sm font-medium">
             Editing: {measurements[highlightedPart].label} - {measurements[highlightedPart].value}{measurements[highlightedPart].unit}
           </span>
         </div>

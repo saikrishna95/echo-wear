@@ -1,7 +1,7 @@
 
 import React, { useRef, useEffect } from 'react';
 import * as THREE from 'three';
-import { useThree } from '@react-three/fiber';
+import { useThree, useFrame } from '@react-three/fiber';
 import { Measurements } from './types';
 import { createAvatarHead } from './AvatarHead';
 import { createAvatarTorso } from './AvatarTorso';
@@ -48,7 +48,7 @@ export const AvatarModel: React.FC<AvatarModelProps> = ({
         group.current.remove(group.current.children[0]);
       }
       
-      // Scale factors based on measurements
+      // Calculate scale factors based on measurements
       const heightFactor = measurements.height / 175; // Base height is 175cm
       const shoulderFactor = measurements.shoulder / 45; // Base shoulder width is 45cm
       const weightFactor = measurements.weight / 70;  // Base weight is 70kg
@@ -58,13 +58,14 @@ export const AvatarModel: React.FC<AvatarModelProps> = ({
       const neckFactor = measurements.neck / 38; // Base neck is 38cm
       const stomachFactor = measurements.stomach / 88; // Base stomach is 88cm
       const thighFactor = measurements.thigh / 55; // Base thigh is 55cm
+      const inseamFactor = measurements.inseam / 80; // Base inseam is 80cm
       
       console.log("Avatar measurements applied:", { 
         heightFactor, shoulderFactor, weightFactor, chestFactor, 
-        waistFactor, hipsFactor, neckFactor, stomachFactor, thighFactor 
+        waistFactor, hipsFactor, neckFactor, stomachFactor, thighFactor, inseamFactor 
       });
       
-      // Create body parts - hide parts that will be covered by clothing
+      // Check which body parts should be visible based on clothing
       const hasUpperClothing = selectedClothing.some(item => 
         ['shirt', 'blouse', 'sweater', 'jacket', 't-shirt'].includes(item.type.toLowerCase())
       );
@@ -73,10 +74,11 @@ export const AvatarModel: React.FC<AvatarModelProps> = ({
         ['pants', 'jeans', 'skirt', 'shorts'].includes(item.type.toLowerCase())
       );
       
-      // Always create the head
+      // Create body parts with updated measurements
+      // Head is always visible
       createAvatarHead(heightFactor, neckFactor, group.current);
       
-      // Create body parts that aren't covered by clothing
+      // Create body parts that aren't covered by clothing with proper measurements
       if (!hasUpperClothing) {
         createAvatarTorso(
           heightFactor, 
@@ -89,20 +91,31 @@ export const AvatarModel: React.FC<AvatarModelProps> = ({
       }
       
       if (!hasLowerClothing) {
-        createAvatarLowerBody(heightFactor, waistFactor, hipsFactor, group.current);
+        createAvatarLowerBody(
+          heightFactor, 
+          waistFactor, 
+          hipsFactor, 
+          group.current
+        );
       }
       
-      // Always create arms and legs
-      createAvatarArms(heightFactor, shoulderFactor, weightFactor, group.current);
+      // Always create arms and legs with updated measurements
+      createAvatarArms(
+        heightFactor, 
+        shoulderFactor, 
+        weightFactor, 
+        group.current
+      );
+      
       createAvatarLegs(
         heightFactor, 
         hipsFactor, 
-        measurements.thigh, // Pass actual measurement value instead of factor 
+        measurements.thigh,  
         measurements.inseam, 
         group.current
       );
       
-      // Add clothing layers
+      // Add clothing layers if selected
       if (selectedClothing && selectedClothing.length > 0) {
         selectedClothing.forEach(item => {
           createAvatarClothingLayer(
@@ -123,6 +136,15 @@ export const AvatarModel: React.FC<AvatarModelProps> = ({
       group.current.rotation.y = (rotation * Math.PI) / 180;
     }
   }, [measurements, rotation, camera, selectedClothing, deviceSize]);
+
+  // Add subtle breathing animation
+  useFrame((state) => {
+    if (group.current) {
+      const t = state.clock.getElapsedTime();
+      // Add subtle breathing movement
+      group.current.position.y = getPositionY() + Math.sin(t * 0.5) * 0.01;
+    }
+  });
 
   return (
     <group ref={group} position={[0, getPositionY(), 0]} />

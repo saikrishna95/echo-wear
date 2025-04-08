@@ -19,13 +19,11 @@ export const RealisticAvatarModel: React.FC<RealisticAvatarModelProps> = ({
   deviceSize = "mobile"
 }) => {
   const group = useRef<THREE.Group>(null);
+  const modelRef = useRef<THREE.Object3D>();
   const { camera } = useThree();
   
   // Use the mannequin.glb model which is available in the project
   const { scene, nodes, materials } = useGLTF('/models/mannequin.glb', false) as any;
-  
-  // Create a copy of the scene to modify
-  const model = scene?.clone();
   
   // Log measurements for debugging
   useEffect(() => {
@@ -46,7 +44,7 @@ export const RealisticAvatarModel: React.FC<RealisticAvatarModelProps> = ({
     }
   };
 
-  // Get model position based on device size
+  // Get model position based on device size and height
   const getModelPositionY = () => {
     // Adjust position based on height factor
     const heightFactor = measurements.height / 175;
@@ -64,14 +62,15 @@ export const RealisticAvatarModel: React.FC<RealisticAvatarModelProps> = ({
   };
   
   useEffect(() => {
-    if (group.current && model) {
+    if (group.current && scene) {
       // Remove previous mannequin
       while (group.current.children.length) {
         group.current.remove(group.current.children[0]);
       }
       
-      // Add the model to the group
-      group.current.add(model);
+      // Create a copy of the scene to modify
+      const model = scene.clone();
+      modelRef.current = model;
       
       // Calculate scaling factors based on measurements
       const heightFactor = measurements.height / 175; // Base height is 175cm
@@ -81,6 +80,8 @@ export const RealisticAvatarModel: React.FC<RealisticAvatarModelProps> = ({
       const hipsFactor = measurements.hips / 95;      // Base hips is 95cm
       const shoulderFactor = measurements.shoulder / 45; // Base shoulder is 45cm
       const stomachFactor = measurements.stomach / 88;   // Base stomach is 88cm
+      const thighFactor = measurements.thigh / 55;      // Base thigh is 55cm
+      const neckFactor = measurements.neck / 38;         // Base neck is 38cm
       
       console.log("Applying realistic avatar measurements:", {
         heightFactor, 
@@ -89,40 +90,54 @@ export const RealisticAvatarModel: React.FC<RealisticAvatarModelProps> = ({
         waistFactor, 
         hipsFactor,
         shoulderFactor,
-        stomachFactor
+        stomachFactor,
+        thighFactor,
+        neckFactor
       });
       
-      // Apply more pronounced scaling for better visual feedback
+      // Apply overall model scaling for better proportions
       model.scale.set(
-        heightFactor * 0.18 * (0.7 + weightFactor * 0.3), // More weight influence
-        heightFactor * 0.18,
-        heightFactor * 0.18 * (0.7 + weightFactor * 0.3)
+        0.18 * (shoulderFactor * 0.7 + chestFactor * 0.3), // X-axis width influenced by shoulders and chest
+        0.18 * heightFactor,                               // Y-axis height
+        0.18 * (waistFactor * 0.5 + stomachFactor * 0.3 + hipsFactor * 0.2) // Z-axis depth
       );
       
-      // Apply body-specific scaling if model has named parts
+      // Apply body-specific scaling to each body part
       model.traverse((child: THREE.Object3D) => {
         if (child instanceof THREE.Mesh) {
           // Apply specific scaling to body parts based on their names
           const name = child.name.toLowerCase();
           
           if (name.includes('torso') || name.includes('chest')) {
-            child.scale.x = chestFactor * 1.2; // Amplify the effect
-            child.scale.z = chestFactor * 1.2;
+            child.scale.x = chestFactor * 1.3; // Amplify the effect
+            child.scale.z = chestFactor * 1.3;
           }
           else if (name.includes('waist')) {
-            child.scale.x = waistFactor * 1.2;
-            child.scale.z = waistFactor * 1.2;
+            child.scale.x = waistFactor * 1.3;
+            child.scale.z = waistFactor * 1.3;
           }
           else if (name.includes('hip') || name.includes('pelvis')) {
-            child.scale.x = hipsFactor * 1.2;
-            child.scale.z = hipsFactor * 1.2;
+            child.scale.x = hipsFactor * 1.3;
+            child.scale.z = hipsFactor * 1.3;
           }
           else if (name.includes('shoulder')) {
-            child.scale.x = shoulderFactor * 1.3; // More pronounced
+            child.scale.x = shoulderFactor * 1.4; // More pronounced
           }
           else if (name.includes('stomach') || name.includes('belly')) {
-            child.scale.x = stomachFactor * 1.2;
-            child.scale.z = stomachFactor * 1.2;
+            child.scale.x = stomachFactor * 1.3;
+            child.scale.z = stomachFactor * 1.3;
+          }
+          else if (name.includes('leg') || name.includes('thigh')) {
+            child.scale.x = thighFactor * 1.3;
+            child.scale.z = thighFactor * 1.3;
+          }
+          else if (name.includes('neck')) {
+            child.scale.x = neckFactor * 1.2;
+            child.scale.z = neckFactor * 1.2;
+          }
+          else if (name.includes('arm')) {
+            child.scale.x = weightFactor * 1.2;
+            child.scale.z = weightFactor * 1.2;
           }
         }
       });
@@ -131,19 +146,19 @@ export const RealisticAvatarModel: React.FC<RealisticAvatarModelProps> = ({
       model.position.set(0, getModelPositionY(), 0);
       
       // Apply rotation
-      group.current.rotation.y = (rotation * Math.PI) / 180;
+      model.rotation.y = (rotation * Math.PI) / 180;
+      
+      // Add model to group
+      group.current.add(model);
     }
-  }, [measurements, rotation, camera, model, selectedClothing, deviceSize]);
+  }, [measurements, rotation, camera, scene, selectedClothing, deviceSize]);
 
-  // Animation to slightly rotate for better viewing
+  // Animation to slightly rotate for better viewing and smooth breathing
   useFrame((state) => {
-    if (group.current && model) {
-      // Optional: Add subtle breathing animation or gentle swaying
+    if (modelRef.current) {
+      // Add subtle breathing animation
       const t = state.clock.getElapsedTime();
-      if (group.current.rotation.y === (rotation * Math.PI) / 180) {
-        // Only apply subtle movement if user hasn't manually rotated
-        group.current.position.y = getPositionY() + Math.sin(t * 0.5) * 0.01; // Subtle up/down breathing
-      }
+      modelRef.current.position.y = getModelPositionY() + Math.sin(t * 0.5) * 0.01;
     }
   });
 
