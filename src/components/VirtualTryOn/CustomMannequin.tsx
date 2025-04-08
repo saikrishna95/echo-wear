@@ -78,20 +78,19 @@ const CustomMannequin: React.FC<CustomMannequinProps> = ({
     }
   };
 
-  // Apply measurements to mannequin model parts
-  const applyMeasurementsToModel = (model: THREE.Object3D) => {
-    // Store reference for animation frame updates
-    modelRef.current = model;
+  // Function to update model scaling - extracted for reuse in useFrame
+  const updateModelScaling = () => {
+    if (!modelRef.current) return;
     
     // Apply global scaling based on measurements
-    model.scale.set(
+    modelRef.current.scale.set(
       0.18 * (shoulderFactor * 0.7 + chestFactor * 0.3),  // X-axis: Width of upper body
-      0.18 * heightFactor,                               // Y-axis: Total height
+      0.18 * heightFactor,                                // Y-axis: Total height
       0.18 * (waistFactor * 0.5 + stomachFactor * 0.3 + hipsFactor * 0.2)  // Z-axis: Depth of torso
     );
     
-    // Find and scale specific body parts if they exist in the model
-    model.traverse((child) => {
+    // Apply more specific scaling to body parts
+    modelRef.current.traverse((child) => {
       if (child instanceof THREE.Mesh) {
         const name = child.name.toLowerCase();
         
@@ -130,9 +129,12 @@ const CustomMannequin: React.FC<CustomMannequinProps> = ({
         }
       }
     });
+    
+    // Update model position
+    modelRef.current.position.y = getModelPositionY();
   };
 
-  // Load the mannequin into the scene
+  // Initial setup - load the mannequin into the scene
   useEffect(() => {
     if (!scene || !group.current) return;
 
@@ -142,25 +144,33 @@ const CustomMannequin: React.FC<CustomMannequinProps> = ({
     }
 
     const model = scene.clone();
-
-    // Apply measurements to the model
-    applyMeasurementsToModel(model);
     
-    // Position the model to align with bottom of view
-    model.position.set(0, getModelPositionY(), 0);
+    // Store reference for animation frame updates
+    modelRef.current = model;
     
-    // Apply rotation
+    // Apply initial rotation
     model.rotation.y = (rotation * Math.PI) / 180;
 
     // Add model to group
     group.current.add(model);
-  }, [scene, measurements, rotation, deviceSize]);
+    
+    // Initial scaling and position
+    updateModelScaling();
+  }, [scene, rotation, deviceSize]);
 
-  // Handle highlighting for the currently selected measurement and smooth transitions
+  // Live updates and highlighting - runs every frame
   useFrame(() => {
     if (!modelRef.current) return;
     
-    // Apply highlighting for the selected measurement
+    // Update rotation when it changes
+    if (modelRef.current) {
+      modelRef.current.rotation.y = (rotation * Math.PI) / 180;
+    }
+    
+    // 🔥 Apply continuous real-time scaling based on current measurements
+    updateModelScaling();
+    
+    // Handle highlighting for the currently selected measurement
     if (group.current && highlightedPart) {
       group.current.traverse((child) => {
         if (child instanceof THREE.Mesh) {
@@ -191,6 +201,7 @@ const CustomMannequin: React.FC<CustomMannequinProps> = ({
     // Add subtle breathing animation
     const t = Date.now() * 0.001;
     if (modelRef.current) {
+      // Apply breathing animation after position update in updateModelScaling
       modelRef.current.position.y = getModelPositionY() + Math.sin(t * 0.5) * 0.01;
     }
   });
