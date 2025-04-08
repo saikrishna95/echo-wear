@@ -24,7 +24,7 @@ export const ReadyPlayerMeAvatar: React.FC<ReadyPlayerMeAvatarProps> = ({
   const modelRef = useRef<THREE.Object3D>();
   const { camera } = useThree();
   
-  // Use the ReadyPlayerMe model with improved loading
+  // Use the doctor-like ReadyPlayerMe model
   const { scene } = useGLTF('https://models.readyplayer.me/67f534d65ec6a722636d42b4.glb', true);
   
   // Debug logs for measurements
@@ -36,13 +36,13 @@ export const ReadyPlayerMeAvatar: React.FC<ReadyPlayerMeAvatarProps> = ({
   const getPositionY = () => {
     switch (deviceSize) {
       case "mobile":
-        return -1.15;
+        return -0.9; // Adjusted to match the image (higher position)
       case "tablet":
-        return -1.2;
+        return -0.95;
       case "desktop":
-        return -1.25;
+        return -1.0;
       default:
-        return -1.15;
+        return -0.9;
     }
   };
 
@@ -53,13 +53,13 @@ export const ReadyPlayerMeAvatar: React.FC<ReadyPlayerMeAvatarProps> = ({
     
     switch (deviceSize) {
       case "mobile":
-        return -1 * heightFactor;
+        return -0.75 * heightFactor; // Adjusted to move the avatar higher
       case "tablet":
-        return -1.05 * heightFactor;
+        return -0.8 * heightFactor;
       case "desktop":
-        return -1.1 * heightFactor;
+        return -0.85 * heightFactor;
       default:
-        return -1 * heightFactor;
+        return -0.75 * heightFactor;
     }
   };
   
@@ -79,45 +79,78 @@ export const ReadyPlayerMeAvatar: React.FC<ReadyPlayerMeAvatarProps> = ({
       
       console.log("Applying ReadyPlayerMe avatar with height factor:", heightFactor);
       
-      // Apply overall model scaling
+      // Apply overall model scaling - adjusted to match the image
       model.scale.set(
-        0.8, // Base scale for the ReadyPlayerMe model
-        0.8 * heightFactor, // Scale height based on measurements
-        0.8
+        0.85, // Slightly wider
+        0.85 * heightFactor, // Scale height based on measurements
+        0.85
       );
       
-      // Position model for better visibility
+      // Position model for better visibility - adjusted to match the image
       model.position.set(0, getModelPositionY(), 0);
       
       // Apply rotation
       model.rotation.y = (rotation * Math.PI) / 180;
       
-      // Enhance materials for more realistic look
+      // Apply default clothing textures to match the image
       model.traverse((child) => {
         if (child instanceof THREE.Mesh && child.material) {
           if (Array.isArray(child.material)) {
             child.material.forEach(mat => {
               if (mat instanceof THREE.MeshStandardMaterial) {
+                // Make coat white if it's outerwear
+                if (child.name.toLowerCase().includes('coat') || 
+                    child.name.toLowerCase().includes('jacket') ||
+                    child.name.toLowerCase().includes('outerwear')) {
+                  mat.color.set('#ffffff'); // White coat
+                  mat.roughness = 0.7;
+                  mat.metalness = 0.1;
+                }
+                // Make shirt white
+                else if (child.name.toLowerCase().includes('shirt') || 
+                         child.name.toLowerCase().includes('top')) {
+                  mat.color.set('#ffffff'); // White shirt
+                  mat.roughness = 0.6;
+                  mat.metalness = 0.05;
+                }
+                // Make pants gray
+                else if (child.name.toLowerCase().includes('pant') || 
+                         child.name.toLowerCase().includes('trouser') || 
+                         child.name.toLowerCase().includes('bottom')) {
+                  mat.color.set('#707070'); // Gray pants
+                  mat.roughness = 0.7;
+                  mat.metalness = 0.05;
+                }
+                // Make shoes dark gray
+                else if (child.name.toLowerCase().includes('shoe') || 
+                         child.name.toLowerCase().includes('boot') || 
+                         child.name.toLowerCase().includes('footwear')) {
+                  mat.color.set('#3a3a3a'); // Dark gray shoes
+                  mat.roughness = 0.5;
+                  mat.metalness = 0.2;
+                }
+                // Make gloves light blue (as in the image)
+                else if (child.name.toLowerCase().includes('glove') || 
+                         child.name.toLowerCase().includes('hand')) {
+                  mat.color.set('#a8d1f0'); // Light blue gloves
+                  mat.roughness = 0.6;
+                  mat.metalness = 0.1;
+                }
+                
                 // Improve skin material
                 if (mat.name.toLowerCase().includes('skin') || 
                     child.name.toLowerCase().includes('face') || 
                     child.name.toLowerCase().includes('head')) {
-                  mat.roughness = 0.7; // Less shiny skin
-                  mat.metalness = 0.1; // Slight subsurface look
-                  mat.envMapIntensity = 0.8; // Better light reflection
+                  mat.roughness = 0.7; 
+                  mat.metalness = 0.1;
+                  mat.envMapIntensity = 0.8;
                 }
                 // Improve hair material
                 else if (mat.name.toLowerCase().includes('hair') || 
                          child.name.toLowerCase().includes('hair')) {
                   mat.roughness = 0.6;
                   mat.metalness = 0.1;
-                }
-                // Improve clothing material
-                else if (mat.name.toLowerCase().includes('cloth') || 
-                         child.name.toLowerCase().includes('shirt') || 
-                         child.name.toLowerCase().includes('pant')) {
-                  mat.roughness = 0.8; // Fabric-like roughness
-                  mat.metalness = 0.05;
+                  mat.color.set('#1a1a1a'); // Dark hair (almost black)
                 }
                 
                 // Enable shadows for all meshes
@@ -130,21 +163,53 @@ export const ReadyPlayerMeAvatar: React.FC<ReadyPlayerMeAvatarProps> = ({
           } else if (child.material instanceof THREE.MeshStandardMaterial) {
             // Same material enhancements for non-array materials
             const mat = child.material;
-            if (mat.name.toLowerCase().includes('skin') || 
-                child.name.toLowerCase().includes('face') || 
-                child.name.toLowerCase().includes('head')) {
+            
+            // Apply the same coloring logic for single materials
+            if (child.name.toLowerCase().includes('coat') || 
+                child.name.toLowerCase().includes('jacket') ||
+                child.name.toLowerCase().includes('outerwear')) {
+              mat.color.set('#ffffff'); // White coat
+              mat.roughness = 0.7;
+              mat.metalness = 0.1;
+            }
+            else if (child.name.toLowerCase().includes('shirt') || 
+                     child.name.toLowerCase().includes('top')) {
+              mat.color.set('#ffffff'); // White shirt
+              mat.roughness = 0.6;
+              mat.metalness = 0.05;
+            }
+            else if (child.name.toLowerCase().includes('pant') || 
+                     child.name.toLowerCase().includes('trouser') || 
+                     child.name.toLowerCase().includes('bottom')) {
+              mat.color.set('#707070'); // Gray pants
+              mat.roughness = 0.7;
+              mat.metalness = 0.05;
+            }
+            else if (child.name.toLowerCase().includes('shoe') || 
+                     child.name.toLowerCase().includes('boot') || 
+                     child.name.toLowerCase().includes('footwear')) {
+              mat.color.set('#3a3a3a'); // Dark gray shoes
+              mat.roughness = 0.5;
+              mat.metalness = 0.2;
+            }
+            else if (child.name.toLowerCase().includes('glove') || 
+                     child.name.toLowerCase().includes('hand')) {
+              mat.color.set('#a8d1f0'); // Light blue gloves
+              mat.roughness = 0.6;
+              mat.metalness = 0.1;
+            }
+            else if (mat.name.toLowerCase().includes('skin') || 
+                     child.name.toLowerCase().includes('face') || 
+                     child.name.toLowerCase().includes('head')) {
               mat.roughness = 0.7;
               mat.metalness = 0.1;
               mat.envMapIntensity = 0.8;
-            } else if (mat.name.toLowerCase().includes('hair') || 
-                       child.name.toLowerCase().includes('hair')) {
+            }
+            else if (mat.name.toLowerCase().includes('hair') || 
+                     child.name.toLowerCase().includes('hair')) {
               mat.roughness = 0.6;
               mat.metalness = 0.1;
-            } else if (mat.name.toLowerCase().includes('cloth') || 
-                       child.name.toLowerCase().includes('shirt') || 
-                       child.name.toLowerCase().includes('pant')) {
-              mat.roughness = 0.8;
-              mat.metalness = 0.05;
+              mat.color.set('#1a1a1a'); // Dark hair
             }
             
             // Enable shadows
