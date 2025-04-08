@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
@@ -37,11 +36,11 @@ const CustomMannequin: React.FC<CustomMannequinProps> = ({
 
     const model = scene.clone();
 
-    // Apply consistent scale
-    model.scale.set(0.25, 0.25, 0.25); // Slightly reduced scale for better fit
+    // Apply consistent scale - adjusted for better fit in frame
+    model.scale.set(0.20, 0.20, 0.20);
     
-    // Position the model to ensure full visibility
-    model.position.set(0, -1.0, 0); 
+    // Position the model to center it in the view
+    model.position.set(0, -0.7, 0); 
     
     // Apply rotation
     model.rotation.y = (rotation * Math.PI) / 180;
@@ -50,16 +49,11 @@ const CustomMannequin: React.FC<CustomMannequinProps> = ({
     group.current.add(model);
   }, [scene, measurements, rotation]);
 
-  // Simple animation for subtle movement
-  useFrame((state) => {
-    if (group.current) {
-      const t = state.clock.getElapsedTime();
-      group.current.position.y = Math.sin(t * 0.5) * 0.01;
-
-      if (highlightedPart) {
-        // You could highlight specific parts here
-        console.log('Highlighting:', highlightedPart);
-      }
+  // Simple animation for subtle movement - removed to keep avatar static
+  useFrame(() => {
+    if (group.current && highlightedPart) {
+      // You could highlight specific parts here if needed
+      console.log('Highlighting:', highlightedPart);
     }
   });
 

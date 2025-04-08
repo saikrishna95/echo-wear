@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect } from 'react';
 import * as THREE from 'three';
 import { useThree, useFrame } from '@react-three/fiber';
@@ -37,7 +36,7 @@ export const RealisticAvatarModel: React.FC<RealisticAvatarModelProps> = ({
       
       // Apply optimal scaling for full visibility
       const heightFactor = measurements.height / 175; // Base height is 175cm
-      model.scale.set(heightFactor * 0.25, heightFactor * 0.25, heightFactor * 0.25); // Adjusted scale for better fit
+      model.scale.set(heightFactor * 0.20, heightFactor * 0.20, heightFactor * 0.20); // Adjusted scale for better fit
       
       // Apply morphing or scaling to different body parts based on measurements
       // This depends on the specific model structure
@@ -48,8 +47,8 @@ export const RealisticAvatarModel: React.FC<RealisticAvatarModelProps> = ({
         console.log(`Applied ${selectedClothing.length} clothing items to realistic avatar`);
       }
       
-      // Position model for better visibility
-      model.position.y = -1.0;
+      // Position model for better visibility - centered in view
+      model.position.y = -0.7;
       
       // Apply rotation
       group.current.rotation.y = (rotation * Math.PI) / 180;
@@ -61,13 +60,9 @@ export const RealisticAvatarModel: React.FC<RealisticAvatarModelProps> = ({
     }
   }, [measurements, rotation, camera, model, selectedClothing]);
 
-  // Simple animation for subtle movement
-  useFrame((state) => {
-    if (group.current) {
-      // Small breathing animation
-      const t = state.clock.getElapsedTime();
-      group.current.position.y = Math.sin(t * 0.5) * 0.01;
-    }
+  // Simple animation - removed to keep avatar static
+  useFrame(() => {
+    // No animation for static positioning
   });
 
   return (
