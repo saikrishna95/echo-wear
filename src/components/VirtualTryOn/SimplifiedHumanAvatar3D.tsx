@@ -6,7 +6,6 @@ import CustomMannequin from './CustomMannequin';
 import { MeasurementKey } from './types';
 import { ErrorBoundary } from 'react-error-boundary';
 
-
 interface SimplifiedHumanAvatar3DProps {
   measurements: {
     [key in MeasurementKey]: {
@@ -29,7 +28,7 @@ const FallbackAvatar = () => {
       <div className="text-center p-4">
         <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">3D Avatar</h3>
         <p className="text-sm text-gray-500 dark:text-gray-400">
-          Unable to load 3D avatar. Using basic mannequin instead.
+          Unable to load 3D avatar. Please refresh the page.
         </p>
       </div>
     </div>
@@ -51,11 +50,11 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
   );
 
   return (
-    <div className="w-full h-full rounded-xl overflow-hidden bg-gray-50 dark:bg-gray-900">
+    <div className="w-full h-full rounded-xl overflow-hidden bg-gray-50 border border-gray-200">
       <ErrorBoundary FallbackComponent={FallbackAvatar}>
         <Canvas
-          camera={{ position: [0, 0, 3.2], fov: 45 }} // Adjusted camera position for better view
-          style={{ background: 'transparent' }}
+          camera={{ position: [0, 0, 3.0], fov: 45 }} // Adjusted camera position for better view
+          style={{ background: '#f8f8f8' }}
         >
           <Suspense fallback={null}>
             {/* Simple lighting for clear visibility */}
@@ -79,23 +78,14 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
               enablePan={false} 
               enableRotate={true}
               minDistance={2}
-              maxDistance={6}
+              maxDistance={5}
               minPolarAngle={0}
-              maxPolarAngle={Math.PI / 1.5} // Limit vertical rotation to prevent awkward angles
-              target={[0, -0.2, 0]} // Adjusted target to center on the avatar's body
+              maxPolarAngle={Math.PI / 1.6} // Limit vertical rotation to prevent awkward angles
+              target={[0, -0.5, 0]} // Adjusted target to center on the avatar's body
             />
           </Suspense>
         </Canvas>
       </ErrorBoundary>
-      
-      {/* Measurement indicator overlay */}
-      {highlightedPart && (
-        <div className="absolute bottom-4 left-0 right-0 text-center">
-          <span className="bg-gray-800/70 text-white px-3 py-1 rounded-full text-xs">
-            Editing: {measurements[highlightedPart].label}
-          </span>
-        </div>
-      )}
     </div>
   );
 };
