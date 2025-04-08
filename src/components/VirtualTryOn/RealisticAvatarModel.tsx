@@ -48,8 +48,8 @@ export const RealisticAvatarModel: React.FC<RealisticAvatarModelProps> = ({
         console.log(`Applied ${selectedClothing.length} clothing items to realistic avatar`);
       }
       
-      // Center the model vertically
-      model.position.y = -0.6;
+      // Position model lower for better visibility
+      model.position.y = -1.2;
       
       // Apply rotation
       group.current.rotation.y = (rotation * Math.PI) / 180;

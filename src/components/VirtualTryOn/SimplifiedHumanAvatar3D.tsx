@@ -71,7 +71,7 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
               far={10}
               resolution={256}
               color="#000000"
-              position={[0, -1.6, 0]} // Adjusted shadow position
+              position={[0, -2.0, 0]} // Adjusted shadow position to match model
             />
             
             {/* Mannequin model */}
@@ -93,7 +93,7 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
               maxDistance={8}
               minPolarAngle={0}
               maxPolarAngle={Math.PI / 1.5} // Limit vertical rotation to prevent awkward angles
-              target={[0, 0, 0]} // Center target for better orbiting around the model
+              target={[0, -0.6, 0]} // Adjusted target to focus on the center of the avatar
             />
           </Suspense>
         </Canvas>

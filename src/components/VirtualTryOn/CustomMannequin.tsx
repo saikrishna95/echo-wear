@@ -40,8 +40,8 @@ const CustomMannequin: React.FC<CustomMannequinProps> = ({
     // Apply consistent scale
     model.scale.set(0.25, 0.25, 0.25); // Slightly reduced scale for better fit
     
-    // Center the model vertically to ensure full visibility
-    model.position.set(0, -0.6, 0); // Centered position to show the complete avatar
+    // Position the model lower to ensure better visibility
+    model.position.set(0, -1.2, 0); // Moved down for better positioning
     
     // Apply rotation
     model.rotation.y = (rotation * Math.PI) / 180;

@@ -56,7 +56,7 @@ const HumanAvatar3D: React.FC<HumanAvatar3DProps> = ({
           far={10}
           resolution={256}
           color="#000000"
-          position={[0, -1.6, 0]} // Adjusted shadow position
+          position={[0, -2.0, 0]} // Adjusted shadow position to match model
         />
         
         {/* Hybrid Avatar model - uses realistic GLB if available, falls back to primitive */}
@@ -78,7 +78,7 @@ const HumanAvatar3D: React.FC<HumanAvatar3DProps> = ({
           maxDistance={8}
           minPolarAngle={0} 
           maxPolarAngle={Math.PI / 1.5}
-          target={[0, 0, 0]} // Centered target for better orbiting
+          target={[0, -0.6, 0]} // Adjusted target to focus on the center of the avatar
         />
       </Canvas>
       
