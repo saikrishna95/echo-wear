@@ -38,13 +38,11 @@ export const RealisticAvatarModel: React.FC<RealisticAvatarModelProps> = ({
       const heightFactor = measurements.height / 175; // Base height is 175cm
       model.scale.set(heightFactor * 0.18, heightFactor * 0.18, heightFactor * 0.18); // Adjusted scale
       
-      // Position model for better visibility - T-pose centered in view
-      model.position.y = -0.45;
+      // Position model for better visibility - aligned with bottom of view
+      model.position.set(0, -1, 0);
       
       // Apply rotation
       group.current.rotation.y = (rotation * Math.PI) / 180;
-      
-      // No need to adjust camera to focus on model as we've set it in the Canvas
     }
   }, [measurements, rotation, camera, model, selectedClothing]);
 
@@ -54,7 +52,7 @@ export const RealisticAvatarModel: React.FC<RealisticAvatarModelProps> = ({
   });
 
   return (
-    <group ref={group} />
+    <group ref={group} position={[0, -1.15, 0]} />
   );
 };
 

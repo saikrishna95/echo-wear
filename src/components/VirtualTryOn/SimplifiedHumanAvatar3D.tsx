@@ -51,10 +51,10 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
   );
 
   return (
-    <div className="w-full h-full rounded-xl overflow-hidden bg-gray-50 dark:bg-gray-900">
+    <div className="w-full h-full max-h-[500px] rounded-xl overflow-hidden bg-gray-50 dark:bg-gray-900">
       <ErrorBoundary FallbackComponent={FallbackAvatar}>
         <Canvas
-          camera={{ position: [0, 0, 2.8], fov: 40 }} // Adjusted camera position and field of view
+          camera={{ position: [0, 1.6, 3.2], fov: 35 }} 
           style={{ background: 'transparent' }}
         >
           <Suspense fallback={null}>
@@ -82,7 +82,7 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
               maxDistance={5}
               minPolarAngle={0}
               maxPolarAngle={Math.PI / 1.8} // Limit vertical rotation
-              target={[0, 0, 0]} // Center target point
+              target={[0, 0.5, 0]} // Adjusted target point to better frame the model
             />
           </Suspense>
         </Canvas>

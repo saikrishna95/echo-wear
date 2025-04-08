@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
@@ -39,8 +40,8 @@ const CustomMannequin: React.FC<CustomMannequinProps> = ({
     // Adjust scale for better fit based on reference image
     model.scale.set(0.18, 0.18, 0.18);
     
-    // Position the model to center it in the view - adjusted for T-pose visibility
-    model.position.set(0, -0.45, 0); 
+    // Position the model to align with bottom of view
+    model.position.set(0, -1, 0);
     
     // Apply rotation
     model.rotation.y = (rotation * Math.PI) / 180;
@@ -56,7 +57,7 @@ const CustomMannequin: React.FC<CustomMannequinProps> = ({
     }
   });
 
-  return <group ref={group} position={[0, 0, 0]} />;
+  return <group ref={group} position={[0, -1.15, 0]} />;
 };
 
 export default CustomMannequin;

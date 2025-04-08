@@ -37,10 +37,10 @@ const HumanAvatar3D: React.FC<HumanAvatar3DProps> = ({
   );
 
   return (
-    <div className="w-full h-full rounded-xl overflow-hidden bg-gray-50">
+    <div className="w-full h-full max-h-[500px] rounded-xl overflow-hidden bg-gray-50">
       <Canvas
-        style={{ background: '#f8f8f8' }}
-        camera={{ position: [0, 0, 2.8], fov: 40 }} // Adjusted for better framing
+        style={{ background: 'transparent' }}
+        camera={{ position: [0, 1.6, 3.2], fov: 35 }}
       >
         {/* Simple lighting for clear visibility */}
         <ambientLight intensity={0.8} />
@@ -66,7 +66,7 @@ const HumanAvatar3D: React.FC<HumanAvatar3DProps> = ({
           maxDistance={5}
           minPolarAngle={0} 
           maxPolarAngle={Math.PI / 1.8}
-          target={[0, 0, 0]} // Centered target
+          target={[0, 0.5, 0]} // Adjusted target point
         />
       </Canvas>
       

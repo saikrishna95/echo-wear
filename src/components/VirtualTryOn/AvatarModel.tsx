@@ -85,21 +85,16 @@ export const AvatarModel: React.FC<AvatarModelProps> = ({
         });
       }
       
-      // Position the whole model
-      group.current.position.y = -0.1;
+      // Position the whole model to align with bottom of view
+      group.current.position.y = -0.7;
       
       // Apply rotation
       group.current.rotation.y = (rotation * Math.PI) / 180;
-      
-      // Adjust camera to focus on model
-      const box = new THREE.Box3().setFromObject(group.current);
-      const center = box.getCenter(new THREE.Vector3());
-      camera.lookAt(center);
     }
   }, [measurements, rotation, camera, selectedClothing]);
 
   return (
-    <group ref={group} />
+    <group ref={group} position={[0, -1.15, 0]} />
   );
 };
 
