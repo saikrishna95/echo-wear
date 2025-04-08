@@ -26,13 +26,13 @@ interface HumanAvatar3DProps {
 const getCameraSettings = (deviceSize: "mobile" | "tablet" | "desktop") => {
   switch (deviceSize) {
     case "mobile":
-      return { position: [0, 1.6, 3.2], fov: 35 };
+      return { position: [0, 1.6, 3.2] as [number, number, number], fov: 35 };
     case "tablet":
-      return { position: [0, 1.6, 3.5], fov: 40 };
+      return { position: [0, 1.6, 3.5] as [number, number, number], fov: 40 };
     case "desktop":
-      return { position: [0, 1.8, 4], fov: 45 };
+      return { position: [0, 1.8, 4] as [number, number, number], fov: 45 };
     default:
-      return { position: [0, 1.6, 3.2], fov: 35 };
+      return { position: [0, 1.6, 3.2] as [number, number, number], fov: 35 };
   }
 };
 
@@ -102,7 +102,7 @@ const HumanAvatar3D: React.FC<HumanAvatar3DProps> = ({
           maxDistance={5}
           minPolarAngle={0} 
           maxPolarAngle={Math.PI / 1.8}
-          target={[0, 0.5, 0]} // Adjusted target point
+          target={[0, 0.5, 0] as [number, number, number]} // Fixed: explicitly typed as tuple
         />
       </Canvas>
       
