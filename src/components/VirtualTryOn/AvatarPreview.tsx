@@ -3,7 +3,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { RotateCcw } from "lucide-react";
 import SimplifiedHumanAvatar3D from "./SimplifiedHumanAvatar3D";
-import { MeasurementKey } from "./types";
+import { MeasurementKey, ClothingItem } from "./types";
 
 interface MeasurementData {
   value: number;
@@ -23,13 +23,15 @@ interface AvatarPreviewProps {
   highlightedPart: MeasurementKey | null;
   rotation: number;
   setRotation: (rotation: number) => void;
+  selectedClothing?: ClothingItem[]; // Added this prop to match what's being passed
 }
 
 const AvatarPreview: React.FC<AvatarPreviewProps> = ({
   measurements,
   highlightedPart,
   rotation,
-  setRotation
+  setRotation,
+  selectedClothing = [] // Provide default empty array
 }) => {
   return (
     <div className="px-6 mb-2">
@@ -38,6 +40,7 @@ const AvatarPreview: React.FC<AvatarPreviewProps> = ({
           measurements={measurements} 
           highlightedPart={highlightedPart}
           rotation={rotation}
+          selectedClothing={selectedClothing} // Pass the prop to SimplifiedHumanAvatar3D
         />
         
         {/* Rotation controls */}

@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment, ContactShadows, SoftShadows } from '@react-three/drei';
-import { MeasurementKey } from './types';
+import { MeasurementKey, ClothingItem } from './types';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useDeviceSize } from '../../hooks/use-mobile';
 import ReadyPlayerMeAvatar from './ReadyPlayerMeAvatar';
@@ -24,6 +25,7 @@ interface SimplifiedHumanAvatar3DProps {
   };
   highlightedPart: MeasurementKey | null;
   rotation: number;
+  selectedClothing?: ClothingItem[]; // Added this prop
 }
 
 // Fallback component if 3D rendering fails
@@ -57,7 +59,8 @@ const getCameraSettings = (deviceSize: "mobile" | "tablet" | "desktop") => {
 const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({ 
   measurements, 
   highlightedPart,
-  rotation
+  rotation,
+  selectedClothing = [] // Provide default empty array
 }) => {
   const deviceSize = useDeviceSize();
   const cameraSettings = getCameraSettings(deviceSize);
@@ -116,6 +119,7 @@ const SimplifiedHumanAvatar3D: React.FC<SimplifiedHumanAvatar3DProps> = ({
               rotation={rotation}
               deviceSize={deviceSize}
               highlightedPart={highlightedPart}
+              selectedClothing={selectedClothing} // Pass the prop to ReadyPlayerMeAvatar
             />
             
             {/* Contact shadows for better grounding */}
