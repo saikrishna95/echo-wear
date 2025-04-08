@@ -19,8 +19,8 @@ export const RealisticAvatarModel: React.FC<RealisticAvatarModelProps> = ({
   const group = useRef<THREE.Group>(null);
   const { camera } = useThree();
   
-  // Use the male_base model instead of mannequin.glb
-  const { scene, nodes, materials } = useGLTF('/models/male_base (1).glb', false) as any;
+  // Use the mannequin.glb model which is available in the project
+  const { scene, nodes, materials } = useGLTF('/models/mannequin.glb', false) as any;
   
   // Create a copy of the scene to modify
   const model = scene?.clone();

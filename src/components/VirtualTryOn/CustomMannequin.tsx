@@ -17,7 +17,7 @@ const CustomMannequin: React.FC<CustomMannequinProps> = ({
   highlightedPart
 }) => {
   const group = useRef<THREE.Group>(null);
-  const { scene } = useGLTF('/models/male_base (1).glb', true);
+  const { scene } = useGLTF('/models/mannequin.glb', true);
 
   // Extract measurement factors
   const heightFactor = measurements.height / 175;
