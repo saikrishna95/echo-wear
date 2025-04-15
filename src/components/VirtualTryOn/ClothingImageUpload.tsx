@@ -50,12 +50,34 @@ const ClothingImageUpload: React.FC<ClothingImageUploadProps> = ({
       // Process the image (optional: remove background)
       const processedImage = await removeBackground(imageUrl);
       
+      // Store in localStorage for persistence
+      const storageKey = `echowear_images_${Date.now()}`;
+      const imageData = {
+        id: storageKey,
+        url: processedImage,
+        type: clothingType,
+        uploadDate: new Date().toISOString(),
+        name: file.name
+      };
+      
+      // Save to local storage
+      try {
+        const existingStorage = localStorage.getItem('echowear_image_storage');
+        let imagesStorage = existingStorage ? JSON.parse(existingStorage) : [];
+        imagesStorage.push(imageData);
+        localStorage.setItem('echowear_image_storage', JSON.stringify(imagesStorage));
+        
+        console.log('Image stored successfully:', imageData);
+      } catch (storageError) {
+        console.error('Error storing image in localStorage:', storageError);
+      }
+      
       // Pass the processed image URL back
       onImageUploaded(processedImage, clothingType);
       
       toast({
-        title: "Image uploaded",
-        description: `Your ${clothingType} image has been applied to the avatar`,
+        title: "Image uploaded and stored",
+        description: `Your ${clothingType} image has been applied to the avatar and saved to your collection`,
       });
     } catch (error) {
       console.error("Error processing image:", error);
