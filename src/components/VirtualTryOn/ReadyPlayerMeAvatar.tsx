@@ -24,8 +24,8 @@ export const ReadyPlayerMeAvatar: React.FC<ReadyPlayerMeAvatarProps> = ({
   const modelRef = useRef<THREE.Object3D>();
   const { camera } = useThree();
   
-  // Use the custom model file - note the path to our new model
-  const { scene, nodes, materials } = useGLTF('/models/Model_in_Underwear_0415163210_texture.glb', false) as any;
+  // Use the mannequin model that we know is available in the project
+  const { scene, nodes, materials } = useGLTF('/models/mannequin.glb', false) as any;
   
   // Log measurements for debugging
   useEffect(() => {
