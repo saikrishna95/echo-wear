@@ -21,25 +21,18 @@ const Index = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-fashion-light">
-      {/* Full screen background with gradient overlay */}
-      <div className="fixed inset-0 w-full h-full z-0">
-        <img 
-          src="/lovable-uploads/5e62aadd-496b-44e3-84c8-e8f40d379fd5.png" 
-          alt="Fashion background" 
-          className="w-full h-full object-cover" 
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-fashion-amber/60 via-fashion-peach/30 to-fashion-sand/20"></div>
-      </div>
-      
+    <div className="flex flex-col min-h-screen bg-gradient-to-b from-fashion-light to-white">
       {/* Content container with z-index to appear above background */}
       <div className="relative z-10 flex flex-col min-h-screen pt-safe">
         {/* Header with logo */}
-        <header className="w-full px-4 py-4">
-          <div className="max-w-md mx-auto">
-            <h1 className="text-2xl font-bold text-white text-center">
+        <header className="w-full px-4 py-6 bg-white/70 backdrop-blur-sm shadow-sm">
+          <div className="max-w-md mx-auto flex justify-between items-center">
+            <h1 className="text-2xl font-bold text-fashion-navy">
               Echo<span className="text-fashion-amber">Wear</span>
             </h1>
+            <div className="text-sm text-fashion-navy/60 font-medium">
+              AI Fashion Assistant
+            </div>
           </div>
         </header>
         
