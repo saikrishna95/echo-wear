@@ -13,6 +13,7 @@ import Profile from "./pages/Profile";
 import VirtualTryOn from "./pages/VirtualTryOn";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
+import LoginScreen from "./components/EchoWear/LoginScreen";
 
 // Create a new QueryClient instance
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => {
             <TooltipProvider>
               <Routes>
                 <Route path="/login" element={<Login />} />
+                <Route path="/echowear-login" element={<LoginScreen />} />
                 <Route path="/" element={<Index />} />
                 <Route path="/closet" element={<Closet />} />
                 <Route path="/social" element={<Social />} />
