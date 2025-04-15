@@ -23,6 +23,9 @@ export const createAvatarClothingLayer = (
 ) => {
   const materials = createAvatarMaterials();
   
+  console.log("Creating clothing layer for:", clothingItem);
+  console.log("Custom texture:", clothingItem.customTexture);
+  
   // Create clothing material based either on a texture (if custom) or the item's color
   let clothingMaterial: THREE.MeshStandardMaterial;
   
@@ -30,12 +33,31 @@ export const createAvatarClothingLayer = (
     // Create a texture loader
     const textureLoader = new THREE.TextureLoader();
     
-    // Load the texture
-    const texture = textureLoader.load(clothingItem.customTexture);
+    console.log("Loading texture from URL:", clothingItem.customTexture);
+    
+    // Load the texture with proper settings
+    const texture = textureLoader.load(clothingItem.customTexture, 
+      // onLoad callback
+      (loadedTexture) => {
+        console.log("Texture loaded successfully");
+        // Apply proper texture settings
+        loadedTexture.flipY = false;
+        loadedTexture.encoding = THREE.sRGBEncoding;
+        // Update the material after texture is loaded
+        clothingMaterial.needsUpdate = true;
+      },
+      // onProgress callback
+      undefined,
+      // onError callback
+      (err) => {
+        console.error("Error loading texture:", err);
+      }
+    );
     
     // Create material with the texture
     clothingMaterial = new THREE.MeshStandardMaterial({
       map: texture,
+      transparent: true,
       roughness: 0.5,
       metalness: 0.1
     });

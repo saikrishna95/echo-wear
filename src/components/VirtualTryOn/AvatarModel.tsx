@@ -75,22 +75,32 @@ export const AvatarModel: React.FC<AvatarModelProps> = ({
       // Position model
       model.position.y = getPositionY();
       
+      // Add the model to the group FIRST so it's behind the clothing
+      group.current.add(model);
+      
       // Add clothing layers if selected
       if (selectedClothing && selectedClothing.length > 0) {
+        console.log("Adding clothing to avatar:", selectedClothing);
+        
+        // Create a separate group for clothing to better control positioning
+        const clothingGroup = new THREE.Group();
+        clothingGroup.position.y = getPositionY();
+        
         selectedClothing.forEach(item => {
+          console.log("Adding clothing item:", item);
           createAvatarClothingLayer(
             item,
             heightFactor,
             chestFactor,
             waistFactor,
             hipsFactor,
-            group.current as THREE.Group
+            clothingGroup
           );
         });
+        
+        // Add the clothing group to the main group
+        group.current.add(clothingGroup);
       }
-      
-      // Add the model to the group
-      group.current.add(model);
     }
   }, [measurements, rotation, camera, selectedClothing, deviceSize, scene]);
 

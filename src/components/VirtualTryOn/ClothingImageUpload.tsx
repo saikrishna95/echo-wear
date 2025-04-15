@@ -50,6 +50,8 @@ const ClothingImageUpload: React.FC<ClothingImageUploadProps> = ({
       // Process the image (optional: remove background)
       const processedImage = await removeBackground(imageUrl);
       
+      console.log("Image processed successfully:", processedImage);
+      
       // Store in localStorage for persistence
       const storageKey = `echowear_images_${Date.now()}`;
       const imageData = {
