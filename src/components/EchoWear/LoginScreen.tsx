@@ -48,7 +48,7 @@ const LoginScreen: React.FC = () => {
   };
   
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center p-6 bg-gradient-to-b from-fashion-light to-fashion-sand">
+    <div className="min-h-screen flex flex-col justify-center items-center p-6 bg-gradient-to-b from-fashion-light to-fashion-sand pt-safe">
       <div className="w-full max-w-md space-y-8">
         {/* Logo and brand */}
         <div className="text-center">
@@ -89,6 +89,10 @@ const LoginScreen: React.FC = () => {
                 className="mt-1"
               />
             </div>
+
+            <div className="text-right text-sm">
+              <a href="#" className="text-fashion-amber hover:underline">Forgot password?</a>
+            </div>
           </div>
           
           <div className="space-y-3">
@@ -109,8 +113,8 @@ const LoginScreen: React.FC = () => {
             </Button>
           </div>
           
-          <div className="text-center text-sm text-gray-600">
-            <a href="#" className="hover:text-fashion-amber">Forgot your password?</a>
+          <div className="text-center text-xs text-gray-500 mt-8">
+            <p>Test credentials: test@example.com / password</p>
           </div>
         </form>
       </div>

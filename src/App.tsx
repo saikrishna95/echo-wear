@@ -14,6 +14,7 @@ import VirtualTryOn from "./pages/VirtualTryOn";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import LoginScreen from "./components/EchoWear/LoginScreen";
+import Settings from "./pages/Settings";
 
 // Create a new QueryClient instance
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => {
                 <Route path="/closet" element={<Closet />} />
                 <Route path="/social" element={<Social />} />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/settings" element={<Settings />} />
                 <Route path="/virtual-tryon" element={<VirtualTryOn />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>

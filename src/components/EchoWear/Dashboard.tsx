@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Shirt, Users, Settings, UserCog, Search, Calendar } from "lucide-react";
+import { Shirt, Users, Settings, Search, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
@@ -18,7 +18,7 @@ const EchoWearDashboard: React.FC<DashboardProps> = ({
   const username = user?.name || "Guest";
   
   return (
-    <div className="flex flex-col h-full px-4 pt-2 pb-16">
+    <div className="flex flex-col px-4 pt-2 pb-4">
       {/* Greeting */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
@@ -78,21 +78,6 @@ const EchoWearDashboard: React.FC<DashboardProps> = ({
           </div>
         </div>
       </Card>
-      
-      {/* Footer menu */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800 py-3 px-6">
-        <div className="flex justify-around">
-          <Button variant="ghost" size="icon" className="text-gray-600 dark:text-gray-400">
-            <Settings size={20} />
-          </Button>
-          <Button variant="ghost" size="icon" className="text-gray-600 dark:text-gray-400">
-            <UserCog size={20} />
-          </Button>
-          <Button variant="ghost" size="icon" className="text-gray-600 dark:text-gray-400">
-            <Search size={20} />
-          </Button>
-        </div>
-      </div>
     </div>
   );
 };

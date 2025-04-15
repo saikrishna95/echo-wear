@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import EchoWearDashboard from "@/components/EchoWear/Dashboard";
+import MobileBottomNav from "@/components/layout/MobileBottomNav";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-fashion-light">
+    <div className="flex flex-col min-h-screen bg-fashion-light">
       {/* Full screen background with gradient overlay */}
       <div className="fixed inset-0 w-full h-full z-0">
         <img 
@@ -32,9 +33,9 @@ const Index = () => {
       </div>
       
       {/* Content container with z-index to appear above background */}
-      <div className="relative z-10 flex flex-col min-h-screen">
+      <div className="relative z-10 flex flex-col min-h-screen pt-safe">
         {/* Header with logo */}
-        <header className="w-full pt-safe pt-6 pb-4 px-6">
+        <header className="w-full px-4 py-4">
           <div className="max-w-md mx-auto">
             <h1 className="text-2xl font-bold text-white text-center">
               Echo<span className="text-fashion-amber">Wear</span>
@@ -42,10 +43,13 @@ const Index = () => {
           </div>
         </header>
         
-        {/* Main content */}
-        <main className="flex-1">
+        {/* Main content with padding for bottom nav */}
+        <main className="flex-1 pb-20">
           <EchoWearDashboard />
         </main>
+
+        {/* Mobile bottom navigation */}
+        <MobileBottomNav />
       </div>
     </div>
   );

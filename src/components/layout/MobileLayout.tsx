@@ -22,7 +22,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
   return (
     <div className="min-h-screen flex flex-col bg-fashion-light">
       {/* Mobile Header with safe area padding */}
-      <header className="sticky top-0 z-10 w-full bg-fashion-amber/80 backdrop-blur-md shadow-sm px-4 py-3 flex items-center justify-between">
+      <header className="sticky top-0 z-10 w-full bg-fashion-amber/80 backdrop-blur-md shadow-sm pt-safe px-4 py-3 flex items-center justify-between">
         <div className="flex items-center">
           {showBackButton && (
             <Button 
@@ -41,12 +41,9 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
       </header>
       
       {/* Main Content */}
-      <main className="flex-1 p-4 pb-16">
+      <main className="flex-1 p-4">
         {children}
       </main>
-      
-      {/* Bottom Padding for Mobile Safe Area */}
-      <div className="h-safe-bottom bg-fashion-light"></div>
     </div>
   );
 };
