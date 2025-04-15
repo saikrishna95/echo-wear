@@ -24,42 +24,42 @@ export const ReadyPlayerMeAvatar: React.FC<ReadyPlayerMeAvatarProps> = ({
   const modelRef = useRef<THREE.Object3D>();
   const { camera } = useThree();
   
-  // Use the ReadyPlayerMe model with improved loading
-  const { scene } = useGLTF('https://models.readyplayer.me/67f534d65ec6a722636d42b4.glb', true);
+  // Use the custom model file - note the path to our new model
+  const { scene, nodes, materials } = useGLTF('/models/Model_in_Underwear_0415163210_texture.glb', false) as any;
   
-  // Debug logs for measurements
+  // Log measurements for debugging
   useEffect(() => {
     console.log("ReadyPlayerMeAvatar measurements:", measurements);
   }, [measurements]);
   
-  // Get position adjustment based on device size - moved upward
+  // Get position adjustment based on device size
   const getPositionY = () => {
     switch (deviceSize) {
       case "mobile":
-        return -1.4; // Raised from -1.5
+        return -1.15;
       case "tablet":
-        return -1.4; // Raised from -1.6
+        return -1.2;
       case "desktop":
-        return -1.4; // Raised from -1.65
+        return -1.25;
       default:
-        return -1.4; // Raised from -1.5
+        return -1.15;
     }
   };
 
-  // Get model position based on device size and height - moved upward
+  // Get model position based on device size and height
   const getModelPositionY = () => {
     // Adjust position based on height factor
     const heightFactor = measurements.height / 175;
     
     switch (deviceSize) {
       case "mobile":
-        return -1.2 * heightFactor; // Raised from -1.35
+        return -1 * heightFactor;
       case "tablet":
-        return -1.2 * heightFactor; // Raised from -1.40
+        return -1.05 * heightFactor;
       case "desktop":
-        return -1.2 * heightFactor; // Raised from -1.45
+        return -1.1 * heightFactor;
       default:
-        return -1.2 * heightFactor; // Raised from -1.35
+        return -1 * heightFactor;
     }
   };
   
@@ -76,162 +76,86 @@ export const ReadyPlayerMeAvatar: React.FC<ReadyPlayerMeAvatarProps> = ({
       
       // Calculate scaling factors based on measurements
       const heightFactor = measurements.height / 175; // Base height is 175cm
+      const weightFactor = measurements.weight / 70;  // Base weight is 70kg
+      const chestFactor = measurements.chest / 95;    // Base chest is 95cm
+      const waistFactor = measurements.waist / 85;    // Base waist is 85cm
+      const hipsFactor = measurements.hips / 95;      // Base hips is 95cm
+      const shoulderFactor = measurements.shoulder / 45; // Base shoulder is 45cm
+      const stomachFactor = measurements.stomach / 88;   // Base stomach is 88cm
+      const thighFactor = measurements.thigh / 55;      // Base thigh is 55cm
+      const neckFactor = measurements.neck / 38;         // Base neck is 38cm
       
-      console.log("Applying ReadyPlayerMe avatar with height factor:", heightFactor);
+      console.log("Applying measurements to model:", {
+        heightFactor, 
+        weightFactor, 
+        chestFactor, 
+        waistFactor, 
+        hipsFactor,
+        shoulderFactor,
+        stomachFactor,
+        thighFactor,
+        neckFactor
+      });
       
-      // Apply overall model scaling
+      // Apply overall model scaling for better proportions
       model.scale.set(
-        0.8, // Base scale for the ReadyPlayerMe model
-        0.8 * heightFactor, // Scale height based on measurements
-        0.8
+        0.07 * (shoulderFactor * 0.7 + chestFactor * 0.3), // X-axis width influenced by shoulders and chest
+        0.07 * heightFactor,                               // Y-axis height
+        0.07 * (waistFactor * 0.5 + stomachFactor * 0.3 + hipsFactor * 0.2) // Z-axis depth
       );
-      
-      // Position model for better visibility
-      model.position.set(0, getModelPositionY(), 0);
       
       // Apply rotation
       model.rotation.y = (rotation * Math.PI) / 180;
       
-      // Enhance materials for more realistic look
-      model.traverse((child) => {
-        if (child instanceof THREE.Mesh && child.material) {
-          if (Array.isArray(child.material)) {
-            child.material.forEach(mat => {
-              if (mat instanceof THREE.MeshStandardMaterial) {
-                // Improve skin material
-                if (mat.name.toLowerCase().includes('skin') || 
-                    child.name.toLowerCase().includes('face') || 
-                    child.name.toLowerCase().includes('head')) {
-                  mat.roughness = 0.7; // Less shiny skin
-                  mat.metalness = 0.1; // Slight subsurface look
-                  mat.envMapIntensity = 0.8; // Better light reflection
-                }
-                // Improve hair material
-                else if (mat.name.toLowerCase().includes('hair') || 
-                         child.name.toLowerCase().includes('hair')) {
-                  mat.roughness = 0.6;
-                  mat.metalness = 0.1;
-                }
-                // Improve clothing material
-                else if (mat.name.toLowerCase().includes('cloth') || 
-                         child.name.toLowerCase().includes('shirt') || 
-                         child.name.toLowerCase().includes('pant')) {
-                  mat.roughness = 0.8; // Fabric-like roughness
-                  mat.metalness = 0.05;
-                }
-                
-                // Enable shadows for all meshes
-                if (child.castShadow !== undefined) {
-                  child.castShadow = true;
-                  child.receiveShadow = true;
-                }
-              }
-            });
-          } else if (child.material instanceof THREE.MeshStandardMaterial) {
-            // Same material enhancements for non-array materials
-            const mat = child.material;
-            if (mat.name.toLowerCase().includes('skin') || 
-                child.name.toLowerCase().includes('face') || 
-                child.name.toLowerCase().includes('head')) {
-              mat.roughness = 0.7;
-              mat.metalness = 0.1;
-              mat.envMapIntensity = 0.8;
-            } else if (mat.name.toLowerCase().includes('hair') || 
-                       child.name.toLowerCase().includes('hair')) {
-              mat.roughness = 0.6;
-              mat.metalness = 0.1;
-            } else if (mat.name.toLowerCase().includes('cloth') || 
-                       child.name.toLowerCase().includes('shirt') || 
-                       child.name.toLowerCase().includes('pant')) {
-              mat.roughness = 0.8;
-              mat.metalness = 0.05;
-            }
-            
-            // Enable shadows
-            if (child.castShadow !== undefined) {
-              child.castShadow = true;
-              child.receiveShadow = true;
-            }
-          }
-        }
-      });
+      // Position model for better visibility
+      model.position.set(0, getModelPositionY(), 0);
       
       // Add model to group
       group.current.add(model);
-    }
-  }, [measurements, rotation, camera, scene, selectedClothing, deviceSize]);
-
-  // Animation and continuous updates
-  useFrame((state) => {
-    if (modelRef.current) {
-      // Update rotation when it changes
-      modelRef.current.rotation.y = (rotation * Math.PI) / 180;
       
-      // Add natural breathing animation
-      const t = state.clock.getElapsedTime();
-      const breathingAmplitude = 0.01; // Subtle breathing
-      const breathingFrequency = 0.5; // Slow, natural breathing
-      
-      // Apply breathing animation
-      modelRef.current.position.y = getModelPositionY() + Math.sin(t * breathingFrequency) * breathingAmplitude;
-      
-      // Very subtle shoulder movement for breathing
-      modelRef.current.traverse((child) => {
-        if (child instanceof THREE.Object3D) {
-          if (child.name.toLowerCase().includes('shoulder') || 
-              child.name.toLowerCase().includes('chest') || 
-              child.name.toLowerCase().includes('spine')) {
-            // Apply extremely subtle rotation to simulate breathing
-            const breathScale = 0.0008; // Very small scale
-            child.rotation.x = (Math.sin(t * breathingFrequency) * breathScale) + (child.rotation.x || 0);
-          }
-        }
-      });
-      
-      // Highlight specific body parts if needed
+      // Apply highlighting if applicable
       if (highlightedPart) {
-        modelRef.current.traverse((child) => {
-          if (child instanceof THREE.Mesh && child.material) {
-            // Reset all materials first
-            if (Array.isArray(child.material)) {
-              child.material.forEach(mat => {
-                if (mat.emissive) mat.emissive.set(0x000000);
-              });
-            } else if (child.material.emissive) {
+        console.log("Highlighting part:", highlightedPart);
+        model.traverse((child: THREE.Object3D) => {
+          if (child instanceof THREE.Mesh) {
+            // Remove any previous highlighting
+            if (child.material instanceof THREE.MeshStandardMaterial) {
               child.material.emissive.set(0x000000);
             }
             
-            // Apply highlighting based on part names in the model
+            // Apply highlighting based on the body part name
             const name = child.name.toLowerCase();
             
             if ((highlightedPart === "chest" && 
-                 (name.includes('chest') || name.includes('torso'))) ||
+                (name.includes('chest') || name.includes('torso'))) ||
                 (highlightedPart === "waist" && name.includes('waist')) ||
                 (highlightedPart === "hips" && (name.includes('hip') || name.includes('pelvis'))) ||
                 (highlightedPart === "shoulder" && name.includes('shoulder')) ||
-                (highlightedPart === "stomach" && (name.includes('stomach') || name.includes('belly') || name.includes('abdomen'))) ||
+                (highlightedPart === "stomach" && (name.includes('stomach') || name.includes('belly'))) ||
                 (highlightedPart === "thigh" && (name.includes('thigh') || name.includes('leg'))) ||
                 (highlightedPart === "neck" && name.includes('neck'))) {
-              
-              if (Array.isArray(child.material)) {
-                child.material.forEach(mat => {
-                  if (mat.emissive) {
-                    mat.emissive.set(0x666666);
-                    mat.emissiveIntensity = 0.7;
-                  }
-                });
-              } else if (child.material.emissive) {
-                child.material.emissive.set(0x666666);
-                child.material.emissiveIntensity = 0.7;
+              if (child.material instanceof THREE.MeshStandardMaterial) {
+                child.material.emissive.set(0x2266CC);
+                child.material.emissiveIntensity = 0.3;
               }
             }
           }
         });
       }
     }
+  }, [measurements, rotation, camera, scene, selectedClothing, deviceSize, highlightedPart]);
+
+  // Animation for subtle movement
+  useFrame((state) => {
+    if (modelRef.current) {
+      const t = state.clock.getElapsedTime();
+      modelRef.current.position.y = getModelPositionY() + Math.sin(t * 0.5) * 0.01;
+    }
   });
 
-  return <group ref={group} position={[0, getPositionY(), 0]} />;
+  return (
+    <group ref={group} position={[0, getPositionY(), 0]} />
+  );
 };
 
 export default ReadyPlayerMeAvatar;

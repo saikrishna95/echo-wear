@@ -3,11 +3,7 @@ import React, { useRef, useEffect } from 'react';
 import * as THREE from 'three';
 import { useThree, useFrame } from '@react-three/fiber';
 import { Measurements } from './types';
-import { createAvatarHead } from './AvatarHead';
-import { createAvatarTorso } from './AvatarTorso';
-import { createAvatarLowerBody } from './AvatarLowerBody';
-import { createAvatarArms } from './AvatarArms';
-import { createAvatarLegs } from './AvatarLegs';
+import { useGLTF } from '@react-three/drei';
 import { createAvatarClothingLayer } from './AvatarClothingLayer';
 import { ClothingItem } from './types';
 
@@ -27,6 +23,9 @@ export const AvatarModel: React.FC<AvatarModelProps> = ({
   const group = useRef<THREE.Group>(null);
   const { camera } = useThree();
   
+  // Use the custom model file from the GitHub repository
+  const { scene, nodes, materials } = useGLTF('/models/Model_in_Underwear_0415163210_texture.glb', false) as any;
+  
   // Get position adjustment based on device size
   const getPositionY = () => {
     switch (deviceSize) {
@@ -42,78 +41,39 @@ export const AvatarModel: React.FC<AvatarModelProps> = ({
   };
   
   useEffect(() => {
-    if (group.current) {
+    if (group.current && scene) {
       // Clear any existing children
       while (group.current.children.length) {
         group.current.remove(group.current.children[0]);
       }
       
+      // Create a copy of the scene to modify
+      const model = scene.clone();
+      
       // Calculate scale factors based on measurements
       const heightFactor = measurements.height / 175; // Base height is 175cm
       const shoulderFactor = measurements.shoulder / 45; // Base shoulder width is 45cm
-      const weightFactor = measurements.weight / 70;  // Base weight is 70kg
       const chestFactor = measurements.chest / 95; // Base chest is 95cm
       const waistFactor = measurements.waist / 85; // Base waist is 85cm
       const hipsFactor = measurements.hips / 95; // Base hips is 95cm
-      const neckFactor = measurements.neck / 38; // Base neck is 38cm
-      const stomachFactor = measurements.stomach / 88; // Base stomach is 88cm
-      const thighFactor = measurements.thigh / 55; // Base thigh is 55cm
-      const inseamFactor = measurements.inseam / 80; // Base inseam is 80cm
       
       console.log("Avatar measurements applied:", { 
-        heightFactor, shoulderFactor, weightFactor, chestFactor, 
-        waistFactor, hipsFactor, neckFactor, stomachFactor, thighFactor, inseamFactor 
+        heightFactor, shoulderFactor, chestFactor, 
+        waistFactor, hipsFactor
       });
       
-      // Check which body parts should be visible based on clothing
-      const hasUpperClothing = selectedClothing.some(item => 
-        ['shirt', 'blouse', 'sweater', 'jacket', 't-shirt'].includes(item.type.toLowerCase())
+      // Apply overall model scaling for better proportions
+      model.scale.set(
+        0.07 * (shoulderFactor * 0.7 + chestFactor * 0.3), // X-axis width 
+        0.07 * heightFactor,                               // Y-axis height
+        0.07 * (waistFactor * 0.5 + hipsFactor * 0.5)      // Z-axis depth
       );
       
-      const hasLowerClothing = selectedClothing.some(item => 
-        ['pants', 'jeans', 'skirt', 'shorts'].includes(item.type.toLowerCase())
-      );
+      // Apply rotation
+      model.rotation.y = (rotation * Math.PI) / 180;
       
-      // Create body parts with updated measurements
-      // Head is always visible
-      createAvatarHead(heightFactor, neckFactor, group.current);
-      
-      // Create body parts that aren't covered by clothing with proper measurements
-      if (!hasUpperClothing) {
-        createAvatarTorso(
-          heightFactor, 
-          shoulderFactor, 
-          waistFactor, 
-          chestFactor,
-          stomachFactor, 
-          group.current
-        );
-      }
-      
-      if (!hasLowerClothing) {
-        createAvatarLowerBody(
-          heightFactor, 
-          waistFactor, 
-          hipsFactor, 
-          group.current
-        );
-      }
-      
-      // Always create arms and legs with updated measurements
-      createAvatarArms(
-        heightFactor, 
-        shoulderFactor, 
-        weightFactor, 
-        group.current
-      );
-      
-      createAvatarLegs(
-        heightFactor, 
-        hipsFactor, 
-        measurements.thigh,  
-        measurements.inseam, 
-        group.current
-      );
+      // Position model
+      model.position.y = getPositionY();
       
       // Add clothing layers if selected
       if (selectedClothing && selectedClothing.length > 0) {
@@ -124,18 +84,15 @@ export const AvatarModel: React.FC<AvatarModelProps> = ({
             chestFactor,
             waistFactor,
             hipsFactor,
-            group.current
+            group.current as THREE.Group
           );
         });
       }
       
-      // Position the whole model to align with bottom of view
-      group.current.position.y = getPositionY();
-      
-      // Apply rotation
-      group.current.rotation.y = (rotation * Math.PI) / 180;
+      // Add the model to the group
+      group.current.add(model);
     }
-  }, [measurements, rotation, camera, selectedClothing, deviceSize]);
+  }, [measurements, rotation, camera, selectedClothing, deviceSize, scene]);
 
   // Add subtle breathing animation
   useFrame((state) => {

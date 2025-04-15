@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { RotateCcw, RotateCw, Ratio, Frame, Camera, Download } from "lucide-react";
+import { RotateCcw, RotateCw, Camera, Download } from "lucide-react";
 import SimplifiedHumanAvatar3D from "./SimplifiedHumanAvatar3D";
 import { MeasurementKey, ClothingItem } from "./types";
 
@@ -23,7 +23,7 @@ interface AvatarPreviewProps {
   highlightedPart: MeasurementKey | null;
   rotation: number;
   setRotation: (rotation: number) => void;
-  selectedClothing?: ClothingItem[]; // Added this prop to match what's being passed
+  selectedClothing?: ClothingItem[]; 
 }
 
 const AvatarPreview: React.FC<AvatarPreviewProps> = ({
@@ -31,8 +31,49 @@ const AvatarPreview: React.FC<AvatarPreviewProps> = ({
   highlightedPart,
   rotation,
   setRotation,
-  selectedClothing = [] // Provide default empty array
+  selectedClothing = [] 
 }) => {
+  // Function to handle saving the avatar as an image
+  const handleDownload = () => {
+    const canvas = document.querySelector('canvas');
+    if (!canvas) return;
+    
+    // Create a temporary link element
+    const link = document.createElement('a');
+    link.download = 'echowear-avatar.png';
+    link.href = canvas.toDataURL('image/png');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // Function to handle taking a photo/screenshot
+  const handleTakePhoto = () => {
+    const canvas = document.querySelector('canvas');
+    if (!canvas) return;
+    
+    // Flash effect
+    const flash = document.createElement('div');
+    flash.style.position = 'fixed';
+    flash.style.top = '0';
+    flash.style.left = '0';
+    flash.style.width = '100%';
+    flash.style.height = '100%';
+    flash.style.backgroundColor = 'white';
+    flash.style.opacity = '0.7';
+    flash.style.transition = 'opacity 0.5s';
+    flash.style.zIndex = '9999';
+    document.body.appendChild(flash);
+    
+    setTimeout(() => {
+      flash.style.opacity = '0';
+      setTimeout(() => {
+        document.body.removeChild(flash);
+        handleDownload();
+      }, 500);
+    }, 100);
+  };
+
   return (
     <div className="px-4 mb-2">
       <div className="relative aspect-[3/5] w-full max-w-xs mx-auto perspective-[1200px] preserve-3d bg-gradient-to-b from-fashion-light to-fashion-peach rounded-xl shadow-sm">
@@ -50,13 +91,6 @@ const AvatarPreview: React.FC<AvatarPreviewProps> = ({
           selectedClothing={selectedClothing}
         />
         
-        {/* Frame indicator */}
-        <div className="absolute top-3 left-3">
-          <div className="bg-white/80 backdrop-blur-sm rounded-md p-1.5 shadow-sm">
-            <Ratio size={16} className="text-gray-600" />
-          </div>
-        </div>
-        
         {/* Bottom controls */}
         <div className="absolute bottom-3 left-0 w-full flex justify-center gap-3">
           <Button 
@@ -64,6 +98,7 @@ const AvatarPreview: React.FC<AvatarPreviewProps> = ({
             size="icon"
             className="rounded-full h-10 w-10 bg-white/90 hover:bg-white shadow-md"
             aria-label="Take photo"
+            onClick={handleTakePhoto}
           >
             <Camera size={18} className="text-gray-700" />
           </Button>
@@ -93,6 +128,7 @@ const AvatarPreview: React.FC<AvatarPreviewProps> = ({
             size="icon"
             className="rounded-full h-10 w-10 bg-white/90 hover:bg-white shadow-md"
             aria-label="Save image"
+            onClick={handleDownload}
           >
             <Download size={18} className="text-gray-700" />
           </Button>
