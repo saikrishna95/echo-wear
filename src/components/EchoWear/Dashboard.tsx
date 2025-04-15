@@ -18,9 +18,9 @@ const EchoWearDashboard: React.FC<DashboardProps> = ({
   const username = user?.name || "Guest";
   
   return (
-    <div className="flex flex-col px-4 pt-4 pb-4 max-w-md mx-auto w-full">
+    <div className="flex flex-col px-4 pt-4 pb-4 max-w-md mx-auto w-full bg-warm-gradient min-h-screen">
       {/* Greeting */}
-      <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-4 mb-6 shadow-sm border border-fashion-peach/20">
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 mb-6 shadow-warm-soft border border-fashion-peach/20">
         <div className="flex justify-between items-center">
           <div>
             <h2 className="text-xl font-semibold text-fashion-navy">
@@ -47,7 +47,7 @@ const EchoWearDashboard: React.FC<DashboardProps> = ({
       <div className="grid grid-cols-2 gap-4 mb-6">
         <Button 
           variant="outline"
-          className="h-32 flex flex-col gap-2 border-2 border-fashion-peach/20 bg-white hover:bg-fashion-sand/50 rounded-2xl shadow-sm"
+          className="h-32 flex flex-col gap-2 border-2 border-fashion-peach/20 bg-white hover:bg-fashion-sand/50 rounded-2xl shadow-warm-soft"
           onClick={() => navigate("/closet")}
         >
           <div className="w-12 h-12 rounded-full bg-fashion-amber/10 flex items-center justify-center">
@@ -58,7 +58,7 @@ const EchoWearDashboard: React.FC<DashboardProps> = ({
         
         <Button 
           variant="outline"
-          className="h-32 flex flex-col gap-2 border-2 border-fashion-peach/20 bg-white hover:bg-fashion-sand/50 rounded-2xl shadow-sm"
+          className="h-32 flex flex-col gap-2 border-2 border-fashion-peach/20 bg-white hover:bg-fashion-sand/50 rounded-2xl shadow-warm-soft"
           onClick={() => navigate("/social")}
         >
           <div className="w-12 h-12 rounded-full bg-fashion-amber/10 flex items-center justify-center">
@@ -70,7 +70,7 @@ const EchoWearDashboard: React.FC<DashboardProps> = ({
       
       {/* Daily outfit suggestion */}
       <h3 className="text-sm font-medium text-fashion-navy/70 mb-3 ml-1">TODAY'S SUGGESTION</h3>
-      <Card className="mb-6 p-5 border-fashion-peach/20 bg-white rounded-2xl shadow-sm overflow-hidden">
+      <Card className="mb-6 p-5 border-fashion-peach/20 bg-white rounded-2xl shadow-warm-soft overflow-hidden">
         <div className="flex items-center gap-2 mb-3">
           <Sparkles size={18} className="text-fashion-amber" />
           <h3 className="text-lg font-semibold text-fashion-navy">AI Outfit Suggestion</h3>
@@ -117,3 +117,4 @@ const EchoWearDashboard: React.FC<DashboardProps> = ({
 };
 
 export default EchoWearDashboard;
+

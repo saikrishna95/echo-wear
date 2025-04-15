@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -63,17 +62,16 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        // EchoWear custom fashion colors - updated with warm tones
         fashion: {
-          navy: "#1A1F2C",
-          teal: "#FF9D76", // Changed from teal to warm orange
-          pink: "#FFDEC3", // Warmer pink tone
-          gray: "#FFF9F0", // Warmer gray tone
+          navy: "#2C3E50",
+          teal: "#FFA07A",
+          pink: "#FFE4E1",
+          gray: "#FFF5E6",
           charcoal: "#403E43",
-          light: "#FFFAF2", // Slightly warmer white
-          amber: "#FFC4A3", // Added warm amber
-          peach: "#FFD7B5", // Added peach
-          sand: "#F2E2C6", // Added sand color
+          light: "#FFFAF2",
+          amber: "#FFC478",
+          peach: "#FFD7B5",
+          sand: "#F2E6D0",
         },
       },
       borderRadius: {
@@ -104,6 +102,12 @@ export default {
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in": "fade-in 0.3s ease-out",
         "slide-in": "slide-in 0.3s ease-out",
+      },
+      backgroundImage: {
+        'warm-gradient': 'linear-gradient(135deg, #FFFAF2 0%, #FFE4E1 100%)',
+      },
+      boxShadow: {
+        'warm-soft': '0 4px 6px rgba(255, 160, 122, 0.1)',
       },
     },
   },
