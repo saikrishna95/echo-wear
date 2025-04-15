@@ -5,11 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 
 const LoginScreen: React.FC = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("test@example.com");
+  const [password, setPassword] = useState("password");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -19,8 +19,8 @@ const LoginScreen: React.FC = () => {
     setIsLoading(true);
     
     try {
-      // Simulate login - in a real implementation, this would validate with Firebase
-      if (email && password) {
+      // Simulate login with hardcoded test credentials
+      if (email === "test@example.com" && password === "password") {
         toast({
           title: "Login successful",
           description: "Welcome to EchoWear!",
@@ -32,7 +32,7 @@ const LoginScreen: React.FC = () => {
       } else {
         toast({
           title: "Login failed",
-          description: "Please enter your email and password",
+          description: "Invalid email or password",
           variant: "destructive"
         });
       }
@@ -73,7 +73,7 @@ const LoginScreen: React.FC = () => {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1"
+                className="mt-1 bg-white/70 backdrop-blur-sm border-fashion-peach/30 focus:ring-fashion-amber focus:border-fashion-amber"
               />
             </div>
             
@@ -86,7 +86,7 @@ const LoginScreen: React.FC = () => {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="mt-1"
+                className="mt-1 bg-white/70 backdrop-blur-sm border-fashion-peach/30 focus:ring-fashion-amber focus:border-fashion-amber"
               />
             </div>
 
