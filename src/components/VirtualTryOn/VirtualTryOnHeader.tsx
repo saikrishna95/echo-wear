@@ -2,7 +2,6 @@
 import React from "react";
 import { ChevronLeft, Shirt, CalendarDays, Sun } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 const VirtualTryOnHeader: React.FC = () => {
   const navigate = useNavigate();

@@ -5,17 +5,46 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 const LoginScreen: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { toast } = useToast();
   
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real implementation, this would validate credentials
-    // For now, we'll just redirect to the home page
-    navigate("/");
+    setIsLoading(true);
+    
+    try {
+      // Simulate login - in a real implementation, this would validate with Firebase
+      if (email && password) {
+        toast({
+          title: "Login successful",
+          description: "Welcome to EchoWear!",
+        });
+        // Navigate to home after a brief delay to simulate the transition
+        setTimeout(() => {
+          navigate("/");
+        }, 800);
+      } else {
+        toast({
+          title: "Login failed",
+          description: "Please enter your email and password",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "An error occurred",
+        description: "Please try again later",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
   
   return (
@@ -66,8 +95,9 @@ const LoginScreen: React.FC = () => {
             <Button 
               type="submit" 
               className="w-full bg-fashion-amber hover:bg-fashion-amber/90 text-white"
+              disabled={isLoading}
             >
-              Login
+              {isLoading ? "Logging in..." : "Login"}
             </Button>
             
             <Button 
