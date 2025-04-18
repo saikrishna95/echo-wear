@@ -1,34 +1,43 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Shirt } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const LoginScreen: React.FC = () => {
   const [email, setEmail] = useState("test@example.com");
   const [password, setPassword] = useState("password");
+  const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { login, isAuthenticated } = useAuth();
+  
+  // Redirect if already logged in
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/");
+    }
+  }, [isAuthenticated, navigate]);
   
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
     try {
-      // Simulate login with hardcoded test credentials
-      if (email === "test@example.com" && password === "password") {
+      const success = await login(email, password, rememberMe);
+      
+      if (success) {
         toast({
           title: "Login successful",
           description: "Welcome to EchoWear!",
         });
-        // Navigate to home after a brief delay to simulate the transition
-        setTimeout(() => {
-          navigate("/");
-        }, 800);
+        navigate("/");
       } else {
         toast({
           title: "Login failed",
@@ -90,8 +99,21 @@ const LoginScreen: React.FC = () => {
               />
             </div>
 
-            <div className="text-right text-sm">
-              <a href="#" className="text-fashion-amber hover:underline">Forgot password?</a>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="rememberMe" 
+                  checked={rememberMe} 
+                  onCheckedChange={(checked) => setRememberMe(checked === true)}
+                />
+                <Label htmlFor="rememberMe" className="text-sm text-gray-700 cursor-pointer">
+                  Remember me
+                </Label>
+              </div>
+              
+              <div className="text-right text-sm">
+                <a href="#" className="text-fashion-amber hover:underline">Forgot password?</a>
+              </div>
             </div>
           </div>
           
