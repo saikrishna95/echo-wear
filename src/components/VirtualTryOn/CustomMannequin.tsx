@@ -167,7 +167,7 @@ const CustomMannequin: React.FC<CustomMannequinProps> = ({
       modelRef.current.rotation.y = (rotation * Math.PI) / 180;
     }
     
-    // 🔥 Apply continuous real-time scaling based on current measurements
+    // 🔥 Apply continuous real-time scaling based on current measurements hello
     updateModelScaling();
     
     // Handle highlighting for the currently selected measurement
