@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { ClothingItem } from '@/components/VirtualTryOn/types';
 
@@ -13,9 +12,9 @@ const demoClothingItems: ClothingItem[] = [
     pattern: 'solid',
     size: 'M',
     images: {
-      front: '/lovable-uploads/a5e5209b-37ed-404a-aca4-c4984df06eff.png',
-      back: '/lovable-uploads/a5e5209b-37ed-404a-aca4-c4984df06eff.png',
-      side: '/lovable-uploads/a5e5209b-37ed-404a-aca4-c4984df06eff.png'
+      front: '/uploads/a5e5209b-37ed-404a-aca4-c4984df06eff.png',
+      back: '/uploads/a5e5209b-37ed-404a-aca4-c4984df06eff.png',
+      side: '/uploads/a5e5209b-37ed-404a-aca4-c4984df06eff.png'
     }
   },
   {
@@ -27,9 +26,9 @@ const demoClothingItems: ClothingItem[] = [
     pattern: 'solid',
     size: '32',
     images: {
-      front: '/lovable-uploads/6d5869e6-335e-43b2-9095-3cba3298e969.png',
-      back: '/lovable-uploads/6d5869e6-335e-43b2-9095-3cba3298e969.png',
-      side: '/lovable-uploads/6d5869e6-335e-43b2-9095-3cba3298e969.png'
+      front: '/uploads/6d5869e6-335e-43b2-9095-3cba3298e969.png',
+      back: '/uploads/6d5869e6-335e-43b2-9095-3cba3298e969.png',
+      side: '/uploads/6d5869e6-335e-43b2-9095-3cba3298e969.png'
     }
   },
   {
@@ -41,9 +40,9 @@ const demoClothingItems: ClothingItem[] = [
     pattern: 'solid',
     size: 'L',
     images: {
-      front: '/lovable-uploads/5e62aadd-496b-44e3-84c8-e8f40d379fd5.png',
-      back: '/lovable-uploads/5e62aadd-496b-44e3-84c8-e8f40d379fd5.png',
-      side: '/lovable-uploads/5e62aadd-496b-44e3-84c8-e8f40d379fd5.png'
+      front: '/uploads/5e62aadd-496b-44e3-84c8-e8f40d379fd5.png',
+      back: '/uploads/5e62aadd-496b-44e3-84c8-e8f40d379fd5.png',
+      side: '/uploads/5e62aadd-496b-44e3-84c8-e8f40d379fd5.png'
     }
   },
   {
