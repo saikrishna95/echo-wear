@@ -24,5 +24,4 @@ dist-ssr
 *.sw?
 
 # Ignore directories with large files
-public/lovable-uploads/
 public/models/
